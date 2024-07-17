@@ -14,13 +14,45 @@
 ; You should have received a copy of the GNU Affero General Public License
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-(display (command-line) (current-output-port))
-(newline (current-output-port))
+(define *deck* '(
+    -2 -2 -2 -2 -2
+    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+    -1 1 2 3 4 5 6 7 89 10 11 12
+    -1 1 2 3 4 5 6 7 89 10 11 12
+    -1 1 2 3 4 5 6 7 89 10 11 12
+    -1 1 2 3 4 5 6 7 89 10 11 12
+    -1 1 2 3 4 5 6 7 89 10 11 12
+    -1 1 2 3 4 5 6 7 89 10 11 12
+    -1 1 2 3 4 5 6 7 89 10 11 12
+    -1 1 2 3 4 5 6 7 89 10 11 12
+    -1 1 2 3 4 5 6 7 89 10 11 12
+    -1 1 2 3 4 5 6 7 89 10 11 12))
 
+(define (deep-copy list)    
+    (if (null? list) 
+        '() 
+        (if (list? list) 
+            (cons (deep-copy (car list)) (deep-copy (cdr list)))
+            list)))
 
+(define-structure game
+    hand-cnt deck discard players)
 
+(define-structure player
+    id score cards-value cards-up?)
 
+(define *game* (make-game 
+    0
+    (deep-copy *deck*)
+    '()
+    (list
+        (make-player 1 0 '() '())
+        (make-player 2 0 '() '())
+        (make-player 3 0 '() '())
+        (make-player 4 0 '() '()))
+    ))
 
+(display *game*)
 
 
 
