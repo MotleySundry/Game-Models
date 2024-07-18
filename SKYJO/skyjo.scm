@@ -31,17 +31,10 @@
     -1 1 2 3 4 5 6 7 8 9 10 11 12))
 
 (define-structure game
-    deck discard players)
-
-(define *game* (make-game 
-    '() ; deck
-    '() ; discard
-    '() ; players
-    ))
+    shuffled-cards draw-pile discard-pile players)
 
 (define-structure player
     id score cards-value cards-up?)
-
 
 ; Duplicate an s8 vector.
 (define (s8vector-dup vect)
@@ -53,6 +46,16 @@
             (myfun vect new (- (s8vector-length vect) 1))
             new)
 )
+
+; Copy an s8 vector to a list.
+(define (s8vector-to-list vect)
+    (define (myfun vect lst i)
+        (if (< i 0) 
+            lst
+            (myfun vect (cons (s8vector-ref vect i) lst) (- i 1))))
+    (myfun vect '() (- (s8vector-length vect) 1))
+)
+
 
 ; Randomize an s8 vector in-place.
 (define (s8vector-rand vect)
@@ -67,12 +70,18 @@
     vect
 )
 
-(display (s8vector-dup *cards* ))
-(newline)
-(display (s8vector-rand (s8vector-dup *cards* )))
+(define *game* (make-game
+    (s8vector-dup *cards*)  ;shuffled-cards
+    '()                     ;draw-pile
+    '()                     ;discard-pile
+    '()                     ;players
+    ))
+
+(define (reset-game)
+    (s8vector-rand (game-shuffled-cards *game*))
+    (game-draw-pile-set! *game* (s8vector-to-list(game-shuffled-cards *game*)))
+)
 
 
-
-
-
-
+(reset-game)
+(display *game*)
