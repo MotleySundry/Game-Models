@@ -1,4 +1,4 @@
-; Motley Sundry :: Game Models :: SKYJO :: skyjo.scm
+; Motley Sundry :: Game Models :: SKYJO :: config.scm
 ; Copyright (C) 2024 Donald R Anderson
 ;
 ; This program is free software: you can redistribute it and/or modify
@@ -14,11 +14,22 @@
 ; You should have received a copy of the GNU Affero General Public License
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-(random-source-randomize! default-random-source)
 
+(define *num-players* 4)
+(define *num-runs* 10)
 
+(define *strategies* (list
+    strat-naive
+    strat-naive
+    strat-naive
+    strat-naive
+    strat-naive
+    strat-naive
+    strat-naive
+    strat-naive
+))
 
+;;;;;;;;;;;;;;;;;;;;;;;;
 
-
-
-(display (run-game))
+(define *min-playerst* 2)
+(define *max-playerst* 8)

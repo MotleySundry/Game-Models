@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Motley Sundry - Game Models - SKYJO - skyjo.sh
+# Motley Sundry :: Game Models :: SKYJO :: skyjo.sh
 # Copyright (C) 2024 Donald R Anderson
 #
 # This program is free software: you can redistribute it and/or modify
@@ -19,6 +19,6 @@
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source ../include.sh
 
-build_gambit skyjo ../library.scm
+build_gambit skyjo ../library.scm player.scm game.scm strat-naive.scm
 
 ./skyjo.bin "$@"

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Motley Sundry - Game Models - validate.sh
+# Motley Sundry :: Game Models :: validate.sh
 # Copyright (C) 2024 Donald R Anderson
 #
 # This program is free software: you can redistribute it and/or modify

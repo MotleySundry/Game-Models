@@ -1,4 +1,4 @@
-; Motley Sundry :: Game Models :: SKYJO :: skyjo.scm
+; Motley Sundry :: Game Models :: SKYJO :: strat-vaive.scm
 ; Copyright (C) 2024 Donald R Anderson
 ;
 ; This program is free software: you can redistribute it and/or modify
@@ -14,11 +14,7 @@
 ; You should have received a copy of the GNU Affero General Public License
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-(random-source-randomize! default-random-source)
-
-
-
-
-
-
-(display (run-game))
+; The most basic strategy that follows the rules with random choices.
+(define (strategy-naive game player-id)
+    #f
+)

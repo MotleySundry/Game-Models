@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Motley Sundry - Game Models - include.sh
+# Motley Sundry :: Game Models :: include.sh
 # Copyright (C) 2024 Donald R Anderson
 #
 # This program is free software: you can redistribute it and/or modify
@@ -34,15 +34,15 @@ build_gambit()
 
     # Executable exists?
     if [[ ! -x "$base.bin" ]]; then
-        gsc -:r7rs -o "$base.bin" -exe "$*" "$base.scm" 
+        gsc -:r7rs -o "$base.bin" -exe "$@" "$base.scm" 
         return
     fi
 
     # Source changed?
-    for src in "$base.scm" "$*"; do
+    for src in "$base.scm" "$@"; do
         if [[ "$src" -nt  "$base.bin" ]]; then
             rm "$base.bin"
-            gsc -:r7rs -o "$base.bin" -exe "$*" "$base.scm" 
+            gsc -:r7rs -o "$base.bin" -exe "$@" "$base.scm" 
             return
         fi
     done
