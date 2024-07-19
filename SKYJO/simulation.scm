@@ -22,7 +22,19 @@
         0   ;num-players
     ))
 
-(define (run-simulation sim-stats num-iterations num-players )
+(define (display-sim-stats sim-stats)
+        (display "::: Simulations Statistics (sim-stats) ::::") (newline)
+        
+        (display "--- num-iterations: ")
+        (display (sim-stats-num-iterations sim-stats)) (newline)
+        
+        (display "--- num-players: ")
+        (display (sim-stats-num-players sim-stats)) (newline)
+)      
+
+
+(define (run-simulation num-iterations num-players )
+    (define sim-stats (new-sim-stats))
     (define (myfun stats num)
         (if (= num 0)
             0
@@ -31,5 +43,6 @@
     (myfun sim-stats num-iterations)
     (sim-stats-num-iterations-set! sim-stats num-iterations)
     (sim-stats-num-players-set! sim-stats num-players)
+    sim-stats
 )
 
