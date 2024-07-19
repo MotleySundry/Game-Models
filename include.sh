@@ -21,23 +21,29 @@ set -euo pipefail
 IFS=$'\n\t'
 export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
 
-build_gambit()
+# Args: base-name [src ...]
+build_gambit() 
 {
-base=$1
+    base=$1
+    shift
 
-# Executable exists?
-if [[ ! -x "$base.bin" ]]; then
-    gsc -:r7rs -o "$base.bin" -exe "$base.scm"
-fi
+    # TMP dir?
+    if [[ ! -d "tmp" ]]; then
+        mkdir tmp
+    fi
 
-# Source changed?
-if [[ "$base.scm" -nt  "$base.bin" ]]; then
-    rm "$base.bin"
-    gsc -:r7rs -o "$base.bin" -exe "$base.scm"
-fi
+    # Executable exists?
+    if [[ ! -x "$base.bin" ]]; then
+        gsc -:r7rs -o "$base.bin" -exe "$*" "$base.scm" 
+        return
+    fi
 
-# TMP dir?
-if [[ ! -d "tmp" ]]; then
-    mkdir tmp
-fi
+    # Source changed?
+    for src in "$base.scm" "$*"; do
+        if [[ "$src" -nt  "$base.bin" ]]; then
+            rm "$base.bin"
+            gsc -:r7rs -o "$base.bin" -exe "$*" "$base.scm" 
+            return
+        fi
+    done
 }

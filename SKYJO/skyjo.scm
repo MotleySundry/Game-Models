@@ -30,39 +30,6 @@
     -1 1 2 3 4 5 6 7 8 9 10 11 12
     -1 1 2 3 4 5 6 7 8 9 10 11 12))
 
-; Duplicate an s8 vector.
-(define (s8vector-dup vect)
-    (define (myfun vect new i)
-        (if (>= i 0) (s8vector-set! new i (s8vector-ref vect i) ))
-        (if (> i 0) (myfun vect new (- i 1))) )
-    (let 
-        ((new (make-s8vector(s8vector-length vect))))
-            (myfun vect new (- (s8vector-length vect) 1))
-            new)
-)
-
-; Copy an s8 vector to a list.
-(define (s8vector-to-list vect)
-    (define (myfun vect lst i)
-        (if (< i 0) 
-            lst
-            (myfun vect (cons (s8vector-ref vect i) lst) (- i 1))))
-    (myfun vect '() (- (s8vector-length vect) 1))
-)
-
-
-; Randomize an s8 vector in-place.
-(define (s8vector-rand vect)
-    (define (myfun vect len i)
-        (let(
-            (tmp (s8vector-ref vect i))
-            (irnd (random-integer len))            )
-                (s8vector-set! vect i (s8vector-ref vect irnd) )
-                (s8vector-set! vect irnd tmp)
-                (if (> i 0) (myfun vect len (- i 1))) ))
-    (myfun vect (s8vector-length vect) (- (s8vector-length vect) 1))
-    vect
-)
 
 (define-structure player
     id
