@@ -30,12 +30,6 @@
     -1 1 2 3 4 5 6 7 8 9 10 11 12
     -1 1 2 3 4 5 6 7 8 9 10 11 12))
 
-(define-structure game
-    shuffled-cards draw-pile discard-pile players)
-
-(define-structure player
-    id score cards-value cards-up?)
-
 ; Duplicate an s8 vector.
 (define (s8vector-dup vect)
     (define (myfun vect new i)
@@ -70,18 +64,47 @@
     vect
 )
 
-(define *game* (make-game
-    (s8vector-dup *cards*)  ;shuffled-cards
-    '()                     ;draw-pile
-    '()                     ;discard-pile
-    '()                     ;players
-    ))
-
-(define (reset-game)
-    (s8vector-rand (game-shuffled-cards *game*))
-    (game-draw-pile-set! *game* (s8vector-to-list(game-shuffled-cards *game*)))
+(define-structure player
+    id
+    score 
+    cards ;99 - not present
+    card-up    ; 0 - face down 1 - face up
+    strategy   ; procedure
 )
 
+; The most basic strategy that follows the rules with random choices.
+(define (strategy-naive game player-id)
+    #f
+)
+; Create a new initialized player structure.
+(define (new-player id strat)
+    (make-player
+        id  ;id
+        0   ;score
+        (make-s8vector 12 99)   ;cards
+        (make-s8vector 12 0)    ;card-up
+        strategy-naive          ;strategy
+    ))  
 
-(reset-game)
-(display *game*)
+
+(define-structure game draw-pile discard-pile players)
+
+; Create a new initialized game structure.
+(define (new-game)
+    (make-game
+    (s8vector-to-list (s8vector-rand (s8vector-dup *cards*)))  ;draw-pile
+    '()   ;discard-pile
+    (list 
+        (new-player 0 strategy-naive)    
+        (new-player 1 strategy-naive)    
+        (new-player 2 strategy-naive)    
+        (new-player 3 strategy-naive)    
+    )))  
+
+; Simulates one game.
+(define (run-game)
+    (define game (new-game))
+    game
+)
+
+(display (run-game))
