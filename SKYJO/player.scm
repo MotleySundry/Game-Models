@@ -24,10 +24,11 @@
 
 ; Create a new initialized player structure.
 (define (new-player id strat)
+    ; Allocate structure
     (make-player
-        id  ;id
-        0   ;score
-        (make-s8vector 12 99)   ;cards
-        (make-s8vector 12 0)    ;card-up
-        strat          ;strategy
+        id ;id
+        0  ;score
+        (make-s8vector 12 99) ;cards
+        (make-s8vector 12 0) ;card-up
+        strat ;strategy
     ))  

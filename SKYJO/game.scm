@@ -31,11 +31,22 @@
 (define-structure game draw-pile discard-pile players)
 
 ; Create a new initialized game structure.
-(define (new-game)
-    (make-game
-    (s8vector-to-list (s8vector-rand (s8vector-dup cards)))  ;draw-pile
-    '()   ;discard-pile
-    (make-vector *num-players*)))  
+(define (new-game num-players)
+    ; Allocate structure
+    (define game (make-game
+        (s8vector-to-list (s8vector-rand (s8vector-dup cards)))  ;draw-pile
+        '()   ;discard-pile
+        (make-vector num-players)))
+    
+    ; Populate players vector
+    (define (set-players id)
+        (if (>= id 0)
+            (begin
+                (vector-set! (game-players game) id (new-player id (vector-ref *strategies* id)))
+                add-players (- num 1)))
+    )
+    (set-players num-players)
+)  
 
 (define (run-game game)
     game

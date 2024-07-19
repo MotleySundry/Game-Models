@@ -32,7 +32,6 @@
         (display (sim-stats-num-players sim-stats)) (newline)
 )      
 
-
 (define (run-simulation num-iterations num-players )
     (define sim-stats (new-sim-stats))
     (define (myfun stats num)
