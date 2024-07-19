@@ -14,12 +14,20 @@
 ; You should have received a copy of the GNU Affero General Public License
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-(define (run-simulation num-iterations)
-    (define (myfun num)
+(define-structure sim-stats iterations)
+
+(define (new-sim-stats)
+    (make-sim-stats
+        0   ;iterations
+    ))
+
+(define (run-simulation sim-stats num-iterations )
+    (define (myfun stats num)
         (if (= num 0)
             0
-            (myfun (- num 1))))
+            (myfun stats (- num 1))))
 
-    (myfun num-iterations)
+    (myfun sim-stats num-iterations)
+    ;(sim-stats-num-iterations-set! sim-stats num-iterations)
 )
 
