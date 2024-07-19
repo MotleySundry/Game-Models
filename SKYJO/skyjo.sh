@@ -19,6 +19,6 @@
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source ../include.sh
 
-build_gambit skyjo ../library.scm player.scm game.scm strat-naive.scm
+build_gambit skyjo ../library.scm config.scm player.scm game.scm strat-naive.scm 
 
 ./skyjo.bin "$@"

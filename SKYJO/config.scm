@@ -18,7 +18,7 @@
 (define *num-players* 4)
 (define *num-runs* 10)
 
-(define *strategies* (list
+(define *strategies* '#(
     strat-naive
     strat-naive
     strat-naive
