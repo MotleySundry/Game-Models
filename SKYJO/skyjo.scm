@@ -16,9 +16,6 @@
 
 (random-source-randomize! default-random-source)
 
+(run-simulation *num-iterations*)
 
 
-
-
-
-(display (run-game))

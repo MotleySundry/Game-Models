@@ -35,15 +35,8 @@
     (make-game
     (s8vector-to-list (s8vector-rand (s8vector-dup cards)))  ;draw-pile
     '()   ;discard-pile
-    (list 
-        (new-player 0 strategy-naive)    
-        (new-player 1 strategy-naive)    
-        (new-player 2 strategy-naive)    
-        (new-player 3 strategy-naive)    
-    )))  
+    (make-vector *num-players*)))  
 
-; Simulates one game.
-(define (run-game)
-    (define game (new-game))
+(define (run-game game)
     game
 )

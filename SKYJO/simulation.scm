@@ -1,4 +1,4 @@
-; Motley Sundry :: Game Models :: SKYJO :: config.scm
+; Motley Sundry :: Game Models :: SKYJO :: simulation.scm
 ; Copyright (C) 2024 Donald R Anderson
 ;
 ; This program is free software: you can redistribute it and/or modify
@@ -14,37 +14,12 @@
 ; You should have received a copy of the GNU Affero General Public License
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+(define (run-simulation num-iterations)
+    (define (myfun num)
+        (if (= num 0)
+            0
+            (myfun (- num 1))))
 
-(define *num-players* 4)
-(define *num-iterations* 5)
-
-(define *strategies* '#(
-    strat-naive
-    strat-naive
-    strat-naive
-    strat-naive
-    strat-naive
-    strat-naive
-    strat-naive
-    strat-naive
-))
-
-;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define *min-players* 2)
-(define *max-players* 8)
-
-(if (> *num-players* *max-players*)
-    (begin
-        (display (list "Too many players:" *num-players* ))
-        (exit 1)
-    )
-)
-
-(if (< *num-players* *min-players*)
-    (begin
-        (display (list "Too few players:" *num-players* ))
-        (exit 1)
-    )
+    (myfun num-iterations)
 )
 
