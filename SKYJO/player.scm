@@ -34,6 +34,6 @@
     ))  
 
 ; Returns #f if the player terminates by turning up their last card.
-(define (run-player player game sim-stats last-two?)
-    ((player-strat player) player game sim-stats last-two?)
+(define (run-player player game sim-stats cmd)
+    ((player-strat player) player game sim-stats cmd)
 )

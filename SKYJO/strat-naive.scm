@@ -16,6 +16,11 @@
 
 ; The most basic strategy that follows the rules with random choices.
 ; Returns #f when the last card is turned over
-(define (strat-naive player game sim-stats last-two?)
-    #t
-)
+(define (strat-naive player game sim-stats cmd)
+    (if (equal? cmd "draw-phase-1")
+        #t
+    (if (equal? cmd "draw-phase-2")
+        #t
+    (if (equal? cmd "flip-two")
+        0
+))))

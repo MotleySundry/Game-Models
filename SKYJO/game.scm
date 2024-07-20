@@ -51,21 +51,52 @@
     game
 )  
 
+(define (game-pop-draw-pile game)
+    (define card (car (game-draw-pile game)))
+    (game-draw-pile-set! game (cdr (game-draw-pile game)))
+    card
+)
+
 ; Turns up two cards for each player.
 ; Returns first player id.
-(define (deal-hands game)
-    0
+(define (game-deal-hands game num-players)
+    (define players (game-players game))
+    (define (deal-card num cnt)
+        (if (< cnt num)
+            (let(
+                (player (vector-ref players (remainder cnt num-players))))
+                (s8vector-set!(player-cards player) (/ cnt num-players) (game-pop-draw-pile game))
+            )))
+
+    (deal-card (* 12 num-players) 0)
+    (game-flip-two game num-players)
+
+)
+
+(define (game-flip-two game num-players)
+    (define players (game-players game))
+    (define (flip-two cnt max max-player)
+            (if (< cnt num-players)
+                (let(
+                    (total (run-player (vector-ref players cnt) game sim-stats "flip-two")))
+                    (if (> total max)
+                        (flip-two (+ cnt 1) total cnt)
+                        (flip-two (+ cnt 1) max max-player))
+                )
+                max-player; Return the player with the highest total
+            ))
+    (flip-two 0 -1 0)
 )
 
 (define (run-game game sim-stats num-players)
-    (define first-player (deal-hands game))
+    (define first-player (game-deal-hands game num-players))
     ; Run plays until one player turns up their last card
     (define (run-plays num id)
         (if (> num *game-play-bound*)
             (begin
                 (display "Exceeded *game-play-bound*")
                 (exit 1))
-            (if (run-player (vector-ref (game-players game) id) game sim-stats #f)
+            (if (run-player (vector-ref (game-players game) id) game sim-stats "draw-phase-1")
                 (run-plays  (+ num 1) (remainder (+ id 1) num-players))
                 (run-two-rounds game sim-stats num-players id))))
     (run-plays 0 first-player)
@@ -80,7 +111,7 @@
     (define (run-round num id)
         (if (< num (- num-players 1))
             (begin 
-                (run-player (vector-ref (game-players game) id) game sim-stats #t)
+                (run-player (vector-ref (game-players game) id) game sim-stats "draw-phase-2")
                 (run-round  (+ num 1) (remainder (+ id 1) num-players)))))
 
     (run-round 0 (remainder (+ skip-player 1) num-players))
