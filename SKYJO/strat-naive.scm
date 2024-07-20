@@ -15,6 +15,7 @@
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ; The most basic strategy that follows the rules with random choices.
-(define (strategy-naive game player-id)
-    #f
+; Returns #f when the last card is turned over
+(define (strat-naive player game sim-stats last-two?)
+    #t
 )

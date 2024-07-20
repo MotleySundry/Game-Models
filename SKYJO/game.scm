@@ -44,7 +44,7 @@
     (define (set-player id)
         (if (< id num-players)
             (begin
-                (vector-set! (game-players game) id (new-player id (vector-ref *strategies* id)))
+                (vector-set! (game-players game) id (new-player id))
                 (set-player (+ id 1))))
     )
     (set-player 0)
@@ -65,15 +65,25 @@
             (begin
                 (display "Exceeded *game-play-bound*")
                 (exit 1))
-            (if (run-player (vector-ref (game-players game) id) game sim-stats )
+            (if (run-player (vector-ref (game-players game) id) game sim-stats #f)
                 (run-plays  (+ num 1) (remainder (+ id 1) num-players))
-                (run-last-two-rounds game sim-stats num-players id))))
-
+                (run-two-rounds game sim-stats num-players id))))
     (run-plays 0 first-player)
 )
 
-(define (run-last-two-rounds game sim-stats num-players out-player)
-    #t
+(define (run-two-rounds game sim-stats num-players skip-player)
+    (run-one-round game sim-stats num-players skip-player)
+    (run-one-round game sim-stats num-players skip-player)
+)
+    
+(define (run-one-round game sim-stats num-players skip-player)
+    (define (run-round num id)
+        (if (< num (- num-players 1))
+            (begin 
+                (run-player (vector-ref (game-players game) id) game sim-stats #t)
+                (run-round  (+ num 1) (remainder (+ id 1) num-players)))))
+
+    (run-round 0 (remainder (+ skip-player 1) num-players))
 )
 
 

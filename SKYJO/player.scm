@@ -18,26 +18,22 @@
     id
     score 
     cards ;99 - not present
-    card-up    ; 0 - face down 1 - face up
-    strategy   ; procedure
+    card-up ;0 - face down 1 - face up
+    strat ;lambda
 )
 
 ; Create a new initialized player structure.
-(define (new-player id strat)
+(define (new-player id)
     ; Allocate structure
     (make-player
         id ;id
         0  ;score
         (make-s8vector 12 99) ;cards
         (make-s8vector 12 0) ;card-up
-        strat ;strategy
+        (get-player-strat id) ;strategy
     ))  
 
 ; Returns #f if the player terminates by turning up their last card.
-(define (run-player player game sim-stats)
-    #t
-)
-
-(define (run-player-last-two-rounds player game sim-stats)
-    #t
+(define (run-player player game sim-stats last-two?)
+    ((player-strat player) player game sim-stats last-two?)
 )

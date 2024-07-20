@@ -19,16 +19,17 @@
 (define *num-iterations* 5)
 (define *game-play-bound* 150)
 
-(define *strategies* '#(
-    strat-naive
-    strat-naive
-    strat-naive
-    strat-naive
-    strat-naive
-    strat-naive
-    strat-naive
-    strat-naive
-))
+(define (get-player-strat id)
+    (if (= id 0) (lambda (player game sim-stats last-two?) (strat-naive player game sim-stats last-two?))
+    (if (= id 1) (lambda (player game sim-stats last-two?) (strat-naive player game sim-stats last-two?))
+    (if (= id 2) (lambda (player game sim-stats last-two?) (strat-naive player game sim-stats last-two?))
+    (if (= id 3) (lambda (player game sim-stats last-two?) (strat-naive player game sim-stats last-two?))
+    (if (= id 4) (lambda (player game sim-stats last-two?) (strat-naive player game sim-stats last-two?))
+    (if (= id 5) (lambda (player game sim-stats last-two?) (strat-naive player game sim-stats last-two?))
+    (if (= id 6) (lambda (player game sim-stats last-two?) (strat-naive player game sim-stats last-two?))
+    (if (= id 7) (lambda (player game sim-stats last-two?) (strat-naive player game sim-stats last-two?))
+)))))))))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
 
