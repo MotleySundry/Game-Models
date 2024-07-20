@@ -17,6 +17,7 @@
 
 (define *num-players* 4)
 (define *num-iterations* 5)
+(define *game-play-bound* 150)
 
 (define *strategies* '#(
     strat-naive

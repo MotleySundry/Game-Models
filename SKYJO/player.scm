@@ -32,3 +32,12 @@
         (make-s8vector 12 0) ;card-up
         strat ;strategy
     ))  
+
+; Returns #f if the player terminates by turning up their last card.
+(define (run-player player game sim-stats)
+    #t
+)
+
+(define (run-player-last-two-rounds player game sim-stats)
+    #t
+)

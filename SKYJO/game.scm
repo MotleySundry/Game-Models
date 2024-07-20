@@ -28,26 +28,53 @@
     -1 1 2 3 4 5 6 7 8 9 10 11 12
     -1 1 2 3 4 5 6 7 8 9 10 11 12))
 
-(define-structure game draw-pile discard-pile players)
+(define-structure game draw-pile discard-pile players first-player)
 
 ; Create a new initialized game structure.
 (define (new-game num-players)
     ; Allocate structure
     (define game (make-game
         (s8vector-to-list (s8vector-rand (s8vector-dup cards)))  ;draw-pile
-        '()   ;discard-pile
-        (make-vector num-players)))
+        '() ;discard-pile
+        (make-vector num-players) ;players
+        0 ;first player
+    ))
     
     ; Populate players vector
-    (define (set-players id)
-        (if (>= id 0)
+    (define (set-player id)
+        (if (< id num-players)
             (begin
                 (vector-set! (game-players game) id (new-player id (vector-ref *strategies* id)))
-                add-players (- num 1)))
+                (set-player (+ id 1))))
     )
-    (set-players num-players)
+    (set-player 0)
+    game
 )  
 
-(define (run-game game)
-    game
+; Turns up two cards for each player.
+; Returns first player id.
+(define (deal-hands game)
+    0
 )
+
+(define (run-game game sim-stats num-players)
+    (define first-player (deal-hands game))
+    ; Run plays until one player turns up their last card
+    (define (run-plays num id)
+        (if (> num *game-play-bound*)
+            (begin
+                (display "Exceeded *game-play-bound*")
+                (exit 1))
+            (if (run-player (vector-ref (game-players game) id) game sim-stats )
+                (run-plays  (+ num 1) (remainder (+ id 1) num-players))
+                (run-last-two-rounds game sim-stats num-players id))))
+
+    (run-plays 0 first-player)
+)
+
+(define (run-last-two-rounds game sim-stats num-players out-player)
+    #t
+)
+
+
+

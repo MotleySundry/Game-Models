@@ -16,5 +16,4 @@
 
 (random-source-randomize! default-random-source)
 
-(define sim-stats (run-simulation *num-iterations* *num-players*))
-(display-sim-stats sim-stats)
+(run-simulation *num-iterations* *num-players*)
