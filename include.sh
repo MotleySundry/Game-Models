@@ -34,7 +34,7 @@ build_gambit()
 
     # Executable exists?
     if [[ ! -x "$base.bin" ]]; then
-        gsc -:r7rs -o "$base.bin" -exe "$@" "$base.scm" 
+        gsc -o "$base.bin" -exe "$@" "$base.scm" 
         return
     fi
 
@@ -42,7 +42,7 @@ build_gambit()
     for src in "$base.scm" "$@"; do
         if [[ "$src" -nt  "$base.bin" ]]; then
             rm "$base.bin"
-            gsc -:r7rs -o "$base.bin" -exe "$@" "$base.scm" 
+            gsc -o "$base.bin" -exe "$@" "$base.scm" 
             return
         fi
     done

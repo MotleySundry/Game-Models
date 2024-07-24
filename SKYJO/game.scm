@@ -53,6 +53,7 @@
 
 (define (game-pop-draw-pile game)
     (define card (car (game-draw-pile game)))
+    (display "Poped: ")(display card)(newline)
     (game-draw-pile-set! game (cdr (game-draw-pile game)))
     card
 )
@@ -65,7 +66,9 @@
         (if (< cnt num)
             (let(
                 (player (vector-ref players (remainder cnt num-players))))
-                (s8vector-set!(player-cards player) (/ cnt num-players) (game-pop-draw-pile game))
+                (s8vector-set!(player-cards player) (floor (/ cnt num-players)) (game-pop-draw-pile game))
+                (display "Player: ")(display player)(newline)
+                (deal-card num (+ cnt 1))
             )))
 
     (deal-card (* 12 num-players) 0)

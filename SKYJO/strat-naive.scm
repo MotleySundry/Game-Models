@@ -22,5 +22,15 @@
     (if (equal? cmd "draw-phase-2")
         #t
     (if (equal? cmd "flip-two")
-        0
-))))
+        (strat-naive-flip-two player game sim-stats)
+        (begin
+            (display "Unknown command: ")
+            (display cmd)
+            (newline)
+            (exit 1)))))
+)
+
+(define (strat-naive-flip-two player game sim-stats)
+    (display player)(newline)
+    0
+)
