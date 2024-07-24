@@ -53,7 +53,6 @@
 
 (define (game-pop-draw-pile game)
     (define card (car (game-draw-pile game)))
-    (display "Poped: ")(display card)(newline)
     (game-draw-pile-set! game (cdr (game-draw-pile game)))
     card
 )
@@ -67,7 +66,6 @@
             (let(
                 (player (vector-ref players (remainder cnt num-players))))
                 (s8vector-set!(player-cards player) (floor (/ cnt num-players)) (game-pop-draw-pile game))
-                (display "Player: ")(display player)(newline)
                 (deal-card num (+ cnt 1))
             )))
 
@@ -102,6 +100,7 @@
             (if (run-player (vector-ref (game-players game) id) game sim-stats "draw-phase-1")
                 (run-plays  (+ num 1) (remainder (+ id 1) num-players))
                 (run-two-rounds game sim-stats num-players id))))
+    
     (run-plays 0 first-player)
 )
 

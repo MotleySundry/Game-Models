@@ -31,6 +31,9 @@
 )
 
 (define (strat-naive-flip-two player game sim-stats)
-    (display player)(newline)
-    0
+    (s8vector-set!(player-card-up player) 0 1)
+    (s8vector-set!(player-card-up player) 1 1)
+
+    (+(s8vector-ref(player-cards player) 0)
+        (s8vector-ref(player-cards player) 1))
 )
