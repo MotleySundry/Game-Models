@@ -52,8 +52,39 @@
 )  
 
 (define (game-pop-draw-pile game)
-    (define card (car (game-draw-pile game)))
-    (game-draw-pile-set! game (cdr (game-draw-pile game)))
+    ; Draw pile empty?
+    (if (null? (game-draw-pile game))
+        (begin (display "!!! The draw pile is empty!")(newline)(exit 1)))
+    
+    ; Pop it off
+    (let ((card (car (game-draw-pile game))))
+        (game-draw-pile-set! game (cdr (game-draw-pile game)))
+        card
+    )
+)
+
+(define (game-pop-discard-pile game)
+    ; Discard pile empty?
+    (if (null? (game-discard-pile game))
+        (begin (display "!!! The discard pile is empty!")(newline)(exit 1)))
+    
+    ; Pop it off
+    (let ((card (car (game-discard-pile game))))
+        (game-discard-pile-set! game (cdr (game-discard-pile game)))
+        card
+    )
+)
+
+(define (game-view-discard-top game)
+    ; Discard pile empty?
+    (if (null? (game-discard-pile game))
+        (begin (display "!!! The discard pile is empty!")(newline)(exit 1)))
+    
+    (car (game-discard-pile game))
+)
+
+(define (game-push-discard-pile game card)
+    (game-discard-pile-set! game (cons card (game-discard-pile game)))
     card
 )
 
@@ -69,7 +100,13 @@
                 (deal-card num (+ cnt 1))
             )))
 
+    ; Deal all hands
     (deal-card (* 12 num-players) 0)
+    
+    ; Add the first card to the discard pile.
+    (game-push-discard-pile game(game-pop-draw-pile game))
+
+    ; Return first player.
     (game-flip-two game num-players)
 
 )

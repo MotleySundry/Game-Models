@@ -18,9 +18,11 @@
 ; Returns #f when the last card is turned over
 (define (strat-naive player game sim-stats cmd)
     (if (equal? cmd "draw-phase-1")
-        #t
+        (strat-naive-draw-phase-1 player game sim-stats) 
+
     (if (equal? cmd "draw-phase-2")
-        #t
+        (strat-naive-draw-phase-2 player game sim-stats)
+
     (if (equal? cmd "flip-two")
         (strat-naive-flip-two player game sim-stats)
         (begin
@@ -28,6 +30,15 @@
             (display cmd)
             (newline)
             (exit 1)))))
+)
+
+(define (strat-naive-draw-phase-1 player game sim-stats)
+    (define discard-visible (game-view-discard-top game)) 
+    #f
+)
+
+(define (strat-naive-draw-phase-2 player game sim-stats)
+    (strat-naive-draw-phase-1 player game sim-stats)
 )
 
 (define (strat-naive-flip-two player game sim-stats)
