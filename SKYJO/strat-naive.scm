@@ -31,9 +31,13 @@
 )
 
 (define (strat-naive-flip-two player game sim-stats)
-    (s8vector-set!(player-card-up player) 0 1)
-    (s8vector-set!(player-card-up player) 1 1)
+    
+    (define card1 (random-integer 12))
+    (define card2 (random-integer-exclude 12 card1))
+    
+    (s8vector-set!(player-card-up player) card1 1)
+    (s8vector-set!(player-card-up player) card2 1)
 
-    (+(s8vector-ref(player-cards player) 0)
-        (s8vector-ref(player-cards player) 1))
+    (+(s8vector-ref(player-cards player) card1)
+        (s8vector-ref(player-cards player) card2))
 )

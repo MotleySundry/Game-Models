@@ -34,16 +34,27 @@
     (myfun vect '() (- (s8vector-length vect) 1))
 )
 
-
 ; Randomize an s8 vector in-place.
 (define (s8vector-rand vect)
     (define (myfun vect len i)
         (let(
             (tmp (s8vector-ref vect i))
-            (irnd (random-integer len))            )
+            (irnd (random-integer len)))
                 (s8vector-set! vect i (s8vector-ref vect irnd) )
                 (s8vector-set! vect irnd tmp)
                 (if (> i 0) (myfun vect len (- i 1))) ))
     (myfun vect (s8vector-length vect) (- (s8vector-length vect) 1))
     vect
 )
+
+(define (random-integer-exclude max exclude)
+    (define (myfun)
+        (let ((rnd (random-integer max)))
+        (if (= rnd exclude)
+            (myfun)
+            rnd))
+    )
+    (myfun)
+)
+
+
