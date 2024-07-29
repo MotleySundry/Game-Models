@@ -37,3 +37,36 @@
 (define (run-player player game sim-stats cmd)
     ((player-strat player) player game sim-stats cmd)
 )
+
+; Returns #t if any cards are face down.
+(define (player-any-cards-down? player)
+    (define (myfun i)
+        (if (= i 12)
+            #f
+            (if (= (s8vector-ref (player-card-up player) i) 0)
+                #t 
+                (myfun (+ i 1))
+            ))
+    )
+    (myfun 0)
+)
+
+; Returns the index of the largest up card or #f if there are no up cards.
+ (define (player-largest-up-card-idx player)
+     (define (myfun i max-val max-idx)
+        (if (= i 12)
+            max-idx
+            (if (and
+                    (= (s8vector-ref (player-card-up player) i) 1)
+                    (or
+                        (not max-idx)
+                        (> (s8vector-ref (player-cards player) i) max-val)
+                    ))
+                (myfun (+ i 1) (s8vector-ref (player-cards player) i) i)
+                (myfun (+ i 1) max-val max-idx)
+            ))
+    )
+    (myfun 0 -2 #f)
+ )
+
+

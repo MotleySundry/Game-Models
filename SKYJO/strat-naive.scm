@@ -17,8 +17,11 @@
 ; The most basic strategy that follows the rules with random choices.
 ; Returns #f when the last card is turned over
 (define (strat-naive player game sim-stats cmd)
-    (if (equal? cmd "draw-phase-1")
-        (strat-naive-draw-phase-1 player game sim-stats) 
+    (if (equal? cmd "draw-phase-1") 
+        (begin
+            (strat-naive-draw-phase-1 player game sim-stats)
+            (player-any-cards-down? player)
+        )
 
     (if (equal? cmd "draw-phase-2")
         (strat-naive-draw-phase-2 player game sim-stats)
@@ -33,8 +36,23 @@
 )
 
 (define (strat-naive-draw-phase-1 player game sim-stats)
-    (define discard-visible (game-view-discard-top game)) 
-    #f
+    (or 
+        (improve-up-cards? player game sim-stats)
+    )   
+)
+
+; Try to swap the discard top with an up card.
+; Returns #t if successful
+(define (improve-up-cards? player game sim-stats)
+    (define disc-val (game-view-discard-top game))
+    (define max-idx (player-largest-up-card-idx player))
+    (if max-idx
+        (if (< disc-val (s8vector-ref(player-cards player)max-idx))
+            (begin
+                (s8vector-set!(player-cards player) max-idx (game-pop-draw-pile game))
+                #t)
+            #f)
+        #f)
 )
 
 (define (strat-naive-draw-phase-2 player game sim-stats)
