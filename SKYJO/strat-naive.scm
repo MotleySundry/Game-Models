@@ -17,14 +17,15 @@
 ; The most basic strategy that follows the rules with random choices.
 ; Returns #f when the last card is turned over
 (define (strat-naive player game sim-stats cmd)
-    (if (equal? cmd "draw-phase-1") 
+    (if (equal? cmd "phase-1") 
         (begin
-            (strat-naive-draw-phase-1 player game sim-stats)
-            (player-any-cards-down? player)
+            (strat-naive-phase-1 player game sim-stats)
+            ; Any hidden cards remaining, if so continue phase 1. 
+            (> 0 (player-count-cards-in-state? player *card-state-hidden*))
         )
 
-    (if (equal? cmd "draw-phase-2")
-        (strat-naive-draw-phase-2 player game sim-stats)
+    (if (equal? cmd "phase-2")
+        (strat-naive-phase-2 player game sim-stats)
 
     (if (equal? cmd "flip-two")
         (strat-naive-flip-two player game sim-stats)
@@ -35,12 +36,12 @@
             (exit 1)))))
 )
 
-(define (strat-naive-draw-phase-1 player game sim-stats)
+(define (strat-naive-phase-1 player game sim-stats)
     (if (or (try-discard-top? player game sim-stats)
         (try-draw-card? player game sim-stats))
             #t
             (begin
-                (display "!!! Strat-naive: failed to make a move!")(newline)
+                (display "!!! Strat-naive-phase-1: failed to make a move!")(newline)
                 (display game)(newline)
                 (exit 1)
             )
@@ -50,41 +51,43 @@
 ; Try to swap the drawn card with an up card.
 ; Returns #t if successful
 (define (try-draw-card? player game sim-stats)
-
-    ; Try draw card to improve up cards
-    (let (( draw-val (game-pop-draw-pile game))
-        (idx (player-largest-up-card-idx player)))
-
-        (let ((val (s8vector-ref (player-cards player) idx)))
-            (if (and disc-val idx)
-                (if (< draw-val val)
-                    (begin
-                        (s8vector-set!(player-cards player) idx val)
-                        #t)
-                    #f)
-                #f)))
+    (let ((draw (game-pop-draw-pile game)))
+        (and
+            draw
+            (or
+                (try-to-replace-up-card? player game sim-stats draw)
+                (try-to-replace-down-card? player game sim-stats draw)
+                (and
+                    (game-push-discard-pile game draw)
+                    (player-open-rand-hidden-card player)
+                )
+            )))
 )
 
 ; Try to swap the discard top with an up card.
 ; Returns #t if successful
 (define (try-discard-top? player game sim-stats)
-
-    ; Try discard top to improve up cards
-    (let (( disc-val (game-view-discard-top game))
-        (idx (player-largest-up-card-idx player)))
-
-        (let ((val (s8vector-ref (player-cards player) idx)))
-            (if (and disc-val idx)
-                (if (< disc-val val)
-                    (begin
-                        (s8vector-set!(player-cards player) idx (game-pop-draw-pile game))
-                        #t)
-                    #f)
-                #f)))
+    (let ((disc (game-discard-top game)))
+        (and 
+            disc 
+            (or
+                (try-to-replace-up-card? player game sim-stats disc)
+                (try-to-replace-down-card? player game sim-stats disc))
+            (game-pop-draw-pile game)
+        ))
 )
 
-(define (strat-naive-draw-phase-2 player game sim-stats)
-    (strat-naive-draw-phase-1 player game sim-stats)
+
+(define (try-to-replace-up-card? player game sim-stats value)
+    #f
+)
+
+(define (try-to-replace-down-card? player game sim-stats value)
+    #f
+)
+
+(define (strat-naive-phase-2 player game sim-stats)
+    (strat-naive-phase-1 player game sim-stats)
 )
 
 (define (strat-naive-flip-two player game sim-stats)
@@ -92,8 +95,8 @@
     (define card1 (random-integer 12))
     (define card2 (random-integer-exclude 12 card1))
     
-    (s8vector-set!(player-card-up player) card1 1)
-    (s8vector-set!(player-card-up player) card2 1)
+    (s8vector-set!(player-card-state player) card1 1)
+    (s8vector-set!(player-card-state player) card2 1)
 
     (+(s8vector-ref(player-cards player) card1)
         (s8vector-ref(player-cards player) card2))

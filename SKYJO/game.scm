@@ -56,14 +56,14 @@
 (define (game-pop-draw-pile game)
     ; Draw pile empty?
     (if (null? (game-draw-pile game))
-        (begin (display "!!! The draw pile is empty!")(newline))
+        (begin (display "--- The draw pile is empty.")(newline)
         #f)
     
-    ; Pop it off
-    (let ((card (car (game-draw-pile game))))
-        (game-draw-pile-set! game (cdr (game-draw-pile game)))
-        card
-    )
+        ; Pop it off
+        (let ((card (car (game-draw-pile game))))
+            (game-draw-pile-set! game (cdr (game-draw-pile game)))
+            card
+        ))
 )
 
 ; Removes the top card on the discard pile.
@@ -71,28 +71,28 @@
 (define (game-pop-discard-pile game)
     ; Discard pile empty?
     (if (null? (game-discard-pile game))
-        (begin (display "!!! The discard pile is empty!")(newline)
-        #f))
+        (begin (display "--- The discard pile is empty.")(newline)
+        #f)
     
-    ; Pop it off
-    (let ((card (car (game-discard-pile game))))
-        (game-discard-pile-set! game (cdr (game-discard-pile game)))
-        card
-    )
+        ; Pop it off
+        (let ((card (car (game-discard-pile game))))
+            (game-discard-pile-set! game (cdr (game-discard-pile game)))
+            card
+        ))
 )
 
 ; Returns the value of the top card on the discard pile.
 ; Returns #f if the discard pile is empty.
-(define (game-view-discard-top game)
+(define (game-discard-top game)
     (if (null? (game-discard-pile game))
-        (begin (display "!!! The discard pile is empty!")(newline) #f)
+        (begin (display "--- The discard pile is empty.")(newline) #f)
         (car (game-discard-pile game)))
 )
 
 ; Places the value of the card onto the discard pile.
 (define (game-push-discard-pile game card)
     (game-discard-pile-set! game (cons card (game-discard-pile game)))
-    card
+    #t
 )
 
 ; Turns up two cards for each player.
@@ -130,6 +130,7 @@
                 )
                 max-player; Return the player with the highest total
             ))
+    (newline)(display "flip-two:")
     (flip-two 0 -1 0)
 )
 
@@ -141,25 +142,27 @@
             (begin
                 (display "Exceeded *game-play-bound*")
                 (exit 1))
-            (if (run-player (vector-ref (game-players game) id) game sim-stats "draw-phase-1")
+            (if (run-player (vector-ref (game-players game) id) game sim-stats "phase-1")
                 (run-plays  (+ num 1) (remainder (+ id 1) num-players))
                 (run-two-rounds game sim-stats num-players id))))
     
-    ;(display "--- Run Game:")(display game)(newline)
-    ;(display "--- First Player:")(display first-player)(newline)
+    (newline)(display "phase 1:")
     (run-plays 0 first-player)
 )
 
 (define (run-two-rounds game sim-stats num-players skip-player)
+    (newline)(display "phase 2:")
+    (display " r1")
     (run-one-round game sim-stats num-players skip-player)
+    (display " r2")
     (run-one-round game sim-stats num-players skip-player)
 )
     
 (define (run-one-round game sim-stats num-players skip-player)
     (define (run-round num id)
         (if (< num (- num-players 1))
-            (begin 
-                (run-player (vector-ref (game-players game) id) game sim-stats "draw-phase-2")
+            (begin
+                (run-player (vector-ref (game-players game) id) game sim-stats "phase-2")
                 (run-round  (+ num 1) (remainder (+ id 1) num-players)))))
 
     (run-round 0 (remainder (+ skip-player 1) num-players))

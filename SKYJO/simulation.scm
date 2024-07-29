@@ -37,6 +37,7 @@
     (define (play-game num)
         (if (< num num-iterations)
             (begin
+                (newline)(newline)(display "Game #")(display num)
                 (run-game (new-game num-players) sim-stats num-players)
                 (play-game (+ num 1)))))
 

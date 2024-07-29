@@ -18,6 +18,8 @@
 (define *num-players* 4)
 (define *num-iterations* 5)
 (define *game-play-bound* 150)
+(define *mean-card-value* 5)
+(define *median-card-value* 4)
 
 (define (get-player-strat id)
     (if (= id 0) strat-naive
