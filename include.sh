@@ -22,6 +22,21 @@ IFS=$'\n\t'
 export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
 
 # Args: base-name [src ...]
+repl_gambit() 
+{
+    base=$1
+    shift
+
+    # TMP dir?
+    if [[ ! -d "tmp" ]]; then
+        mkdir tmp
+    fi
+
+    # Run REPL
+    gsi "$@" "$base.scm" 
+}
+
+# Args: base-name [src ...]
 build_gambit() 
 {
     base=$1

@@ -51,10 +51,13 @@
     game
 )  
 
+; Removes the top card on the draw pile.
+; Returns the value of the card or #f if the draw pile is empty.
 (define (game-pop-draw-pile game)
     ; Draw pile empty?
     (if (null? (game-draw-pile game))
-        (begin (display "!!! The draw pile is empty!")(newline)(exit 1)))
+        (begin (display "!!! The draw pile is empty!")(newline))
+        #f)
     
     ; Pop it off
     (let ((card (car (game-draw-pile game))))
@@ -63,10 +66,13 @@
     )
 )
 
+; Removes the top card on the discard pile.
+; Returns the value of the card or #f if the discard pile is empty.
 (define (game-pop-discard-pile game)
     ; Discard pile empty?
     (if (null? (game-discard-pile game))
-        (begin (display "!!! The discard pile is empty!")(newline)(exit 1)))
+        (begin (display "!!! The discard pile is empty!")(newline)
+        #f))
     
     ; Pop it off
     (let ((card (car (game-discard-pile game))))
@@ -75,14 +81,15 @@
     )
 )
 
+; Returns the value of the top card on the discard pile.
+; Returns #f if the discard pile is empty.
 (define (game-view-discard-top game)
-    ; Discard pile empty?
     (if (null? (game-discard-pile game))
-        (begin (display "!!! The discard pile is empty!")(newline)(exit 1)))
-    
-    (car (game-discard-pile game))
+        (begin (display "!!! The discard pile is empty!")(newline) #f)
+        (car (game-discard-pile game)))
 )
 
+; Places the value of the card onto the discard pile.
 (define (game-push-discard-pile game card)
     (game-discard-pile-set! game (cons card (game-discard-pile game)))
     card
@@ -90,7 +97,7 @@
 
 ; Turns up two cards for each player.
 ; Returns first player id.
-(define (game-deal-hands game num-players)
+(define (game-deal-hands game sim-stats num-players)
     (define players (game-players game))
     (define (deal-card num cnt)
         (if (< cnt num)
@@ -107,11 +114,11 @@
     (game-push-discard-pile game(game-pop-draw-pile game))
 
     ; Return first player.
-    (game-flip-two game num-players)
+    (game-flip-two game sim-stats num-players)
 
 )
 
-(define (game-flip-two game num-players)
+(define (game-flip-two game sim-stats num-players)
     (define players (game-players game))
     (define (flip-two cnt max max-player)
             (if (< cnt num-players)
@@ -127,7 +134,7 @@
 )
 
 (define (run-game game sim-stats num-players)
-    (define first-player (game-deal-hands game num-players))
+    (define first-player (game-deal-hands game sim-stats num-players))
     ; Run plays until one player turns up their last card
     (define (run-plays num id)
         (if (> num *game-play-bound*)

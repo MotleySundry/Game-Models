@@ -19,6 +19,22 @@
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source ../include.sh
 
-build_gambit skyjo ../library.scm config.scm player.scm game.scm simulation.scm strat-naive.scm 
+print_usage(){
+cat << USAGE
+    $(basename "$0") [ repl ]
 
+USAGE
+}
+
+# Check the arguments
+if [[ $# -eq 1 ]]; then
+    if [[ $1 = 'repl' ]]; then
+        repl_gambit skyjo-repl ../library.scm config.scm player.scm game.scm simulation.scm strat-naive.scm 
+        exit 1
+    else
+        usage
+    fi
+fi
+
+build_gambit skyjo ../library.scm config.scm player.scm game.scm simulation.scm strat-naive.scm 
 ./skyjo.bin "$@"
