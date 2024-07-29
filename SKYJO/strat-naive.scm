@@ -36,9 +36,8 @@
 )
 
 (define (strat-naive-draw-phase-1 player game sim-stats)
-    (if (or 
-        (improve-up-cards? player game sim-stats)
-        (draw-a-card? player game sim-stats))
+    (if (or (try-discard-top? player game sim-stats)
+        (try-draw-card? player game sim-stats))
             #t
             (begin
                 (display "!!! Strat-naive: failed to make a move!")(newline)
@@ -48,21 +47,33 @@
     )
 )
 
-(define (draw-a-card? player game sim-stats)
-    #f
+; Try to swap the drawn card with an up card.
+; Returns #t if successful
+(define (try-draw-card? player game sim-stats)
+
+    ; Try draw card to improve up cards
+    (let (( draw-val (game-pop-draw-pile game))
+        (idx (player-largest-up-card-idx player)))
+
+        (let ((val (s8vector-ref (player-cards player) idx)))
+            (if (and disc-val idx)
+                (if (< draw-val val)
+                    (begin
+                        (s8vector-set!(player-cards player) idx val)
+                        #t)
+                    #f)
+                #f)))
 )
 
 ; Try to swap the discard top with an up card.
 ; Returns #t if successful
-(define (improve-up-cards? player game sim-stats)
+(define (try-discard-top? player game sim-stats)
 
+    ; Try discard top to improve up cards
     (let (( disc-val (game-view-discard-top game))
         (idx (player-largest-up-card-idx player)))
 
         (let ((val (s8vector-ref (player-cards player) idx)))
-
-            (display disc-val)(newline)
-
             (if (and disc-val idx)
                 (if (< disc-val val)
                     (begin
