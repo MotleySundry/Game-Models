@@ -36,9 +36,15 @@
 )
 
 (define (strat-naive-draw-phase-1 player game sim-stats)
-    (or 
-        (improve-up-cards? player game sim-stats)
-    )   
+    (if (or 
+        (improve-up-cards? player game sim-stats))
+            #t
+            (begin
+                (display "!!! Strat-naive: failed to make a move!")(newline)
+                (display game)(newline)
+                (exit 1)
+            )
+    )
 )
 
 ; Try to swap the discard top with an up card.

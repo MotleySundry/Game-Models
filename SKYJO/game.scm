@@ -138,8 +138,8 @@
                 (run-plays  (+ num 1) (remainder (+ id 1) num-players))
                 (run-two-rounds game sim-stats num-players id))))
     
-    (display "--- Run Game:")(display game)(newline)
-    (display "--- First Player:")(display first-player)(newline)
+    ;(display "--- Run Game:")(display game)(newline)
+    ;(display "--- First Player:")(display first-player)(newline)
     (run-plays 0 first-player)
 )
 
