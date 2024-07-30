@@ -22,6 +22,6 @@ source include.sh
 shellcheck ./*.sh
 
 # Game levels
-cd "$HERE/SKYJO"
+cd "$HERE/SKYJO-SCM"
 shellcheck ../include.sh ./*.sh
 
