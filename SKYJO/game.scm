@@ -49,7 +49,7 @@
     )
     (set-player 0)
     game
-)  
+)
 
 ; Removes the top card on the draw pile.
 ; Returns the value of the card or #f if the draw pile is empty.
@@ -135,38 +135,51 @@
 )
 
 (define (run-game game sim-stats num-players)
-    (define first-player (game-deal-hands game sim-stats num-players))
-    ; Run plays until one player turns up their last card
-    (define (run-plays num id)
-        (if (> num *game-play-bound*)
-            (begin
-                (display "Exceeded *game-play-bound*")
-                (exit 1))
-            (if (run-player (vector-ref (game-players game) id) game sim-stats "phase-1")
-                (run-plays  (+ num 1) (remainder (+ id 1) num-players))
-                (run-two-rounds game sim-stats num-players id))))
-    
+    (define starting-player (game-deal-hands game sim-stats num-players))
+    ; Run rounds until one player turns up their last card
+    (define (phase-1 game sim-stats num-players first rnd-cnt)
+        (display " r")(display rnd-cnt)
+        (if (run-phase-1-round game sim-stats num-players first)
+            (phase-1 game sim-stats num-players (remainder (+ first num-players) num-players) (+ rnd-cnt 1))))
     (newline)(display "phase 1:")
-    (run-plays 0 first-player)
+    (phase-1 game sim-stats num-players starting-player 0)
 )
 
-(define (run-two-rounds game sim-stats num-players skip-player)
+; Returns #f if the game is over
+(define (run-phase-1-round game sim-stats num-players first)
+    ; Run round until finished or one player turns up their last card
+    (define (run-plays cnt id)
+            (if (= cnt num-players)
+                #t 
+                (if (run-player (game-get-player game id) game sim-stats "phase-1")
+                    (run-plays  (+ cnt 1) (remainder (+ id 1) num-players))
+                    (begin
+                        (phase-2 game sim-stats num-players id)
+                        #f))))
+        
+    (run-plays 0 first)
+)
+
+(define (phase-2 game sim-stats num-players skip)
     (newline)(display "phase 2:")
     (display " r1")
-    (run-one-round game sim-stats num-players skip-player)
+    (run-phase-2-round game sim-stats num-players skip)
     (display " r2")
-    (run-one-round game sim-stats num-players skip-player)
+    (run-phase-2-round game sim-stats num-players skip)
 )
     
-(define (run-one-round game sim-stats num-players skip-player)
+(define (run-phase-2-round game sim-stats num-players skip)
     (define (run-round num id)
-        (if (< num (- num-players 1))
+        (if (= num (- num-players 1))
+            #t
             (begin
-                (run-player (vector-ref (game-players game) id) game sim-stats "phase-2")
+                (run-player (game-get-player game id) game sim-stats "phase-2")
                 (run-round  (+ num 1) (remainder (+ id 1) num-players)))))
 
-    (run-round 0 (remainder (+ skip-player 1) num-players))
+    (run-round 0 (remainder (+ skip 1) num-players))
 )
 
-
+(define (game-get-player game id)
+    (vector-ref (game-players game) id)
+)
 

@@ -21,7 +21,7 @@
         (begin
             (strat-naive-phase-1 player game sim-stats)
             ; Any hidden cards remaining, if so continue phase 1. 
-            (> 0 (player-count-cards-in-state? player *card-state-hidden*))
+            (player-any-hidden-cards? player)
         )
 
     (if (equal? cmd "phase-2")
@@ -41,7 +41,7 @@
         (try-draw-card? player game sim-stats))
             #t
             (begin
-                (display "!!! Strat-naive-phase-1: failed to make a move!")(newline)
+                (display "!!! strat-naive-phase-1: failed to make a move!")(newline)
                 (display game)(newline)
                 (exit 1)
             )
@@ -55,13 +55,17 @@
         (and
             draw
             (or
-                (try-to-replace-up-card? player game sim-stats draw)
-                (try-to-replace-down-card? player game sim-stats draw)
+                (and                    
+                    (player-any-open-cards? player)
+                    (try-to-replace-open-card? player game sim-stats disc))
+                (and
+                    (player-any-hidden-cards? player)
+                    (try-to-replace-hidden-card? player game sim-stats disc))
                 (and
                     (game-push-discard-pile game draw)
-                    (player-open-rand-hidden-card player)
-                )
-            )))
+                    (player-any-hidden-cards? player)
+                    (player-open-first-hidden-card player)
+                ))))
 )
 
 ; Try to swap the discard top with an up card.
@@ -71,18 +75,22 @@
         (and 
             disc 
             (or
-                (try-to-replace-up-card? player game sim-stats disc)
-                (try-to-replace-down-card? player game sim-stats disc))
-            (game-pop-draw-pile game)
-        ))
+                (and                    
+                    (player-any-open-cards? player)
+                    (try-to-replace-open-card? player game sim-stats disc))
+                (and
+                    (player-any-hidden-cards? player)
+                    (try-to-replace-hidden-card? player game sim-stats disc))
+
+            (game-pop-draw-pile game))))
 )
 
 
-(define (try-to-replace-up-card? player game sim-stats value)
+(define (try-to-replace-open-card? player game sim-stats value)
     #f
 )
 
-(define (try-to-replace-down-card? player game sim-stats value)
+(define (try-to-replace-hidden-card? player game sim-stats value)
     #f
 )
 

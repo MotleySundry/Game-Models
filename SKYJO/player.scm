@@ -75,11 +75,21 @@
  )
 
 ; Returns the value of the card replaced of #f on failure.
-(define (player-replace-rand-hidden-card player val)
-    (let ((idx (random-integer 12)))
-        (if (= (s8vector-ref(player-card-state) idx) *card-state-hidden)
-            (player-replace-card player idx val)
-            (player-replace-rand-hidden-card player val)))
+(define (player-replace-first-hidden-card player val)
+    (define (open idx)
+        (if (= idx 12)
+            (begin
+                (display "!!! player-replace-first-hidden-card: there are none hidden!")
+                (newline)
+                (exit 1))
+        
+            (if (= (s8vector-ref(player-card-state player) idx) *card-state-hidden*)
+                (begin
+                (player-set-card-state player idx *card-state-open*)
+                (player-set-card player idx val)
+                )
+                (open (+ idx 1)))))
+    (open 0)
 )
 
 ; Replaces the value and opens the card state.
@@ -93,12 +103,34 @@
     (s8vector-set! (player-card-state player) idx state)
 )
 
-; Set sets the state of a randon hidden card to open 
-(define (player-open-rand-hidden-card player)
-    (let ((idx (random-integer 12)))
-    (if (= (s8vector-ref(player-card-state player) idx) *card-state-hidden*)
-        (player-set-card-state player idx *card-state-open*)
-        (player-open-rand-hidden-card player)))
+; Sets the card value
+(define (player-set-card player idx card)
+    (s8vector-set! (player-cards player) idx card)
+)
+
+(define (player-any-hidden-cards? player)
+  (< 0 (player-count-cards-in-state? player *card-state-hidden*))
+)
+
+(define (player-any-open-cards? player)
+  (< 0 (player-count-cards-in-state? player *card-state-open*))
+)
+
+
+; Set sets the first hidden card to open 
+(define (player-open-first-hidden-card player)
+    (define (open idx)
+        (if (= idx 12)
+            (begin
+                (display "!!! player-open-first-hidden-card: there are none hidden!")
+                (newline)
+                (exit 1))
+        
+            (if (= (s8vector-ref(player-card-state player) idx) *card-state-hidden*)
+                (player-set-card-state player idx *card-state-open*)
+                (open (+ idx 1)))))
+
+    (open 0)
 )
 
 
