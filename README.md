@@ -1,7 +1,7 @@
 # Game-Models
 This repository contains software for modeling games.
 
-The models are written in Gambit Scheme and C++.
+The models are written in Gambit Scheme.
 
 ## To Install Scheme Mac prerequisites:
 * brew install gambit-scheme
