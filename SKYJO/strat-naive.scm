@@ -16,19 +16,19 @@
 
 ; The most basic strategy that follows the rules with random choices.
 ; Returns #f when the last card is turned over
-(define (strat-naive player game sim-stats cmd)
+(define (strat-naive player table sim-stats cmd)
     (if (equal? cmd "phase-1") 
         (begin
-            (strat-naive-phase-1 player game sim-stats)
+            (strat-naive-phase-1 player table sim-stats)
             ; Any hidden cards remaining, if so continue phase 1. 
             (player-any-hidden-cards? player)
         )
 
     (if (equal? cmd "phase-2")
-        (strat-naive-phase-2 player game sim-stats)
+        (strat-naive-phase-2 player table sim-stats)
 
     (if (equal? cmd "flip-two")
-        (strat-naive-flip-two player game sim-stats)
+        (strat-naive-flip-two player table sim-stats)
         (begin
             (display "Unknown command: ")
             (display cmd)
@@ -36,13 +36,13 @@
             (exit 1)))))
 )
 
-(define (strat-naive-phase-1 player game sim-stats)
-    (if (or (try-discard-top? player game sim-stats)
-        (try-draw-card? player game sim-stats))
+(define (strat-naive-phase-1 player table sim-stats)
+    (if (or (try-discard-top? player table sim-stats)
+        (try-draw-card? player table sim-stats))
             #t
             (begin
                 (display "!!! strat-naive-phase-1: failed to make a move!")(newline)
-                (display game)(newline)
+                (display table)(newline)
                 (exit 1)
             )
     )
@@ -50,19 +50,19 @@
 
 ; Try to swap the drawn card with an up card.
 ; Returns #t if successful
-(define (try-draw-card? player game sim-stats)
-    (let ((draw (game-pop-draw-pile game)))
+(define (try-draw-card? player table sim-stats)
+    (let ((draw (table-pop-draw-pile table)))
         (and
             draw
             (or
                 (and                    
                     (player-any-open-cards? player)
-                    (try-to-replace-open-card? player game sim-stats disc))
+                    (try-to-replace-open-card? player table sim-stats disc))
                 (and
                     (player-any-hidden-cards? player)
-                    (try-to-replace-hidden-card? player game sim-stats disc))
+                    (try-to-replace-hidden-card? player table sim-stats disc))
                 (and
-                    (game-push-discard-pile game draw)
+                    (table-push-discard-pile table draw)
                     (player-any-hidden-cards? player)
                     (player-open-first-hidden-card player)
                 ))))
@@ -70,35 +70,35 @@
 
 ; Try to swap the discard top with an up card.
 ; Returns #t if successful
-(define (try-discard-top? player game sim-stats)
-    (let ((disc (game-discard-top game)))
+(define (try-discard-top? player table sim-stats)
+    (let ((disc (table-discard-top table)))
         (and 
             disc 
             (or
                 (and                    
                     (player-any-open-cards? player)
-                    (try-to-replace-open-card? player game sim-stats disc))
+                    (try-to-replace-open-card? player table sim-stats disc))
                 (and
                     (player-any-hidden-cards? player)
-                    (try-to-replace-hidden-card? player game sim-stats disc))
+                    (try-to-replace-hidden-card? player table sim-stats disc))
 
-            (game-pop-draw-pile game))))
+            (table-pop-draw-pile table))))
 )
 
 
-(define (try-to-replace-open-card? player game sim-stats value)
+(define (try-to-replace-open-card? player table sim-stats value)
     #f
 )
 
-(define (try-to-replace-hidden-card? player game sim-stats value)
+(define (try-to-replace-hidden-card? player table sim-stats value)
     #f
 )
 
-(define (strat-naive-phase-2 player game sim-stats)
-    (strat-naive-phase-1 player game sim-stats)
+(define (strat-naive-phase-2 player table sim-stats)
+    (strat-naive-phase-1 player table sim-stats)
 )
 
-(define (strat-naive-flip-two player game sim-stats)
+(define (strat-naive-flip-two player table sim-stats)
     
     (define card1 (random-integer 12))
     (define card2 (random-integer-exclude 12 card1))

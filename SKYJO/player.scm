@@ -38,9 +38,9 @@
     ))  
 
 ; Returns #f if the player terminates by turning up their last card.
-(define (run-player player game sim-stats cmd)
+(define (run-player player table sim-stats cmd)
     (display " p")(display (player-id player))(display " ")
-    ((player-strat player) player game sim-stats cmd)
+    ((player-strat player) player table sim-stats cmd)
 )
 
 ; Returns the count if the cards in state or #f for failure.

@@ -21,7 +21,7 @@ cd "$HERE"
 source include.sh
 shellcheck ./*.sh
 
-# Game levels
+# SKYJO
 cd "$HERE/SKYJO"
 shellcheck ../include.sh ./*.sh
 
