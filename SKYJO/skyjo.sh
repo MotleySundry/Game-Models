@@ -29,12 +29,12 @@ USAGE
 # Check the arguments
 if [[ $# -eq 1 ]]; then
     if [[ $1 = 'repl' ]]; then
-        repl_gambit skyjo-repl ../library.scm config.scm cards.scm player.scm game.scm table.scm round.scm simulation.scm strat-naive.scm 
+        repl_gambit skyjo-repl ../library.scm config.scm deck.scm player.scm game.scm round.scm simulation.scm strat-naive.scm 
         exit 1
     else
         usage
     fi
 fi
 
-build_gambit skyjo ../library.scm config.scm cards.scm player.scm game.scm table.scm round.scm simulation.scm strat-naive.scm 
+build_gambit skyjo ../library.scm config.scm deck.scm player.scm game.scm round.scm simulation.scm strat-naive.scm 
 ./skyjo.bin "$@"

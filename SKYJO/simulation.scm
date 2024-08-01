@@ -14,37 +14,17 @@
 ; You should have received a copy of the GNU Affero General Public License
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-(define-structure sim-stats num-iterations num-players)
+(define-structure simulation id games game-cnt)
 
-(define (new-sim-stats)
-    (make-sim-stats
-        0   ;num-iterations
-        0   ;num-players
-    ))
+(define (new-simulation id)
+    (make-simulation
+        id
+        (make-vector  *num-games*) ; games
+        0 ; game-cnt
+    )
+)
 
-(define (display-sim-stats sim-stats)
-        (display "::: Simulations Statistics (sim-stats) ::::") (newline)
-        
-        (display "--- num-iterations: ")
-        (display (sim-stats-num-iterations sim-stats)) (newline)
-        
-        (display "--- num-players: ")
-        (display (sim-stats-num-players sim-stats)) (newline)
-)      
-
-(define (run-simulation num-iterations num-players)
-    (define sim-stats (new-sim-stats))
-    (define (play-table num)
-        (if (< num num-iterations)
-            (begin
-                (newline)(newline)(display "Game #")(display num)
-                (run-table (new-table num-players) sim-stats num-players)
-                (play-table (+ num 1)))))
-
-    (play-table 0)
-
-    (sim-stats-num-iterations-set! sim-stats num-iterations)
-    (sim-stats-num-players-set! sim-stats num-players)
-    sim-stats
+(define (simulation-run simulation)
+    #f
 )
 

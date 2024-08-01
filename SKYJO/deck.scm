@@ -1,4 +1,4 @@
-; Motley Sundry :: Game Models :: SKYJO :: cards.scm
+; Motley Sundry :: Game Models :: SKYJO :: deck.scm
 ; Copyright (C) 2024 Donald R Anderson
 ;
 ; This program is free software: you can redistribute it and/or modify
@@ -14,6 +14,11 @@
 ; You should have received a copy of the GNU Affero General Public License
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-(define-structure cards draw-pile discard-pile)
+(define-structure deck draw-pile discard-pile)
 
+(define (new-deck)
+    (make-deck
+        '() (s8vector-to-list (s8vector-rand (s8vector-dup cards)))  ;draw-pile
+        '()) ; discard-pile
+)
 

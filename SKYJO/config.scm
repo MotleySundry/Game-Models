@@ -16,7 +16,7 @@
 
 ; CONFIGURATION
 (define *num-players* 4) ; Number of players in the game.
-(define *num-simulations* 5) ; Number of games to simulate.
+(define *num-games* 5) ; Number of games to simulate.
 
 (define (get-player-strat id)
     (if (= id 0) strat-naive
@@ -34,10 +34,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; GAME CONSTANTS
-(define *min-players* 2)
-(define *max-players* 8)
+(define *min-rounds* 10)
+(define *max-rounds* 50)
 
-;CARD CONSTANTS
+
+; DECK CONSTANTS
 (define *deck* '#s8(
     -2 -2 -2 -2 -2
     0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
@@ -56,23 +57,25 @@
 (define *deck-median* 4)
 
 ; ROUND CONSTANTS
+(define *min-players* 2)
+(define *max-players* 8)
 (define *round-max-plays* 150)
 (define *round-min-plays* 5)
 
 ; SIMULATION CONSTANTS
-(define *simulation-min-iterations* 5)
-(define *simulation-max-iterations* 150)
+(define *simulation-min-games* 5)
+(define *simulation-max-games* 150)
 
 ; CONFIGURATION VALIDATION
-(if (> *num-simulations* *simulation-max-iterations*)
+(if (> *num-games* *simulation-max-games*)
     (begin
-        (display (list "Too many simulation iterations:" *num-simulations* ))
+        (display (list "Too many simulation games:" *num-games* ))
         (exit 1)
     )
 )
-(if (< *num-simulations* *simulation-min-iterations* 5)
+(if (< *num-games* *simulation-min-games* 5)
     (begin
-        (display (list "Too few simulation iterations:" *num-simulations* ))
+        (display (list "Too few simulation games:" *num-games* ))
         (exit 1)
     )
 )

@@ -14,4 +14,33 @@
 ; You should have received a copy of the GNU Affero General Public License
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-(define-structure round players first-player)
+(define-structure game id rounds round-cnt )
+
+(define (new-game id)
+    (make-game
+        id ; id
+        (make-vector  *max-rounds*) ; rounds
+        0 ; round-cnt
+    )
+)
+
+(define (game-run game)
+    
+    (let loop ((i 0) (round (new-round i)))
+        (if (>= i *max-rounds*)(begin (display "!!! The game run has reached *max-rounds*")(newline)(exit 1)))
+
+        ; Add round to game
+        (vector-set! (game-rounds game) i round)
+        (let ((high-player (round-deal-hands round)))
+            ; Set the round first player
+            (if (= i 0) (round-first-player-set! round high-player)
+                    (round-first-player-set! round (remainder (+ *num-players* ((round-first-player (game-get-round game (- i 1))))) *num-players*))))
+
+        (loop (+ i 1)))
+)
+
+; GAME ACCESSORS
+(define (game-get-round round id)
+    (vector-ref (game-rounds game) id)
+)
+

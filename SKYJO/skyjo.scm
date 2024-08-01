@@ -16,4 +16,5 @@
 
 (random-source-randomize! default-random-source)
 
-(run-simulation *num-simulations* *num-players*)
+(define simulation (new-simulation 0))
+(simulation-run simulation)

@@ -14,4 +14,54 @@
 ; You should have received a copy of the GNU Affero General Public License
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-(define-structure round players first-player)
+(define-structure round id players deck first-player)    
+
+(define (new-round id)
+    (let ((players (make-vector *num-players*)))
+
+        (let loop ((i 0))
+            (cond ( (< i *num-players) 
+                (vector-set! players i (new-player i)) 
+                (loop (+ i 1)))))
+
+        (make-round
+            id
+            players ; players)
+            (new-deck) ; deck
+            0 ; first-player
+        ))
+
+)
+
+(define (round-run round)
+    (let ((high-player (round-deal-hands round)))
+    
+        (round-first-player-set! round (remainder ((+ high-player *num-players))))
+    
+    )
+)
+
+; Turns up two cards for each player.
+; Returns the player with the highest two cards, for the first player of round 0. 
+(define (round-deal-hands round)
+    (define players (table-players table))
+    (define (deal-card num cnt)
+        (if (< cnt num)
+            (let(
+                (player (vector-ref players (remainder cnt num-players))))
+                (s8vector-set!(player-cards player) (floor (/ cnt num-players)) (table-pop-draw-pile table))
+                (deal-card num (+ cnt 1))
+            )))
+
+    ; Deal all hands
+    (deal-card (* 12 num-players) 0)
+    
+    ; Add the first card to the discard pile.
+    (table-push-discard-pile table(table-pop-draw-pile table))
+
+    ; Return first player.
+    (table-flip-two table sim-stats num-players)
+
+)
+
+
