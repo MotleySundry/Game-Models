@@ -1,4 +1,4 @@
-; Motley Sundry :: Game Models :: SKYJO :: game.scm
+; Motley Sundry :: Game Models :: SKYJO :: round.scm
 ; Copyright (C) 2024 Donald R Anderson
 ;
 ; This program is free software: you can redistribute it and/or modify
