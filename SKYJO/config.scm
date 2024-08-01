@@ -14,12 +14,9 @@
 ; You should have received a copy of the GNU Affero General Public License
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-
-(define *num-players* 4)
-(define *num-iterations* 5)
-(define *game-play-bound* 150)
-(define *mean-card-value* 5)
-(define *median-card-value* 4)
+; CONFIGURATION
+(define *num-players* 4) ; Number of players in the game.
+(define *num-simulations* 5) ; Number of games to simulate.
 
 (define (get-player-strat id)
     (if (= id 0) strat-naive
@@ -32,19 +29,59 @@
     (if (= id 7) strat-naive
 )))))))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Generally, no changes are needed below here.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;;;;;;;;;;;;;;;;;;;;;;;
-
+; GAME CONSTANTS
 (define *min-players* 2)
 (define *max-players* 8)
 
+;CARD CONSTANTS
+(define *deck* '#s8(
+    -2 -2 -2 -2 -2
+    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+    -1 1 2 3 4 5 6 7 8 9 10 11 12
+    -1 1 2 3 4 5 6 7 8 9 10 11 12
+    -1 1 2 3 4 5 6 7 8 9 10 11 12
+    -1 1 2 3 4 5 6 7 8 9 10 11 12
+    -1 1 2 3 4 5 6 7 8 9 10 11 12
+    -1 1 2 3 4 5 6 7 8 9 10 11 12
+    -1 1 2 3 4 5 6 7 8 9 10 11 12
+    -1 1 2 3 4 5 6 7 8 9 10 11 12
+    -1 1 2 3 4 5 6 7 8 9 10 11 12
+    -1 1 2 3 4 5 6 7 8 9 10 11 12))
+(define *deck-size* 150)
+(define *deck-mean* 5)
+(define *deck-median* 4)
+
+; ROUND CONSTANTS
+(define *round-max-plays* 150)
+(define *round-min-plays* 5)
+
+; SIMULATION CONSTANTS
+(define *simulation-min-iterations* 5)
+(define *simulation-max-iterations* 150)
+
+; CONFIGURATION VALIDATION
+(if (> *num-simulations* *simulation-max-iterations*)
+    (begin
+        (display (list "Too many simulation iterations:" *num-simulations* ))
+        (exit 1)
+    )
+)
+(if (< *num-simulations* *simulation-min-iterations* 5)
+    (begin
+        (display (list "Too few simulation iterations:" *num-simulations* ))
+        (exit 1)
+    )
+)
 (if (> *num-players* *max-players*)
     (begin
         (display (list "Too many players:" *num-players* ))
         (exit 1)
     )
 )
-
 (if (< *num-players* *min-players*)
     (begin
         (display (list "Too few players:" *num-players* ))

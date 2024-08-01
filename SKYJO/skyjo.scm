@@ -16,4 +16,4 @@
 
 (random-source-randomize! default-random-source)
 
-(run-simulation *num-iterations* *num-players*)
+(run-simulation *num-simulations* *num-players*)

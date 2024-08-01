@@ -1,4 +1,4 @@
-; Motley Sundry :: Game Models :: SKYJO :: skyjo-repl.scm
+; Motley Sundry :: Game Models :: SKYJO :: cards.scm
 ; Copyright (C) 2024 Donald R Anderson
 ;
 ; This program is free software: you can redistribute it and/or modify
@@ -14,6 +14,6 @@
 ; You should have received a copy of the GNU Affero General Public License
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-(random-source-randomize! default-random-source)
+(define-structure cards draw-pile discard-pile)
 
-(run-simulation *num-simulations* *num-players*)
+
