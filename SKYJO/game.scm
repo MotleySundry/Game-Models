@@ -30,7 +30,7 @@
         (if (>= i *max-rounds*)(begin (display "!!! The game run has reached *max-rounds*")(newline)(exit 1)))
 
         ; Add round to game
-        (vector-set! (game-rounds game) i round)
+        (game-set-round! game i round)
         (let ((high-player (round-deal-hands round)))
             ; Set the round first player
             (if (= i 0) (round-first-player-set! round high-player)
@@ -40,7 +40,12 @@
 )
 
 ; GAME ACCESSORS
-(define (game-get-round round id)
+
+(define (game-get-round game id)
     (vector-ref (game-rounds game) id)
+)
+
+(define (game-set-round! game id round)
+    (vector-set! (game-rounds game) id round)
 )
 

@@ -20,28 +20,24 @@
 
 (define-structure player
     id
-    score 
+    round
+    round-score 
     cards ;value -2 to 12
     card-state ;0=hidden,  1=open, -1=removed
     strat ;lambda
 )
 
 ; Create a new initialized player structure.
-(define (new-player id)
+(define (new-player id round)
     ; Allocate structure
     (make-player
         id ;id
-        0  ;score
+        round ;round
+        0  ;round-score
         (make-s8vector 12 0) ;cards (val 0)
         (make-s8vector 12 0) ;card-state (face down)
         (get-player-strat id) ;strategy
     ))  
-
-; Returns #f if the player terminates by turning up their last card.
-(define (run-player player table sim-stats cmd)
-    (display " p")(display (player-id player))(display " ")
-    ((player-strat player) player table sim-stats cmd)
-)
 
 ; Returns the count if the cards in state or #f for failure.
 (define (player-count-cards-in-state? player state)
@@ -133,6 +129,28 @@
     (open 0)
 )
 
+(define (player-flip-two player game round deck)
+    ((player-strat player) player game round "flip-two") 
+)
 
+(define (player-play-phase1 player game round deck)
+    ((player-strat player) player game round "play-phase1") 
+)
+
+(define (player-play-phase2 player game round deck)
+    ((player-strat player) player game round "play-phase2") 
+)
+
+
+
+; PLAYER ACCESSORS
+
+(define (player-get-card player id)
+    (vector-ref (player-cards player) id)
+)
+
+(define (player-set-card! player id card)
+    (vector-set! (player-cards player) id card)
+)
 
 

@@ -56,6 +56,9 @@
 (define *deck-mean* 5)
 (define *deck-median* 4)
 
+; PLAYER CONSTANTS
+(define *player-num-cards* 12)
+
 ; ROUND CONSTANTS
 (define *min-players* 2)
 (define *max-players* 8)

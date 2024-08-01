@@ -22,3 +22,46 @@
         '()) ; discard-pile
 )
 
+; Removes the top card on the draw pile.
+; Returns the value of the card or #f if the draw pile is empty.
+(define (deck-pop-draw-pile deck)
+    ; Draw pile empty?
+    (if (null? (deck-draw-pile deck))
+        (begin (display "--- The draw pile is empty.")(newline)
+        #f)
+    
+        ; Pop it off
+        (let ((card (car (deck-draw-pile deck))))
+            (deck-draw-pile-set! deck (cdr (deck-draw-pile deck)))
+            card
+        ))
+)
+
+; Removes the top card on the discard pile.
+; Returns the value of the card or #f if the discard pile is empty.
+(define (deck-pop-discard-pile deck)
+    ; Discard pile empty?
+    (if (null? (deck-discard-pile deck))
+        (begin (display "--- The discard pile is empty.")(newline)
+        #f)
+    
+        ; Pop it off
+        (let ((card (car (deck-discard-pile deck))))
+            (deck-discard-pile-set! deck (cdr (deck-discard-pile deck)))
+            card
+        ))
+)
+
+; Returns the value of the top card on the discard pile.
+; Returns #f if the discard pile is empty.
+(define (deck-discard-top deck)
+    (if (null? (deck-discard-pile deck))
+        (begin (display "--- The discard pile is empty.")(newline) #f)
+        (car (deck-discard-pile deck)))
+)
+
+; Places the value of the card onto the discard pile.
+(define (deck-push-discard-pile deck card)
+    (deck-discard-pile-set! deck (cons card (deck-discard-pile deck)))
+    #t
+)

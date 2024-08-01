@@ -14,54 +14,81 @@
 ; You should have received a copy of the GNU Affero General Public License
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-(define-structure round id players deck first-player)    
+(define-structure round id game players deck first-player)    
 
-(define (new-round id)
-    (let ((players (make-vector *num-players*)))
+(define (new-round id game)
 
+    (let ((round 
+            (make-round
+                id
+                game
+                (make-vector *num-players*) ; players
+                (new-deck) ; deck
+                0 ; first-player
+            )))
+
+        ; Create players
         (let loop ((i 0))
-            (cond ( (< i *num-players) 
-                (vector-set! players i (new-player i)) 
-                (loop (+ i 1)))))
-
-        (make-round
-            id
-            players ; players)
-            (new-deck) ; deck
-            0 ; first-player
-        ))
-
+            (cond( 
+                (< i *num-players) 
+                    (round-set-player! round i (new-player i game round))
+                    (loop (+ i 1)))))
+    )
 )
 
 (define (round-run round)
-    (let ((high-player (round-deal-hands round)))
-    
-        (round-first-player-set! round (remainder ((+ high-player *num-players))))
-    
-    )
+#f
+)
+
+; Deals all player's hands.
+; Turns up two cards for each player.
+; Returns the player with the highest two cards, for the first player of round 0. 
+(define (round-deal-hands round)
+    ; Deal cards to each player
+    (let loop ((i 0))
+        (cond ( (< i *num-players*)
+            (deal-player-hand (round-deck round) (round-get-player round i)) 
+            (loop (+ i 1)))))
+
+    ; Add the first card to the discard pile.
+    (deck-push-discard-pile (round-deck round) (deck-pop-draw-pile (round-deck round)))
+
+    ; each player flip two cards
+    (round-flip-two round)
+)
+
+; Deals one player's hand.
+(define (deal-player-hand deck player)
+        ; For all player cards
+        (let loop ((i 0))
+            (cond ( (< i *player-num-cards*)
+                (player-set-card player i (deck-pop-draw-pile deck) 
+                (loop (+ i 1))))))
 )
 
 ; Turns up two cards for each player.
 ; Returns the player with the highest two cards, for the first player of round 0. 
-(define (round-deal-hands round)
-    (define players (table-players table))
-    (define (deal-card num cnt)
-        (if (< cnt num)
-            (let(
-                (player (vector-ref players (remainder cnt num-players))))
-                (s8vector-set!(player-cards player) (floor (/ cnt num-players)) (table-pop-draw-pile table))
-                (deal-card num (+ cnt 1))
-            )))
-
-    ; Deal all hands
-    (deal-card (* 12 num-players) 0)
-    
-    ; Add the first card to the discard pile.
-    (table-push-discard-pile table(table-pop-draw-pile table))
-
-    ; Return first player.
-    (table-flip-two table sim-stats num-players)
-
+(define (round-flip-two round)
+    (let loop ((i 0) (max-val 0) (max-id 0))
+        (if (< i *num-players*)
+            (let ((player (round-get-player round i)))
+                (let ((value (player-flip-two player)))
+                    (if (< max-val value)
+                        (loop (+ i 1) value i)
+                        (loop (+ i 1) max-value Max-id))))
+                
+        (max-id)))
 )
+
+; ROUND ACCESSORS
+
+(define (round-get-player round id)
+    (vector-ref (round-players round) id)
+)
+
+(define (round-set-player! round id player)
+    (vector-set! (round-players round) id player)
+)
+
 
 

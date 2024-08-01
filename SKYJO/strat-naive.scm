@@ -16,29 +16,30 @@
 
 ; The most basic strategy that follows the rules with random choices.
 ; Returns #f when the last card is turned over
-(define (strat-naive player table sim-stats cmd)
-    (if (equal? cmd "phase-1") 
-        (begin
-            (strat-naive-phase-1 player table sim-stats)
+(define (strat-naive player game round cmd)
+
+    (cond(
+        ((equal? cmd "play-phase1") 
+            (strat-naive-phase-1 player game round)
             ; Any hidden cards remaining, if so continue phase 1. 
-            (player-any-hidden-cards? player)
-        )
+            (player-any-hidden-cards? player))
 
-    (if (equal? cmd "phase-2")
-        (strat-naive-phase-2 player table sim-stats)
+        ((equal? cmd "play-phase2")
+            (strat-naive-phase-2 player game round))
 
-    (if (equal? cmd "flip-two")
-        (strat-naive-flip-two player table sim-stats)
-        (begin
+        ((equal? cmd "flip-two")
+            (strat-naive-flip-two player game round))
+        
+        (else
             (display "Unknown command: ")
             (display cmd)
             (newline)
-            (exit 1)))))
+            (exit 1))))
 )
 
-(define (strat-naive-phase-1 player table sim-stats)
-    (if (or (try-discard-top? player table sim-stats)
-        (try-draw-card? player table sim-stats))
+(define (strat-naive-phase-1 player game round)
+    (if (or (try-discard-top? player game round)
+        (try-draw-card? player game round))
             #t
             (begin
                 (display "!!! strat-naive-phase-1: failed to make a move!")(newline)
@@ -50,7 +51,7 @@
 
 ; Try to swap the drawn card with an up card.
 ; Returns #t if successful
-(define (try-draw-card? player table sim-stats)
+(define (try-draw-card? player game round)
     (let ((draw (table-pop-draw-pile table)))
         (and
             draw
@@ -70,35 +71,35 @@
 
 ; Try to swap the discard top with an up card.
 ; Returns #t if successful
-(define (try-discard-top? player table sim-stats)
+(define (try-discard-top? player game round)
     (let ((disc (table-discard-top table)))
         (and 
             disc 
             (or
                 (and                    
                     (player-any-open-cards? player)
-                    (try-to-replace-open-card? player table sim-stats disc))
+                    (try-to-replace-open-card? player game round disc))
                 (and
                     (player-any-hidden-cards? player)
-                    (try-to-replace-hidden-card? player table sim-stats disc))
+                    (try-to-replace-hidden-card? player game round disc))
 
             (table-pop-draw-pile table))))
 )
 
 
-(define (try-to-replace-open-card? player table sim-stats value)
+(define (try-to-replace-open-card? player game round value)
     #f
 )
 
-(define (try-to-replace-hidden-card? player table sim-stats value)
+(define (try-to-replace-hidden-card? player game round value)
     #f
 )
 
-(define (strat-naive-phase-2 player table sim-stats)
-    (strat-naive-phase-1 player table sim-stats)
+(define (strat-naive-phase2 player game round)
+    (strat-naive-phase1 player game round)
 )
 
-(define (strat-naive-flip-two player table sim-stats)
+(define (strat-naive-flip-two player game round)
     
     (define card1 (random-integer 12))
     (define card2 (random-integer-exclude 12 card1))

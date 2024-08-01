@@ -14,17 +14,34 @@
 ; You should have received a copy of the GNU Affero General Public License
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-(define-structure simulation id games game-cnt)
+(define-structure simulation id games)
 
 (define (new-simulation id)
     (make-simulation
         id
         (make-vector  *num-games*) ; games
-        0 ; game-cnt
     )
 )
 
-(define (simulation-run simulation)
-    #f
+(define (simulation-run simulation)    
+    
+    (let loop ((i 0) )
+        (let ((game (new-game i))) 
+            (simulation-set-game! simulation i game) ; Add game to simulation
+            
+        (if (< (+ i 1) *num-games*)
+            (loop (+ i 1))))
+    )  
 )
+
+; SIMULATION ACCESSORS
+
+(define (simulation-get-game simulation id)
+    (vector-ref (simulation-games simulation) id)
+)
+
+(define (simulation-set-game! simulation id game)
+    (vector-set! (simulation-games simulation) id game)
+)
+
 
