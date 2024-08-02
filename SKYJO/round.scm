@@ -37,10 +37,12 @@
     )
 )
 
+; Returns the id of the first player to open their last card. 
 (define (round-run round)
    (run-phase1 round)
 )
 
+; Returns the id of the first player to open their last card. 
 (define (run-phase1 round)
     (let loop ((i 0) (player-id (round-first-player round)))
         (if (>= i *round-max-plays*)
@@ -50,6 +52,7 @@
                     (loop (+ i 1) (remainder (+ player-id 1)  *num-players*))
                     (run-phase2 round (remainder (+ player-id 1)  *num-players*))))
         )
+        player-id
     )
 )
 
@@ -104,6 +107,10 @@
 )
 
 ; ROUND ACCESSORS
+
+(define (round-player-score round id)
+    (player-score (round-get-player round id))
+)
 
 (define (round-get-player round id)
     (vector-ref (round-players round) id)

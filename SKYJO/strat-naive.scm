@@ -48,14 +48,14 @@
     (define hidden-id (player-first-hidden-card player))
 
         (cond
-            ; Try replacing the highest open card with the discard top
-            ((and high-open-id (< top-card (player-get-card player high-open-id)))
+            ; Try replacing the highest open card with the discard
+            ((and high-open-id (< discard-value (player-get-card player high-open-id)))
                 (deck-pop-discard-pile! (player-get-deck player))
                 (deck-push-discard-pile! (player-get-deck player) (player-get-card player high-open-id))
                 (player-set-card! player high-open-id discard-value)
                 #t)
                     
-            ; Try replacing the hidden card with the discard top
+            ; Try replacing the hidden card with the discard
             ((and hidden-id (<= discard-value *deck-median*))
                 (deck-push-discard-pile! (player-get-deck player) (player-get-card player hidden-id))
                 (player-set-card! player hidden-id discard-value)
