@@ -104,10 +104,9 @@
     
     (define card1 (random-integer *player-num-cards*))
     (define card2 (random-integer-exclude *player-num-cards* card1))
-    
-    (s8vector-set!(player-card-state player) card1 1)
-    (s8vector-set!(player-card-state player) card2 1)
 
-    (+(s8vector-ref(player-cards player) card1)
-        (s8vector-ref(player-cards player) card2))
+    (player-open-card player card1)
+    (player-open-card player card2)
+
+    (+ (player-get-card player card1) (player-get-card player card2))
 )

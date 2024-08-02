@@ -18,13 +18,13 @@
 
 (define (new-deck)
     (make-deck
-        (s8vector-to-list (s8vector-rand (s8vector-dup *deck*)))  ;draw-pile
+        (vector-to-list (vector-rand (vector-dup *deck*)))  ;draw-pile
         '()) ; discard-pile
 )
 
 ; Removes the top card on the draw pile.
 ; Returns the value of the card or #f if the draw pile is empty.
-(define (deck-pop-draw-pile deck)
+(define (deck-pop-draw-pile! deck)
     ; Draw pile empty?
     (if (null? (deck-draw-pile deck))
         (begin (display "--- The draw pile is empty.")(newline)
@@ -39,7 +39,7 @@
 
 ; Removes the top card on the discard pile.
 ; Returns the value of the card or #f if the discard pile is empty.
-(define (deck-pop-discard-pile deck)
+(define (deck-pop-discard-pile! deck)
     ; Discard pile empty?
     (if (null? (deck-discard-pile deck))
         (begin (display "--- The discard pile is empty.")(newline)
@@ -54,14 +54,14 @@
 
 ; Returns the value of the top card on the discard pile.
 ; Returns #f if the discard pile is empty.
-(define (deck-discard-top deck)
+(define (deck-discard-top-card deck)
     (if (null? (deck-discard-pile deck))
         (begin (display "--- The discard pile is empty.")(newline) #f)
         (car (deck-discard-pile deck)))
 )
 
 ; Places the value of the card onto the discard pile.
-(define (deck-push-discard-pile deck card)
+(define (deck-push-discard-pile! deck card)
     (deck-discard-pile-set! deck (cons card (deck-discard-pile deck)))
     #t
 )

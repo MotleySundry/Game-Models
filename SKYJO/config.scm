@@ -39,7 +39,7 @@
 
 
 ; DECK CONSTANTS
-(define *deck* '#s8(
+(define *deck* '#(
     -2 -2 -2 -2 -2
     0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
     -1 1 2 3 4 5 6 7 8 9 10 11 12
@@ -58,6 +58,9 @@
 
 ; PLAYER CONSTANTS
 (define *player-num-cards* 12)
+(define *card-state-hidden* 0)
+(define *card-state-open* 1)
+(define *card-state-removed* -1)
 
 ; ROUND CONSTANTS
 (define *min-players* 2)

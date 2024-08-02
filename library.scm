@@ -14,36 +14,36 @@
 ; You should have received a copy of the GNU Affero General Public License
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-; Duplicate an s8 vector.
-(define (s8vector-dup vect)
+; Duplicate a vector.
+(define (vector-dup vect)
     (define (myfun vect new i)
-        (if (>= i 0) (s8vector-set! new i (s8vector-ref vect i) ))
+        (if (>= i 0) (vector-set! new i (vector-ref vect i) ))
         (if (> i 0) (myfun vect new (- i 1))) )
     (let 
-        ((new (make-s8vector(s8vector-length vect))))
-            (myfun vect new (- (s8vector-length vect) 1))
+        ((new (make-vector(vector-length vect))))
+            (myfun vect new (- (vector-length vect) 1))
             new)
 )
 
-; Copy an s8 vector to a list.
-(define (s8vector-to-list vect)
+; Copy a vector to a list.
+(define (vector-to-list vect)
     (define (myfun vect lst i)
         (if (< i 0) 
             lst
-            (myfun vect (cons (s8vector-ref vect i) lst) (- i 1))))
-    (myfun vect '() (- (s8vector-length vect) 1))
+            (myfun vect (cons (vector-ref vect i) lst) (- i 1))))
+    (myfun vect '() (- (vector-length vect) 1))
 )
 
-; Randomize an s8 vector in-place.
-(define (s8vector-rand vect)
+; Randomize an vector in-place.
+(define (vector-rand vect)
     (define (myfun vect len i)
         (let(
-            (tmp (s8vector-ref vect i))
+            (tmp (vector-ref vect i))
             (irnd (random-integer len)))
-                (s8vector-set! vect i (s8vector-ref vect irnd) )
-                (s8vector-set! vect irnd tmp)
+                (vector-set! vect i (vector-ref vect irnd) )
+                (vector-set! vect irnd tmp)
                 (if (> i 0) (myfun vect len (- i 1))) ))
-    (myfun vect (s8vector-length vect) (- (s8vector-length vect) 1))
+    (myfun vect (vector-length vect) (- (vector-length vect) 1))
     vect
 )
 

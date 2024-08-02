@@ -38,7 +38,8 @@
 )
 
 (define (round-run round)
-#f
+    ;(display round)(newline)
+    #f
 )
 
 ; Deals all player's hands.
@@ -52,7 +53,7 @@
             (loop (+ i 1)))))
 
     ; Add the first card to the discard pile.
-    (deck-push-discard-pile (round-deck round) (deck-pop-draw-pile (round-deck round)))
+    (deck-push-discard-pile! (round-deck round) (deck-pop-draw-pile! (round-deck round)))
 
     ; each player flip two cards
     (round-flip-two round)
@@ -63,7 +64,7 @@
         ; For all player cards
         (let loop ((i 0))
             (cond ( (< i *player-num-cards*)
-                (player-set-card player i (deck-pop-draw-pile deck)) 
+                (player-set-card! player i (deck-pop-draw-pile! deck)) 
                 (loop (+ i 1)))))
 )
 
@@ -74,11 +75,10 @@
         (if (< i *num-players*)
             (let ((player (round-get-player round i)))
                 (let ((value (player-flip-two player)))
-                    (if (< max-val value)
+                    (if (> value max-val)
                         (loop (+ i 1) value i)
-                        (loop (+ i 1) max-val max-id)))))
-                
-        max-id)
+                        (loop (+ i 1) max-val max-id))))      
+        max-id))
 )
 
 ; ROUND ACCESSORS

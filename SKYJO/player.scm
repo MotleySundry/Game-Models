@@ -14,16 +14,12 @@
 ; You should have received a copy of the GNU Affero General Public License
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-(define *card-state-hidden* 0)
-(define *card-state-open* 1)
-(define *card-state-removed -1)
-
 (define-structure player
     id
     round
     round-score 
-    cards ; s8vector value -2 to 12
-    card-state ;s8vector 0=hidden,  1=open, -1=removed
+    cards ; vector value -2 to 12
+    card-state ;vector 0=hidden,  1=open, -1=removed
     strat ;lambda
 )
 
@@ -34,8 +30,8 @@
         id ;id
         round ;round
         0  ;round-score
-        (make-s8vector *player-num-cards* 0) ;cards (val 0)
-        (make-s8vector *player-num-cards* 0) ;card-state (face down)
+        (make-vector *player-num-cards* 0) ;cards (val 0)
+        (make-vector *player-num-cards* 0) ;card-state (face down)
         (get-player-strat id) ;strategy
     ))  
 
@@ -44,7 +40,7 @@
     (define (myfun i cnt)
         (if (= i *player-num-cards*)
             cnt
-            (if (= (s8vector-ref (player-card-state player) i) state)
+            (if (= (vector-ref (player-card-state player) i) state)
                 (myfun (+ i 1) (+ cnt 1))
                 (myfun (+ i 1) cnt)
             ))
@@ -58,12 +54,12 @@
         (if (= i *player-num-cards*)
             max-idx
             (if (and
-                    (= (s8vector-ref (player-card-state player) i) *card-state-open*)
+                    (= (player-get-card-state player i) *card-state-open*)
                     (or
                         (not max-idx)
-                        (> (s8vector-ref (player-cards player) i) max-val)
+                        (> (player-get-card player i) max-val)
                     ))
-                (myfun (+ i 1) (s8vector-ref (player-cards player) i) i)
+                (myfun (+ i 1) (player-get-card player i) i)
                 (myfun (+ i 1) max-val max-idx)
             ))
     )
@@ -79,9 +75,9 @@
                 (newline)
                 (exit 1))
         
-            (if (= (s8vector-ref(player-card-state player) idx) *card-state-hidden*)
+            (if (player-card_state-hedn)
                 (begin
-                (player-set-card-state player idx *card-state-open*)
+                (player-open-card player idx)
                 (player-set-card player idx val)
                 )
                 (open (+ idx 1)))))
@@ -90,28 +86,9 @@
 
 ; Replaces the value and opens the card state.
 (define (player-replace-card player idx val)
-    (s8vector-set!(player-cards player) idx val)
-    (player-set-card-state player idx *card-state-open*)
+    (player-set-card! idx val)
+    (player-open-card player idx)
 )
-
-; Sets the card state
-(define (player-set-card-state player idx state)
-    (s8vector-set! (player-card-state player) idx state)
-)
-
-; Sets the card value
-(define (player-set-card player idx card)
-    (s8vector-set! (player-cards player) idx card)
-)
-
-(define (player-any-hidden-cards? player)
-  (< 0 (player-count-cards-in-state? player *card-state-hidden*))
-)
-
-(define (player-any-open-cards? player)
-  (< 0 (player-count-cards-in-state? player *card-state-open*))
-)
-
 
 ; Set sets the first hidden card to open 
 (define (player-open-first-hidden-card player)
@@ -122,10 +99,9 @@
                 (newline)
                 (exit 1))
         
-            (if (= (s8vector-ref(player-card-state player) idx) *card-state-hidden*)
-                (player-set-card-state player idx *card-state-open*)
+            (if (player-card-hidden? player idx)
+                (player-open-card player idx)
                 (open (+ idx 1)))))
-
     (open 0)
 )
 
@@ -162,3 +138,41 @@
 (define (player-get-round player)
     (player-round player)
 )
+
+(define (player-get-card-state player id)
+    (vector-ref (player-card-state player) id)
+)
+
+(define (player-card-open? player id)
+    (= (player-get-card-state player id) *card-state-open*)
+)
+
+(define (player-card-hidden? player id)
+    (= (player-get-card-state player id) *card-state-hidden*)
+)
+
+(define (player-card-removed? player id)
+    (= (player-get-card-state player id) *card-state-removed*)
+)
+
+(define (player-open-card player id)
+    (if (= (vector-ref (player-card-state player) id) *card-state-hidden*)
+        (vector-set! (player-card-state player) id *card-state-open*)
+        (begin (display "!!! Tried to open a non-hidden card!")(newline)(exit 1)))
+)
+
+(define (player-remove-card player id)
+    (if (= (vector-ref (player-card-state player) id) *card-state-open*)
+        (vector-set! (player-card-state player) id *card-state-removed*)
+        (begin (display "!!! Tried to open a non-open card!")(newline)(exit 1)))
+)
+
+(define (player-any-cards-hidden? player)
+  (< 0 (player-count-cards-in-state? player *card-state-hidden*))
+)
+
+(define (player-any-cards-open? player)
+  (< 0 (player-count-cards-in-state? player *card-state-open*))
+)
+
+
