@@ -57,4 +57,26 @@
     (myfun)
 )
 
+(define (log-fatal msg data)
+    (display "### ")(display msg)(display " ### ")(display (time->seconds(current-time)))(newline)
+    (if data (begin (display "    ")(display data)(newline)))
+    (exit 1)
+)
+
+(define (log-error msg data)
+    (display "!!! ")(display msg)(display " !!! ")(display (time->seconds(current-time)))(newline)
+    (if data (begin (display "    ")(display data)(newline)))
+)
+
+(define (log-warning msg data)
+    (display "=== ")(display msg)(display " === ")(display (time->seconds(current-time)))(newline)
+    (if data (begin (display "    ")(display data)(newline)))
+)
+
+(define (log-info msg data)
+    (display "=== ")(display msg)(display " === ")(display (time->seconds(current-time)))(newline)
+    (if data (begin (display "    ")(display data)(newline)))
+)
+
+
 

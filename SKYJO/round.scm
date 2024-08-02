@@ -38,7 +38,6 @@
 )
 
 (define (round-run round)
-    ;(display round)(newline)
     #f
 )
 

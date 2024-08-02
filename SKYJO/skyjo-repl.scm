@@ -14,7 +14,11 @@
 ; You should have received a copy of the GNU Affero General Public License
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+(log-info "Starting SKYJO in repl" #f)
+
 (random-source-randomize! default-random-source)
 
 (define simulation (new-simulation 0))
 (simulation-run simulation)
+
+(log-info "Finished SKYJO in repl" #f)

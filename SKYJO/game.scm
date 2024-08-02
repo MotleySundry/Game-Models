@@ -33,7 +33,6 @@
             ; Add round to game
             (game-set-round! game i round)
             (let ((high-player (round-deal-hands round)))
-(display high-player)(newline)
                 ; Set the round first player
                 (if (= i 0) (round-first-player-set! round high-player)
                         (round-first-player-set! round (remainder (+ *num-players* (round-first-player (game-get-round game (- i 1)))) *num-players*))))
