@@ -55,7 +55,7 @@
 
 (define (run-phase2 round start-player)
     (let loop ((i 0) (player-id start-player))
-        (if (i < (- *num-players* 1))
+        (if (< i (- *num-players* 1))
             (let ((player (round-get-player round player-id)))
                 (player-play-phase2 player)
                 (loop (+ i 1) (remainder (+ player-id 1)  *num-players*))

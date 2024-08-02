@@ -52,7 +52,7 @@
 
 ; Returns the value of the top card on the discard pile.
 ; Returns #f if the discard pile is empty.
-(define (deck-discard-top-card deck)
+(define (deck-discard-value deck)
     (if (null? (deck-discard-pile deck))
         (log-fatal "The discard pile is empty: deck-pop-discard-pile!" "")
         (car (deck-discard-pile deck)))

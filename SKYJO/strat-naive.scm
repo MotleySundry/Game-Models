@@ -20,18 +20,20 @@
 
     (cond
         ; Returns #f if the player opened their last card, #t otherwise.
-        ( (equal? cmd "play-phase1") 
-            (if (strat-naive-phase1 player)
+        ((equal? cmd "play-phase1") 
+            (if (strat-naive-any-phase player)
                 (player-any-cards-hidden? player)
-                (log-fatal "Player failed to make a play: play-phase1" player)
+                (log-fatal "Player failed to make a play: play-phase1" player)))
 
-        ( (equal? cmd "play-phase2")
-            (strat-naive-phase2 player))
+        ((equal? cmd "play-phase2")
+            (or 
+                (strat-naive-any-phase player)
+                (log-fatal "Player failed to make a play: play-phase1" player)))
 
-        ( (equal? cmd "flip-two")
+        ((equal? cmd "flip-two")
             (strat-naive-flip-two player))
         
-        ( else
+        (else
             (display "Unknown command: ")
             (display cmd)
             (newline)
@@ -39,61 +41,47 @@
 )
 
 ; Returns #t if the a play was executed #f otherwise
-(define (strat-naive-phase1 player)
+(define (strat-naive-any-phase player)
 
     (define high-open-id (player-get-max-open-card player))
-    (define discard-value (deck-discard-top-card (player-get-deck player)))
+    (define discard-value (deck-discard-value (player-get-deck player)))
     (define hidden-id (player-first-hidden-card player))
 
         (cond
             ; Try replacing the highest open card with the discard top
             ((and high-open-id (< top-card (player-get-card player high-open-id)))
-                (deck-pop-discard-pile (player-get-deck player))
-                (deck-push-discard-pile (player-get-deck player) (player-get-card player high-open-id))
-                (player-set-card! high-open-id discard-value)
+                (deck-pop-discard-pile! (player-get-deck player))
+                (deck-push-discard-pile! (player-get-deck player) (player-get-card player high-open-id))
+                (player-set-card! player high-open-id discard-value)
                 #t)
                     
             ; Try replacing the hidden card with the discard top
             ((and hidden-id (<= discard-value *deck-median*))
-                (deck-push-discard-pile (player-get-deck player) (player-get-card player hidden-id))
-                (player-set-card! hidden-id discard-value)
+                (deck-push-discard-pile! (player-get-deck player) (player-get-card player hidden-id))
+                (player-set-card! player hidden-id discard-value)
                 (player-open-card! player hidden-id)
                 #t)
                         
             (else
                     ; Draw a card
-                    (let ((draw (deck-pop-draw-pile (player-get-deck player))))
+                    (let ((draw (deck-pop-draw-pile! (player-get-deck player))))
                     (cond
                         ; Try replacing the highest open card with the draw
                         ((and high-open-id (< draw (player-get-card player high-open-id)))
-                            (deck-push-discard-pile (player-get-deck player) (player-get-card player high-open-id))
-                            (player-set-card! high-open-id draw)
+                            (deck-push-discard-pile! (player-get-deck player) (player-get-card player high-open-id))
+                            (player-set-card! player high-open-id draw)
                             #t)
 
                         ; Try replacing the hidden card with the draw
                         ((and hidden-id (<= discard-value *deck-median*))
-                            (deck-push-discard-pile (player-get-deck player) (player-get-card player hidden-id))
-                            (player-set-card! hidden-id draw)
+                            (deck-push-discard-pile! (player-get-deck player) (player-get-card player hidden-id))
+                            (player-set-card! player hidden-id draw)
                             (player-open-card! player hidden-id)
                             #t)
 
                         ; Discard the draw
                         (else
-                        (deck-push-discard-pile (player-get-deck player) (player-get-card player hidden-id)))))))                 
-)
-
-;(player-set-card! idx val)
-    ;(player-open-card player idx)
-
-(define (try-to-replace-open-card? player value)
-    (define highest (player-get-max-open-card player))
-    (if (< value (player-get-card player highest)
-        ()
-        #f)
-)
-
-(define (try-to-replace-hidden-card? player value)
-    #f
+                        (deck-push-discard-pile! (player-get-deck player) (player-get-card player hidden-id)))))))                 
 )
 
 (define (strat-naive-flip-two player)
@@ -101,8 +89,8 @@
     (define card1 (random-integer *player-num-cards*))
     (define card2 (random-integer-exclude *player-num-cards* card1))
 
-    (player-open-card player card1)
-    (player-open-card player card2)
+    (player-open-card! player card1)
+    (player-open-card! player card2)
 
     (+ (player-get-card player card1) (player-get-card player card2))
 )

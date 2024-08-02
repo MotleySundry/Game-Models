@@ -174,8 +174,20 @@
 (define (player-get-max-open-card player)
     (let loop ((i 0) (max-id #f) (max-value -3))
         (if (< i *player-num-cards*)
-            (if (and (player-card-open? player id) (< (player-get-card player i) max-value))
+            (if (and (player-card-open? player i) (< (player-get-card player i) max-value))
                 (loop (+ i 1) i (player-get-card player i))
                 (loop (+ i 1) max-id max-value))
             #f))
 )
+
+; Returns the id of the first hidden card or #f if there are none
+(define (player-first-hidden-card player)
+    (let loop ((i 0))
+        (if (= i *player-num-cards*)
+            #f
+            (if (player-card-hidden? player i)
+                i
+                (loop (+ i 1))
+            )))
+)
+
