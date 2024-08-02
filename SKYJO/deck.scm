@@ -27,8 +27,7 @@
 (define (deck-pop-draw-pile! deck)
     ; Draw pile empty?
     (if (null? (deck-draw-pile deck))
-        (begin (display "--- The draw pile is empty.")(newline)
-        #f)
+        (log-fatal "The draw pile is empty: deck-pop-draw-pile!" "")
     
         ; Pop it off
         (let ((card (car (deck-draw-pile deck))))
@@ -42,8 +41,7 @@
 (define (deck-pop-discard-pile! deck)
     ; Discard pile empty?
     (if (null? (deck-discard-pile deck))
-        (begin (display "--- The discard pile is empty.")(newline)
-        #f)
+        (log-fatal "The discard pile is empty: deck-pop-discard-pile!" "")
     
         ; Pop it off
         (let ((card (car (deck-discard-pile deck))))
@@ -56,7 +54,7 @@
 ; Returns #f if the discard pile is empty.
 (define (deck-discard-top-card deck)
     (if (null? (deck-discard-pile deck))
-        (begin (display "--- The discard pile is empty.")(newline) #f)
+        (log-fatal "The discard pile is empty: deck-pop-discard-pile!" "")
         (car (deck-discard-pile deck)))
 )
 

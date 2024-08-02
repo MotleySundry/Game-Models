@@ -14,12 +14,13 @@
 ; You should have received a copy of the GNU Affero General Public License
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-(define-structure simulation id games)
+(define-structure simulation id num-games games)
 
-(define (new-simulation id)
+(define (new-simulation id num-games)
     (make-simulation
         id
-        (make-vector  *num-games*) ; games
+        num-games
+        (make-vector  num-games) ; games
     )
 )
 
@@ -31,7 +32,7 @@
 
         (game-run game)
 
-        (if (< (+ i 1) *num-games*)
+        (if (< (+ i 1) (simulation-num-games simulation))
             (loop (+ i 1))))
     )  
 )

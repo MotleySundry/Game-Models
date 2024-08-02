@@ -28,7 +28,7 @@
     
     (let loop ((i 0)) 
         (let ((round (new-round i game)))
-            (if (>= i *max-rounds*)(begin (display "!!! The game run has reached *max-rounds*")(newline)(exit 1)))
+            (if (>= i *max-rounds*)(log-fatal "The game run has reached *max-rounds*" *max-rounds*))
 
             ; Add round to game
             (game-set-round! game i round)

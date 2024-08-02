@@ -59,23 +59,26 @@
 
 (define (log-fatal msg data)
     (display "### ")(display msg)(display " ### ")(display (time->seconds(current-time)))(newline)
-    (if data (begin (display "    ")(display data)(newline)))
+    (display "    ")(display data)(newline)
     (exit 1)
 )
 
 (define (log-error msg data)
     (display "!!! ")(display msg)(display " !!! ")(display (time->seconds(current-time)))(newline)
-    (if data (begin (display "    ")(display data)(newline)))
+    (display "    ")(display data)(newline)
+    data
 )
 
 (define (log-warning msg data)
     (display "=== ")(display msg)(display " === ")(display (time->seconds(current-time)))(newline)
-    (if data (begin (display "    ")(display data)(newline)))
+    (display "    ")(display data)(newline)
+    data
 )
 
 (define (log-info msg data)
-    (display "=== ")(display msg)(display " === ")(display (time->seconds(current-time)))(newline)
-    (if data (begin (display "    ")(display data)(newline)))
+    (display "--- ")(display msg)(display " --- ")(display (time->seconds(current-time)))(newline)
+    (display "    ")(display data)(newline)
+    data
 )
 
 

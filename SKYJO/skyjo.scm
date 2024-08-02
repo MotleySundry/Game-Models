@@ -14,11 +14,14 @@
 ; You should have received a copy of the GNU Affero General Public License
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-(log-info "Starting SKYJO" #f)
+(define (run-skyjo num-games)
+    (log-info "Starting SKYJO" "")
 
-(random-source-randomize! default-random-source)
+    (random-source-randomize! default-random-source)
 
-(define simulation (new-simulation 0))
-(simulation-run simulation)
+    (simulation-run (new-simulation 0 num-games))
 
-(log-info "Finished SKYJO" #f)
+    (log-info "Finished SKYJO" "")
+)
+
+(time (run-skyjo *num-games*))

@@ -94,11 +94,7 @@
 (define (player-open-first-hidden-card player)
     (define (open idx)
         (if (= idx *player-num-cards*)
-            (begin
-                (display "!!! player-open-first-hidden-card: there are none hidden!")
-                (newline)
-                (exit 1))
-        
+            (log-fatal "There are no hidden files: player-open-first-hidden-card" "")
             (if (player-card-hidden? player idx)
                 (player-open-card player idx)
                 (open (+ idx 1)))))
@@ -158,21 +154,21 @@
 (define (player-open-card player id)
     (if (= (vector-ref (player-card-state player) id) *card-state-hidden*)
         (vector-set! (player-card-state player) id *card-state-open*)
-        (begin (display "!!! Tried to open a non-hidden card!")(newline)(exit 1)))
+        (log-fatal "Tried to open a non-hidden card: player-open-card" ""))
 )
 
 (define (player-remove-card player id)
     (if (= (vector-ref (player-card-state player) id) *card-state-open*)
         (vector-set! (player-card-state player) id *card-state-removed*)
-        (begin (display "!!! Tried to open a non-open card!")(newline)(exit 1)))
+        (log-fatal "Tried to open a non-open card: player-remove-card" ""))
 )
 
 (define (player-any-cards-hidden? player)
-  (< 0 (player-count-cards-in-state? player *card-state-hidden*))
+  (< 0 (player-count-cards-in-state? player *card-state-hidden* ""))
 )
 
 (define (player-any-cards-open? player)
-  (< 0 (player-count-cards-in-state? player *card-state-open*))
+  (< 0 (player-count-cards-in-state? player *card-state-open* ""))
 )
 
 
