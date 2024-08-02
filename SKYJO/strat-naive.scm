@@ -19,13 +19,14 @@
 (define (strat-naive player cmd)
 
     (cond
+        ; Returns #f if the player opened their last card, #t otherwise.
         ( (equal? cmd "play-phase1") 
-            (strat-naive-phase-1 player)
-            ; Any hidden cards remaining, if so continue phase 1. 
-            (player-any-hidden-cards? player))
+            (if (strat-naive-phase1 player)
+                (player-any-cards-hidden? player)
+                (log-fatal "Player failed to make a play: play-phase1" player)
 
         ( (equal? cmd "play-phase2")
-            (strat-naive-phase-2 player))
+            (strat-naive-phase2 player))
 
         ( (equal? cmd "flip-two")
             (strat-naive-flip-two player))
@@ -37,67 +38,62 @@
             (exit 1)))
 )
 
-(define (strat-naive-phase-1 player)
-    (if (or (try-discard-top? player)
-        (try-draw-card? player))
-            #t
-            (begin
-                (display "!!! strat-naive-phase-1: failed to make a move!")(newline)
-                (exit 1)
-            )
-    )
+; Returns #t if the a play was executed #f otherwise
+(define (strat-naive-phase1 player)
+
+    (define high-open-id (player-get-max-open-card player))
+    (define discard-value (deck-discard-top-card (player-get-deck player)))
+    (define hidden-id (player-first-hidden-card player))
+
+        (cond
+            ; Try replacing the highest open card with the discard top
+            ((and high-open-id (< top-card (player-get-card player high-open-id)))
+                (deck-pop-discard-pile (player-get-deck player))
+                (deck-push-discard-pile (player-get-deck player) (player-get-card player high-open-id))
+                (player-set-card! high-open-id discard-value)
+                #t)
+                    
+            ; Try replacing the hidden card with the discard top
+            ((and hidden-id (<= discard-value *deck-median*))
+                (deck-push-discard-pile (player-get-deck player) (player-get-card player hidden-id))
+                (player-set-card! hidden-id discard-value)
+                (player-open-card! player hidden-id)
+                #t)
+                        
+            (else
+                    ; Draw a card
+                    (let ((draw (deck-pop-draw-pile (player-get-deck player))))
+                    (cond
+                        ; Try replacing the highest open card with the draw
+                        ((and high-open-id (< draw (player-get-card player high-open-id)))
+                            (deck-push-discard-pile (player-get-deck player) (player-get-card player high-open-id))
+                            (player-set-card! high-open-id draw)
+                            #t)
+
+                        ; Try replacing the hidden card with the draw
+                        ((and hidden-id (<= discard-value *deck-median*))
+                            (deck-push-discard-pile (player-get-deck player) (player-get-card player hidden-id))
+                            (player-set-card! hidden-id draw)
+                            (player-open-card! player hidden-id)
+                            #t)
+
+                        ; Discard the draw
+                        (else
+                        (deck-push-discard-pile (player-get-deck player) (player-get-card player hidden-id)))))))                 
 )
 
-; Try to swap the drawn card with an up card.
-; Returns #t if successful
-(define (try-draw-card? player)
-    (let ((draw (deck-pop-draw-pile (player-get-deck player))))
-        (and
-            draw
-            (or
-                (and                    
-                    (player-any-open-cards? player)
-                    (try-to-replace-open-card? player  draw))
-                (and
-                    (player-any-hidden-cards? player)
-                    (try-to-replace-hidden-card? player draw))
-                (and
-                    (deck-push-discard-pile (player-get-deck player) draw)
-                    (player-any-hidden-cards? player)
-                    (player-open-first-hidden-card player)
-                ))))
-)
-
-; Try to swap the discard top with an up card.
-; Returns #t if successful
-(define (try-discard-top? player)
-    (let ((disc (deck-discard-top (player-get-deck player))))
-        (and 
-            disc 
-            (or
-                (and                    
-                    (player-any-open-cards? player)
-                    (try-to-replace-open-card? player disc))
-                (and
-                    (player-any-hidden-cards? player)
-                    (try-to-replace-hidden-card? player disc)))
-
-            (deck-pop-draw-pile (player-get-deck player))
-        )
-    )
-)
-
+;(player-set-card! idx val)
+    ;(player-open-card player idx)
 
 (define (try-to-replace-open-card? player value)
-    #f
+    (define highest (player-get-max-open-card player))
+    (if (< value (player-get-card player highest)
+        ()
+        #f)
 )
 
 (define (try-to-replace-hidden-card? player value)
     #f
-)
-
-(define (strat-naive-phase2 player )
-    (strat-naive-phase1 player game round)
 )
 
 (define (strat-naive-flip-two player)
