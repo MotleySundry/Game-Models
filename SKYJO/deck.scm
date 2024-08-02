@@ -18,7 +18,7 @@
 
 (define (new-deck)
     (make-deck
-        '() (s8vector-to-list (s8vector-rand (s8vector-dup cards)))  ;draw-pile
+        (s8vector-to-list (s8vector-rand (s8vector-dup *deck*)))  ;draw-pile
         '()) ; discard-pile
 )
 

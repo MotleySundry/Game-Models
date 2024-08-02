@@ -16,34 +16,33 @@
 
 ; The most basic strategy that follows the rules with random choices.
 ; Returns #f when the last card is turned over
-(define (strat-naive player game round cmd)
+(define (strat-naive player cmd)
 
-    (cond(
-        ((equal? cmd "play-phase1") 
-            (strat-naive-phase-1 player game round)
+    (cond
+        ( (equal? cmd "play-phase1") 
+            (strat-naive-phase-1 player)
             ; Any hidden cards remaining, if so continue phase 1. 
             (player-any-hidden-cards? player))
 
-        ((equal? cmd "play-phase2")
-            (strat-naive-phase-2 player game round))
+        ( (equal? cmd "play-phase2")
+            (strat-naive-phase-2 player))
 
-        ((equal? cmd "flip-two")
-            (strat-naive-flip-two player game round))
+        ( (equal? cmd "flip-two")
+            (strat-naive-flip-two player))
         
-        (else
+        ( else
             (display "Unknown command: ")
             (display cmd)
             (newline)
-            (exit 1))))
+            (exit 1)))
 )
 
-(define (strat-naive-phase-1 player game round)
-    (if (or (try-discard-top? player game round)
-        (try-draw-card? player game round))
+(define (strat-naive-phase-1 player)
+    (if (or (try-discard-top? player)
+        (try-draw-card? player))
             #t
             (begin
                 (display "!!! strat-naive-phase-1: failed to make a move!")(newline)
-                (display table)(newline)
                 (exit 1)
             )
     )
@@ -51,19 +50,19 @@
 
 ; Try to swap the drawn card with an up card.
 ; Returns #t if successful
-(define (try-draw-card? player game round)
-    (let ((draw (table-pop-draw-pile table)))
+(define (try-draw-card? player)
+    (let ((draw (deck-pop-draw-pile (player-get-deck player))))
         (and
             draw
             (or
                 (and                    
                     (player-any-open-cards? player)
-                    (try-to-replace-open-card? player table sim-stats disc))
+                    (try-to-replace-open-card? player  draw))
                 (and
                     (player-any-hidden-cards? player)
-                    (try-to-replace-hidden-card? player table sim-stats disc))
+                    (try-to-replace-hidden-card? player draw))
                 (and
-                    (table-push-discard-pile table draw)
+                    (deck-push-discard-pile (player-get-deck player) draw)
                     (player-any-hidden-cards? player)
                     (player-open-first-hidden-card player)
                 ))))
@@ -71,38 +70,40 @@
 
 ; Try to swap the discard top with an up card.
 ; Returns #t if successful
-(define (try-discard-top? player game round)
-    (let ((disc (table-discard-top table)))
+(define (try-discard-top? player)
+    (let ((disc (deck-discard-top (player-get-deck player))))
         (and 
             disc 
             (or
                 (and                    
                     (player-any-open-cards? player)
-                    (try-to-replace-open-card? player game round disc))
+                    (try-to-replace-open-card? player disc))
                 (and
                     (player-any-hidden-cards? player)
-                    (try-to-replace-hidden-card? player game round disc))
+                    (try-to-replace-hidden-card? player disc)))
 
-            (table-pop-draw-pile table))))
+            (deck-pop-draw-pile (player-get-deck player))
+        )
+    )
 )
 
 
-(define (try-to-replace-open-card? player game round value)
+(define (try-to-replace-open-card? player value)
     #f
 )
 
-(define (try-to-replace-hidden-card? player game round value)
+(define (try-to-replace-hidden-card? player value)
     #f
 )
 
-(define (strat-naive-phase2 player game round)
+(define (strat-naive-phase2 player )
     (strat-naive-phase1 player game round)
 )
 
-(define (strat-naive-flip-two player game round)
+(define (strat-naive-flip-two player)
     
-    (define card1 (random-integer 12))
-    (define card2 (random-integer-exclude 12 card1))
+    (define card1 (random-integer *player-num-cards*))
+    (define card2 (random-integer-exclude *player-num-cards* card1))
     
     (s8vector-set!(player-card-state player) card1 1)
     (s8vector-set!(player-card-state player) card2 1)

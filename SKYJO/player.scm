@@ -22,8 +22,8 @@
     id
     round
     round-score 
-    cards ;value -2 to 12
-    card-state ;0=hidden,  1=open, -1=removed
+    cards ; s8vector value -2 to 12
+    card-state ;s8vector 0=hidden,  1=open, -1=removed
     strat ;lambda
 )
 
@@ -34,15 +34,15 @@
         id ;id
         round ;round
         0  ;round-score
-        (make-s8vector 12 0) ;cards (val 0)
-        (make-s8vector 12 0) ;card-state (face down)
+        (make-s8vector *player-num-cards* 0) ;cards (val 0)
+        (make-s8vector *player-num-cards* 0) ;card-state (face down)
         (get-player-strat id) ;strategy
     ))  
 
 ; Returns the count if the cards in state or #f for failure.
 (define (player-count-cards-in-state? player state)
     (define (myfun i cnt)
-        (if (= i 12)
+        (if (= i *player-num-cards*)
             cnt
             (if (= (s8vector-ref (player-card-state player) i) state)
                 (myfun (+ i 1) (+ cnt 1))
@@ -55,7 +55,7 @@
 ; Returns the index of the largest open card or #f if there are no open cards.
  (define (player-largest-open-idx player)
      (define (myfun i max-val max-idx)
-        (if (= i 12)
+        (if (= i *player-num-cards*)
             max-idx
             (if (and
                     (= (s8vector-ref (player-card-state player) i) *card-state-open*)
@@ -73,7 +73,7 @@
 ; Returns the value of the card replaced of #f on failure.
 (define (player-replace-first-hidden-card player val)
     (define (open idx)
-        (if (= idx 12)
+        (if (= idx *player-num-cards*)
             (begin
                 (display "!!! player-replace-first-hidden-card: there are none hidden!")
                 (newline)
@@ -116,7 +116,7 @@
 ; Set sets the first hidden card to open 
 (define (player-open-first-hidden-card player)
     (define (open idx)
-        (if (= idx 12)
+        (if (= idx *player-num-cards*)
             (begin
                 (display "!!! player-open-first-hidden-card: there are none hidden!")
                 (newline)
@@ -129,19 +129,17 @@
     (open 0)
 )
 
-(define (player-flip-two player game round deck)
-    ((player-strat player) player game round "flip-two") 
+(define (player-flip-two player)
+    ((player-strat player) player "flip-two") 
 )
 
-(define (player-play-phase1 player game round deck)
-    ((player-strat player) player game round "play-phase1") 
+(define (player-play-phase1 player)
+    ((player-strat player) player "play-phase1") 
 )
 
-(define (player-play-phase2 player game round deck)
-    ((player-strat player) player game round "play-phase2") 
+(define (player-play-phase2 player)
+    ((player-strat player) player "play-phase2") 
 )
-
-
 
 ; PLAYER ACCESSORS
 
@@ -153,4 +151,14 @@
     (vector-set! (player-cards player) id card)
 )
 
+(define (player-get-deck player)
+    (round-deck (player-round player))
+)
 
+(define (player-get-game player)
+    (round-game (player-round player))
+)
+
+(define (player-get-round player)
+    (player-round player)
+)

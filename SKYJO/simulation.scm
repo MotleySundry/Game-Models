@@ -28,7 +28,9 @@
     (let loop ((i 0) )
         (let ((game (new-game i))) 
             (simulation-set-game! simulation i game) ; Add game to simulation
-            
+
+        (game-run game)
+
         (if (< (+ i 1) *num-games*)
             (loop (+ i 1))))
     )  

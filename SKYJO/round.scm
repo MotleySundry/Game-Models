@@ -30,9 +30,10 @@
         ; Create players
         (let loop ((i 0))
             (cond( 
-                (< i *num-players) 
-                    (round-set-player! round i (new-player i game round))
+                (< i *num-players*) 
+                    (round-set-player! round i (new-player i round))
                     (loop (+ i 1)))))
+        round
     )
 )
 
@@ -62,8 +63,8 @@
         ; For all player cards
         (let loop ((i 0))
             (cond ( (< i *player-num-cards*)
-                (player-set-card player i (deck-pop-draw-pile deck) 
-                (loop (+ i 1))))))
+                (player-set-card player i (deck-pop-draw-pile deck)) 
+                (loop (+ i 1)))))
 )
 
 ; Turns up two cards for each player.
@@ -75,9 +76,9 @@
                 (let ((value (player-flip-two player)))
                     (if (< max-val value)
                         (loop (+ i 1) value i)
-                        (loop (+ i 1) max-value Max-id))))
+                        (loop (+ i 1) max-val max-id)))))
                 
-        (max-id)))
+        max-id)
 )
 
 ; ROUND ACCESSORS

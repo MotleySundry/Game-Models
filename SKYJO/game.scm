@@ -26,15 +26,16 @@
 
 (define (game-run game)
     
-    (let loop ((i 0) (round (new-round i)))
-        (if (>= i *max-rounds*)(begin (display "!!! The game run has reached *max-rounds*")(newline)(exit 1)))
+    (let loop ((i 0)) 
+        (let ((round (new-round i game)))
+            (if (>= i *max-rounds*)(begin (display "!!! The game run has reached *max-rounds*")(newline)(exit 1)))
 
-        ; Add round to game
-        (game-set-round! game i round)
-        (let ((high-player (round-deal-hands round)))
-            ; Set the round first player
-            (if (= i 0) (round-first-player-set! round high-player)
-                    (round-first-player-set! round (remainder (+ *num-players* ((round-first-player (game-get-round game (- i 1))))) *num-players*))))
+            ; Add round to game
+            (game-set-round! game i round)
+            (let ((high-player (round-deal-hands round)))
+                ; Set the round first player
+                (if (= i 0) (round-first-player-set! round high-player)
+                        (round-first-player-set! round (remainder (+ *num-players* (round-first-player (game-get-round game (- i 1)))) *num-players*)))))
 
         (loop (+ i 1)))
 )
