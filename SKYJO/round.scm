@@ -38,7 +38,30 @@
 )
 
 (define (round-run round)
-    #f
+   (run-phase1 round)
+)
+
+(define (run-phase1 round)
+    (let loop ((i 0) (player-id (round-first-player round)))
+        (if (>= i *round-max-plays*)
+            (log-fatal "Phase1 has reached *round-max-plays*" i)
+            (let ((player (round-get-player round player-id))) 
+                (if (player-play-phase1 player)
+                    (loop (+ i 1) (remainder (+ player-id 1)  *num-players*))
+                    (run-phase2 round (remainder (+ player-id 1)  *num-players*))))
+        )
+    )
+)
+
+(define (run-phase2 round start-player)
+    (let loop ((i 0) (player-id start-player))
+        (if (i < (- *num-players* 1))
+            (let ((player (round-get-player round player-id)))
+                (player-play-phase2 player)
+                (loop (+ i 1) (remainder (+ player-id 1)  *num-players*))
+            )
+        )
+    )
 )
 
 ; Deals all player's hands.
