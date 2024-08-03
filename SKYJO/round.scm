@@ -39,7 +39,41 @@
 
 ; Returns the id of the first player to open their last card. 
 (define (round-run round)
-   (run-phase1 round)
+   (define out-player (run-phase1 round))
+   (round-update-player-totals round)
+   (round-update-player-points round out-player)
+)
+
+ (define (round-update-player-totals round)
+    #t
+)
+
+; Calculates the player scores for the round.
+(define (round-update-player-points game round out-player)
+    (let ((min-id (round-min-score round exclude-player)))
+        (let loop ((i 0))
+            (cond
+                ((< i *num-players*)
+                    (cond
+                        ((= i exclude-player)
+                            (if (< (game-player-score game i) (game-player-score game min-id))
+                                (game-add-player-score! game 1 (game-player-score game i))                            
+                                (game-add-player-score! game 1 ( * 2 (game-player-score game i)))))
+
+                        (else(game-add-player-score! game 1 (game-player-score game i)))))              
+                (else (loop (+ i 1))))))
+)
+
+
+; Returns the player with the lowest card total for the round.
+; Excludes the player that went out because a tie has to be detected for scoring.
+(define (round-min-total round exclude-player)
+    (let loop ((i 0)( min-id #f) (min-val 144))
+        (if (= i *num-players*)
+            min-id
+            (if (and (not (= i exclude-player))(< (round-player-score round i) min-val))
+                (loop (+ i 1) (round-player-score round i) i)
+                (loop (+ i 1) min-id min-val))))
 )
 
 ; Returns the id of the first player to open their last card. 

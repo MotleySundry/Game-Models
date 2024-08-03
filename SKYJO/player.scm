@@ -17,7 +17,8 @@
 (define-structure player
     id
     round
-    score 
+    card-sum ; The sum of the cards left in the player's hand
+    points ; The points the player scored for the hand
     cards ; vector value -2 to 12
     card-state ;vector 0=hidden,  1=open, -1=removed
     strat ;lambda
@@ -29,7 +30,7 @@
     (make-player
         id ;id
         round ;round
-        0  ;score
+        0  ;total
         (make-vector *player-num-cards* 0) ;cards (val 0)
         (make-vector *player-num-cards* 0) ;card-state (face down)
         (get-player-strat id) ;strategy

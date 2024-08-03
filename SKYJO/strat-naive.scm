@@ -20,6 +20,9 @@
 
     (cond
         ; Returns #f if the player opened their last card, #t otherwise.
+
+        ((equal? cmd "get-label") "Naive")
+
         ((equal? cmd "play-phase1") 
             (if (strat-naive-any-phase player)
                 (player-any-cards-hidden? player)

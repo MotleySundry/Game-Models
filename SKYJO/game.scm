@@ -14,7 +14,7 @@
 ; You should have received a copy of the GNU Affero General Public License
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-(define-structure game id rounds round-cnt scores)
+(define-structure game id rounds round-cnt points last-round winner winner-points winner-strat)
 
 (define (new-game id)
     (make-game
@@ -42,45 +42,16 @@
                             (round-first-player-set! round (remainder (+ *num-players* (round-first-player (game-get-round game (- i 1)))) *num-players*))))
 
                 (let ((out-player (round-run round))) 
-                        (game-calc-player-scores round out-player)
+                        (game-calc-player-points game round out-player)
                         (loop (+ i 1)))
                 #f)
             ))
-)
+)   
 
-; Calculates the player scores for the round and adds it into the game score vector.
-(define (game-calc-player-scores round out-player)
-    (let ((min-id (game-min-score-exclude-player-id round out-player)))
-        (let loop ((i 0))
-            (cond
-                ((< i *num-players*)
-                    (cond
-                        ((= i out-player)
-                            (if (< (game-player-score game i) (game-player-score game min-id))
-                                (game-add-player-score! game 1 (game-player-score game i))                            
-                                (game-add-player-score! game 1 ( * 2 (game-player-score game i)))))
-
-                        (else(game-add-player-score! game 1 (game-player-score game i)))))              
-                (else (loop (+ i 1))))))
-)
-
-; Returns the player with the lowest raw score for the round, excludinf the player that went out.
-(define (game-min-score-exclude-player-id round out-player)
-    (let loop ((i 0)( min-id #f) (min-val 144))
-        (if (= i *num-players*)
-            min-id
-            (if (and (not (= i out-player))(< (round-player-score round i) min-val))
-                (loop (+ i 1) (round-player-scoregame i) i)
-                (loop (+ i 1) min-id min-val))))
-)
-
-; Returns the id of the first player found to have a score of <= 100, #f otherwuse
-(define (game-over? game)
-    (let loop ((i 0))
-        (if (= i *num-players*)
-            #f
-            (loop (+ i 1)))
-    )
+; Tallys the player the player scores for this round.
+; Returns the highest player game points or #f if the game is over.
+(define (game-tally-player-points game round)
+    #f
 )
 
 ; GAME METHODS
