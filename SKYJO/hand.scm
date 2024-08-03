@@ -30,7 +30,7 @@
 )
 
 ; Create a new initialized hand structure.
-(define (new-hand id round)
+(define (new-hand)
     ; Allocate structure
     (make-hand
         0                                   ;card-sum
@@ -48,23 +48,27 @@
 ;               HAND SETTERS
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (hand-set-card! hand id card)
-    (if ((hand-card-removed? hand id)
-        (log-fatal "Tried to set the value of a removed card: hand-set-card!" id))
-        (if (hand-card-open hand id)
-            (hand-open-sum-set! hand (+ (hand-open-sum hand) (- card (hand-get-card hand id))))
-            (hand-hidden-sum-set! hand (+ (hand-hidden-sum hand) (- card (hand-get-card hand id))))))
-    (vector-set! (hand-cards hand) id card)
+(define (hand-set-card-value! hand id card)
+    (let ((old-val (hand-get-card-value hand id)))
+        (if (hand-is-card-removed? hand id)
+            (log-fatal "Tried to set the value of a removed card: hand-set-card!" (list id hand))
+            (if (hand-is-card-open? hand id)
+                (hand-open-sum-set! hand (+ (hand-open-sum hand) (- card old-val )))
+                (hand-hidden-sum-set! hand (+ (hand-hidden-sum hand) (- card old-val )))))
+        (hand-card-sum-set! hand (+ (hand-card-sum hand) (- card old-val )))
+        (vector-set! (hand-card-value hand) id card))
 )
 
 (define (hand-set-card-open! hand id)
-    (if (not(hand-card-hidden? hand id))
-        (log-fatal "Tried to open a non-hidden card: hand-set-card-open!" id))
-        (let ((card-val (hand-get-card hand id))) 
+    (if (not(hand-is-card-hidden? hand id))
+        (log-fatal "Tried to open a non-hidden card: hand-set-card-open!" id ))
+        (let ((card-val (hand-get-card-value hand id))) 
             (hand-open-sum-set! hand (+ (hand-open-sum hand) card-val))
             (hand-open-cnt-set! hand (+ (hand-open-cnt hand) 1))
+           
             (hand-hidden-sum-set! hand (- (hand-hidden-sum hand) card-val))
             (hand-hidden-cnt-set! hand (- (hand-hidden-cnt hand) 1))
+           
             (vector-set! (hand-card-state hand) id *card-state-open*)
         )
 )
@@ -72,10 +76,15 @@
 (define (hand-set-card-removed! hand id)
     (if (not(hand-card-open? hand id))
         (log-fatal "Tried to remove a non-open card: hand-set-card-removed!" id))
-        (let ((card-val (hand-get-card hand id)))
+        (let ((card-val (hand-get-card-value hand id)))
             (hand-removed-cnt-set! hand (+ (hand-removed-cnt-set hand) 1))
+            
+            (hand-card-sum-set! hand (- (hand-card-sum hand) card-val))
+            (hand-card-cnt-set! hand (- (hand-card-cnt hand) 1))
+
             (hand-open-sum-set! hand (- (hand-open-sum hand) card-val))
             (hand-open-cnt-set! hand (- (hand-open-cnt hand) 1))
+            
             (vector-set! (hand-card-state hand) id *card-state-open*)
         )
 )
@@ -85,9 +94,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (hand-get-card-value hand id)
-    (if ((hand-card-removed? hand id)
-        (log-fatal "Tried to get the value of a removed card: hand-set-card!" id)))
-    (vector-ref (hand-cards hand) id)
+    (if (hand-is-card-removed? hand id)
+        (log-fatal "Tried to get the value of a removed card: hand-get-card-value" id)
+        (vector-ref (hand-card-value hand) id))
 )
 
 (define (hand-get-card-state hand id)
@@ -98,16 +107,16 @@
 ;               HAND QUERIES
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (hand-card-open? hand id)
-    (= (hand-get-card-state hand id) *card-state-open*)
+(define (hand-is-card-open? hand card-id)
+    (= (hand-get-card-state hand card-id) *card-state-open*)
 )
 
-(define (hand-card-hidden? hand id)
-    (= (hand-get-card-state hand id) *card-state-hidden*)
+(define (hand-is-card-hidden? hand card-id)
+    (= (hand-get-card-state hand card-id) *card-state-hidden*)
 )
 
-(define (hand-card-removed? hand id)
-    (= (hand-get-card-state hand id) *card-state-removed*)
+(define (hand-is-card-removed? hand card-id)
+    (= (hand-get-card-state hand card-id) *card-state-removed*)
 )
 
 (define (hand-any-cards-open? hand)
@@ -125,27 +134,28 @@
 ; Validate the hand's consistency
 (define (hand-is-valid?)
     (and
-    (= *hand-num-cards* (+ (hand-open-cnt hand) (hand-hidden-cnt hand) (hand-removed-cnt hand)))
-    (= (hand-card-cnt hand) (+ (hand-open-cnt hand) (hand-hidden-cnt hand) )))
+        (= *hand-num-cards* (+ (hand-open-cnt hand) (hand-hidden-cnt hand) (hand-removed-cnt hand)))
+        (= (hand-card-cnt hand) (+ (hand-open-cnt hand) (hand-hidden-cnt hand)))
+        (= (hand-card-sum hand) (+ (hand-open-sum hand) (hand-hidden-sum hand))))
 )
 
 
 ; Returns the id of the highest open card or #f if there are none
-(define (hand-max-open-card hand)
+(define (hand-get-largest-open-card hand)
     (let loop ((i 0) (max-id #f) (max-value -3))
         (if (< i *hand-num-cards*)
-            (if (and (hand-card-open? hand i) (< (hand-get-card hand i) max-value))
-                (loop (+ i 1) i (hand-get-card hand i))
+            (if (and (hand-is-card-open? hand i) (< (hand-get-card-value hand i) max-value))
+                (loop (+ i 1) i (hand-get-card-value hand i))
                 (loop (+ i 1) max-id max-value))
             #f))
 )
 
 ; Returns the id of the first hidden card or #f if there are none
-(define (hand-first-hidden-card hand)
+(define (hand-get-first-hidden-card hand)
     (let loop ((i 0))
         (if (= i *hand-num-cards*)
             #f
-            (if (hand-card-hidden? hand i)
+            (if (hand-is-card-hidden? hand i)
                 i
                 (loop (+ i 1))
             )))

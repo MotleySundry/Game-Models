@@ -22,6 +22,7 @@
     round-cnt           ;integer incremented as new rounds are started
     points              ;integer points for each player tallied after each round
     last-round          ;reference to the round that ended the game
+    starter             ;integer the starter for the round
 
     ; Updated at the end of the game
     winning-points      ;integer points of the winner/s 
@@ -39,6 +40,7 @@
         0                               ;round-count
         (make-vector  *num-players* 0)  ;points
         "last-round TBD"                ;last-round
+        "starter TBD"                   ;starter
 
         ; Updated at the end of the game
         0                               ;winning-points
@@ -48,35 +50,45 @@
     )
 )
 
-; Runs a game and returns #t if all was well.
 (define (game-run game)
     (let loop ((i 0))
-        (if (game-over? game)
-            #t
+        (if (>= i *max-rounds*)
+            (log-fatal "The game run has reached *max-rounds*" *max-rounds*)
+
+            ; RUN NEXT ROUND
             (let ((round (new-round i game)))
-                (if (>= i *max-rounds*)(log-fatal "The game run has reached *max-rounds*" *max-rounds*))
-
-                ; Add round to game
                 (game-set-round! game i round)
-                (let ((high-flipper (round-deal-hands round)))
-                    ; Set the first player
-                    (if (= i 0) (round-first-player-set! round high-flipper)
-                            (round-first-player-set! round (remainder (+ *num-players* (round-first-player (game-get-round game (- i 1)))) *num-players*))))
 
-                (let ((out-player (round-run round))) 
-                        (game-calc-player-points game round out-player)
-                        (loop (+ i 1)))
-                #f)
-            ))
-)   
+                (let ((high-flip (round-deal-hands round)))
+                    ; set starting player
+                    (if (= i 0)
+                        (game-set-starter! game high-flip)
+                        (game-set-starter! game (remainder ( + (game-get-starter game) *num-players*) *num-players*)))
+                    (round-set-first-player! round (game-get-starter game))
+
+                    ; run it
+                    (round-run round)
+
+                    ; game done
+                    (if (game-tally-player-points game round)
+                        (loop (+ i 1)))))))
+)
 
 ; Tallys the player scores for this round.
-; Returns the highest player game points or #f if the game is over.
+; Returns #t or #f if the game is over.
 (define (game-tally-player-points game round)
     #f
 )
 
 ; GAME METHODS
+
+(define (game-set-starter! game starter)
+    (game-starter-set! game starter)
+)
+
+(define (game-get-starter game)
+    (game-starter game)
+)
 
 (define (game-add-player-score! game id round-score)
     (game-set-player-score! game id (+ round-score (game-player-score game id)))

@@ -18,22 +18,9 @@
 (define-structure player
     id              ;integer player id, unique in context
     round           ;reference to the containing round round
+    hand            ;reference to the players hand
     strat           ;lambda reference to the assigned strategy
-
-    ; Updated during each play, only change with setters!
-    card-sum        ;integer sum of the cards in the player's hand
-    card-cnt        ;integer count of the cards in the player's hand
-    open-sum        ;integer sum of the open cards in the player's hand
-    open-cnt        ;integer count of the open cards in the player's hand
-    hidden-sum      ;integer sum of the open cards in the player's hand
-    hidden-cnt      ;integer count of the open cards in the player's hand
-    removed-cnt     ;integer sum of the open cards in the player's hand
-    cards           ;integer vector value -2 to 12
-    card-state      ;vector 0=hidden,  1=open, -1=removed
-
-    ;Updated at the end of the round
-    points          ;integer points the player scored for the round
-
+    points          ;integer points the player scored for the round, updated at the end of the round
 )
 
 ; Create a new initialized player structure.
@@ -42,44 +29,23 @@
     (make-player
         id                                  ;id
         round                               ;round
-        (get-player-strat id)               ;strategy
-
-        ; Updated during each play only change with setters!S
-        0                                   ;card-sum
-        0                                   ;card-cnt
-        0                                   ;open-sum
-        0                                   ;open-cnt
-        0                                   ;hidden-sum
-        12                                  ;hidden-cnt
-        0                                   ;removed-cnt
-        (make-vector *player-num-cards* 0)  ;cards
-        (make-vector *player-num-cards* 0)  ;card-state
-
-        ;Updated at the end of the round
+        (new-hand)                          ;hand
+        (get-player-strat id)               ;strat
         0                                   ;points
     ))  
 
 ; Returns the index of the largest open card or #f if there are no open cards.
- (define (player-largest-open-idx player)
-     (define (myfun i max-val max-idx)
-        (if (= i *player-num-cards*)
-            max-idx
-            (if (and
-                    (= (player-get-card-state player i) *card-state-open*)
-                    (or
-                        (not max-idx)
-                        (> (player-get-card player i) max-val)
-                    ))
-                (myfun (+ i 1) (player-get-card player i) i)
-                (myfun (+ i 1) max-val max-idx)
-            ))
-    )
-    (myfun 0 -2 #f)
+ (define (player-get-largest-open-card player)
+    (hand-get-largest-open-card (player-get-hand player))
  )
 
 ;;;;;;;;;;;;;;;;;;
-; PLAYER METHODS
+; PLAYER GETTERS
 ;;;;;;;;;;;;;;;;;;
+
+(define (player-get-hand player)
+    (player-hand player)
+)
 
 (define (player-get-deck player)
     (round-deck (player-round player))
@@ -92,6 +58,78 @@
 (define (player-get-round player)
     (player-round player)
 )
+
+(define (player-get-card-value player card-id)
+    (hand-get-card-value (player-get-hand player) card-id)
+)
+(define (player-get-first-hidden-card player)
+    (hand-get-first-hidden-card (player-get-hand player))
+)
+
+(define (player-any-cards-open? player)
+    (hand-any-cards-open? (player-get-hand player))
+)
+
+(define (player-any-cards-hidden? player)
+    (hand-any-cards-hidden? (player-get-hand player))
+)
+
+(define (player-any-cards-removed? player)
+    (hand-any-cards-removed? (player-get-hand player))
+)
+
+(define (player-is-card-open? player card-id)
+    (hand-is-card-open? (player-hand player) icard-idd)
+)
+
+(define (player-is-card-hidden? player card-id)
+    (hand-is-card-hidden? (player-hand player) card-id)
+)
+
+(define (player-is-card-removed? player card-id)
+    (hand-is-card-removed? (player-hand player) icard-idd)
+)
+
+
+;;;;;;;;;;;;;;;;;;
+; PLAYER SETTERS
+;;;;;;;;;;;;;;;;;;
+
+(define (player-set-card-value! player card-id)
+    (hand-set-card-value! (player-hand player) card-id)
+)
+
+(define (player-set-card-open! player card-id)
+    (hand-set-card-open! (player-hand player) card-id)
+)
+
+(define (player-set-card-removed! player card-id)
+    (hand-set-card-removed! (player-hand player) card-id)
+)
+
+; Sets a player's card with a value
+(define (player-set-card-value! player card-id card-value)
+    (hand-set-card-value! (player-get-hand player) card-id card-value)
+)
+
+; Replaces a players card with a card-value, used for a card that has been taken from a pile.
+(define (player-replace-card-with-value! player card-id card-value)
+    (deck-push-discard-pile! (player-get-deck player) (player-get-card-value player card-id))
+    (player-set-card-value! player card-id card-id)
+    (if(player-is-card-hidden? player card-id)
+        (player-set-card-open! player card-id))
+)
+
+; Replaces a players card by poping the top card off the discard pile.
+(define (player-replace-card-from-discard! player card-id)
+    (player-replace-card-with-value! player card-id (deck-pop-discard-pile! (player-get-deck player))) 
+)
+
+; Discard a card-value, used for a card that has been taken from a pile.
+(define (player-discard-card! player card-value)
+    (deck-push-discard-pile! (player-get-deck player) card-value)
+)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ; PLAYER STRATEGY METHODS
@@ -111,124 +149,5 @@
 
 (define (player-play-phase2 player)
     ((player-strat player) player "play-phase2") 
-)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;               CARD SETTERS
-;      !!! ONLY CHANGE CARD WITH THESE !!!
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (player-set-card! player id card)
-    (if ((player-card-removed? player id)
-        (log-fatal "Tried to set the value of a removed card: player-set-card!")))
-    (if (player-card-open player id)
-        (player-open-sum-set! player (+ (player-open-sum player) (- card (player-get-card player id))))
-        (player-hidden-sum-set! player (+ (player-hidden-sum player) (- card (player-get-card player id)))))
-    (vector-set! (player-cards player) id card)
-)
-
-(define (player-open-card! player id)
-    (if (= (vector-ref (player-card-state player) id) *card-state-hidden*)
-        (vector-set! (player-card-state player) id *card-state-open*)
-        (log-fatal "Tried to open a non-hidden card: player-open-card" ""))
-)
-
-(define (player-remove-card! player id)
-    (if (= (vector-ref (player-card-state player) id) *card-state-open*)
-        (vector-set! (player-card-state player) id *card-state-removed*)
-        (log-fatal "Tried to open a non-open card: player-remove-card" ""))
-)
-
-;;;;;;;;;;;;;;
-; CARD METHODS
-;;;;;;;;;;;;;;
-
-;Validate the cards for for consistency
-
-; Returns the value of the card replaced of #f on failure.
-(define (player-replace-first-hidden-card player val)
-    (define (open idx)
-        (if (= idx *player-num-cards*)
-            (begin
-                (display "!!! player-replace-first-hidden-card: there are none hidden!")
-                (newline)
-                (exit 1))
-        
-            (if (player-card_state-hidden? idx)
-                (begin
-                    (player-open-card! player idx)
-                    (player-set-card! player idx val)
-                )
-                (open (+ idx 1)))))
-    (open 0)
-)
-
-; Set sets the first hidden card to open 
-(define (player-open-first-hidden-card! player)
-    (define (open idx)
-        (if (= idx *player-num-cards*)
-            (log-fatal "There are no hidden files: player-open-first-hidden-card" "")
-            (if (player-card-hidden? player idx)
-                (player-open-card player idx)
-                (open (+ idx 1)))))
-    (open 0)
-)
-(define (player-any-cards-in-state? player state)
-    (let loop ((i 0))
-        (if (= i *player-num-cards*)
-            #f
-            (if (= (player-get-card-state player i) state)
-                #t
-                (loop (+ i 1)))))
-)
-(define (player-any-cards-open? player)
-    (> 1 (player-open-cnt player))
-)
-(define (player-any-cards-hidden? player)
-    (player-any-cards-in-state? player *card-state-hidden*)
-)
-(define (player-any-cards-removed? player)
-    (player-any-cards-in-state? player *card-state-removed*)
-)
-(define (player-get-card-state player id)
-    (vector-ref (player-card-state player) id)
-)
-
-(define (player-card-open? player id)
-    (= (player-get-card-state player id) *card-state-open*)
-)
-
-(define (player-card-hidden? player id)
-    (= (player-get-card-state player id) *card-state-hidden*)
-)
-
-(define (player-card-removed? player id)
-    (= (player-get-card-state player id) *card-state-removed*)
-)
-
-
-(define (player-get-card player id)
-    (vector-ref (player-cards player) id)
-)
-
-; Returns the id of the highest open card or #f if there are none
-(define (player-get-max-open-card player)
-    (let loop ((i 0) (max-id #f) (max-value -3))
-        (if (< i *player-num-cards*)
-            (if (and (player-card-open? player i) (< (player-get-card player i) max-value))
-                (loop (+ i 1) i (player-get-card player i))
-                (loop (+ i 1) max-id max-value))
-            #f))
-)
-
-; Returns the id of the first hidden card or #f if there are none
-(define (player-first-hidden-card player)
-    (let loop ((i 0))
-        (if (= i *player-num-cards*)
-            #f
-            (if (player-card-hidden? player i)
-                i
-                (loop (+ i 1))
-            )))
 )
 

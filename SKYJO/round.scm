@@ -22,13 +22,13 @@
     deck            ;reference to the deck, new for each round
 )    
 
-(define (new-round id game first)
+(define (new-round id game)
 
     (let ((round 
             (make-round
                 id                          ;id
                 game                        ;game
-                first                       ;first
+                "first TBD"                 ;first
                 (make-vector *num-players*) ;players
                 (new-deck)                  ;deck
             )))
@@ -84,7 +84,7 @@
 
 ; Returns the id of the first player to open their last card. 
 (define (run-phase1 round)
-    (let loop ((i 0) (player-id (round-first-player round)))
+    (let loop ((i 0) (player-id (round-first round)))
         (if (>= i *round-max-plays*)
             (log-fatal "Phase1 has reached *round-max-plays*" i)
             (let ((player (round-get-player round player-id))) 
@@ -114,7 +114,7 @@
     ; Deal cards to each player
     (let loop ((i 0))
         (cond ( (< i *num-players*)
-            (deal-player-hand (round-deck round) (round-get-player round i)) 
+            (deal-hand (round-get-deck round) (round-get-hand round i))
             (loop (+ i 1)))))
 
     ; Add the first card to the discard pile.
@@ -125,11 +125,11 @@
 )
 
 ; Deals one player's hand.
-(define (deal-player-hand deck player)
+(define (deal-hand deck hand)
         ; For all player cards
         (let loop ((i 0))
-            (cond ( (< i *player-num-cards*)
-                (player-set-card! player i (deck-pop-draw-pile! deck)) 
+            (cond ( (< i *hand-num-cards*)
+                (hand-set-card-value! hand i (deck-pop-draw-pile! deck)) 
                 (loop (+ i 1)))))
 )
 
@@ -146,9 +146,7 @@
         max-id))
 )
 
-; ROUND ACCESSORS
-
-(define (round-player-score round id)
+(define (round-get-player-score round id)
     (player-score (round-get-player round id))
 )
 
@@ -156,8 +154,20 @@
     (vector-ref (round-players round) id)
 )
 
+(define (round-get-hand round id)
+    (player-get-hand (round-get-player round id))
+)
+
+(define (round-get-deck round)
+    (round-deck round)
+)
+
 (define (round-set-player! round id player)
     (vector-set! (round-players round) id player)
+)
+
+(define (round-set-first-player! round first)
+    (round-first-set! round first)
 )
 
 
