@@ -19,23 +19,21 @@
     game            ;reference to the containing game
     first           ;integer id of the player who starts the round
     players         ;vector of player references, new for each round
-
     deck            ;reference to the deck, new for each round
-
 )    
 
 (define (new-round id game first)
 
     (let ((round 
             (make-round
-                id ; round id integer
-                game ; parent game pointer
-                (make-vector *num-players*) ; players vector of pointers
-                (new-deck) ; deck pointer
-                first-player ; first player id integer
+                id                          ;id
+                game                        ;game
+                first                       ;first
+                (make-vector *num-players*) ;players
+                (new-deck)                  ;deck
             )))
 
-        ; Create players
+        ; Create players vector
         (let loop ((i 0))
             (cond( 
                 (< i *num-players*) 

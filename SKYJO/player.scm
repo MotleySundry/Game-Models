@@ -20,11 +20,14 @@
     round           ;reference to the containing round round
     strat           ;lambda reference to the assigned strategy
 
-    ; Updated during each play
+    ; Updated during each play, only change with setters!
     card-sum        ;integer sum of the cards in the player's hand
     card-cnt        ;integer count of the cards in the player's hand
     open-sum        ;integer sum of the open cards in the player's hand
     open-cnt        ;integer count of the open cards in the player's hand
+    hidden-sum      ;integer sum of the open cards in the player's hand
+    hidden-cnt      ;integer count of the open cards in the player's hand
+    removed-cnt     ;integer sum of the open cards in the player's hand
     cards           ;integer vector value -2 to 12
     card-state      ;vector 0=hidden,  1=open, -1=removed
 
@@ -39,13 +42,20 @@
     (make-player
         id                                  ;id
         round                               ;round
+        (get-player-strat id)               ;strategy
+
+        ; Updated during each play only change with setters!S
         0                                   ;card-sum
         0                                   ;card-cnt
         0                                   ;open-sum
         0                                   ;open-cnt
+        0                                   ;hidden-sum
+        12                                  ;hidden-cnt
+        0                                   ;removed-cnt
         (make-vector *player-num-cards* 0)  ;cards
         (make-vector *player-num-cards* 0)  ;card-state
-        (get-player-strat id)               ;strategy
+
+        ;Updated at the end of the round
         0                                   ;points
     ))  
 
@@ -87,6 +97,10 @@
 ; PLAYER STRATEGY METHODS
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (player-strat-label player)
+    ((player-strat player) player "get-label") 
+)
+
 (define (player-flip-two player)
     ((player-strat player) player "flip-two") 
 )
@@ -99,9 +113,37 @@
     ((player-strat player) player "play-phase2") 
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;               CARD SETTERS
+;      !!! ONLY CHANGE CARD WITH THESE !!!
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (player-set-card! player id card)
+    (if ((player-card-removed? player id)
+        (log-fatal "Tried to set the value of a removed card: player-set-card!")))
+    (if (player-card-open player id)
+        (player-open-sum-set! player (+ (player-open-sum player) (- card (player-get-card player id))))
+        (player-hidden-sum-set! player (+ (player-hidden-sum player) (- card (player-get-card player id)))))
+    (vector-set! (player-cards player) id card)
+)
+
+(define (player-open-card! player id)
+    (if (= (vector-ref (player-card-state player) id) *card-state-hidden*)
+        (vector-set! (player-card-state player) id *card-state-open*)
+        (log-fatal "Tried to open a non-hidden card: player-open-card" ""))
+)
+
+(define (player-remove-card! player id)
+    (if (= (vector-ref (player-card-state player) id) *card-state-open*)
+        (vector-set! (player-card-state player) id *card-state-removed*)
+        (log-fatal "Tried to open a non-open card: player-remove-card" ""))
+)
+
 ;;;;;;;;;;;;;;
 ; CARD METHODS
 ;;;;;;;;;;;;;;
+
+;Validate the cards for for consistency
 
 ; Returns the value of the card replaced of #f on failure.
 (define (player-replace-first-hidden-card player val)
@@ -140,7 +182,7 @@
                 (loop (+ i 1)))))
 )
 (define (player-any-cards-open? player)
-    (player-any-cards-in-state? player *card-state-open*)
+    (> 1 (player-open-cnt player))
 )
 (define (player-any-cards-hidden? player)
     (player-any-cards-in-state? player *card-state-hidden*)
@@ -164,24 +206,9 @@
     (= (player-get-card-state player id) *card-state-removed*)
 )
 
-(define (player-open-card! player id)
-    (if (= (vector-ref (player-card-state player) id) *card-state-hidden*)
-        (vector-set! (player-card-state player) id *card-state-open*)
-        (log-fatal "Tried to open a non-hidden card: player-open-card" ""))
-)
-
-(define (player-remove-card! player id)
-    (if (= (vector-ref (player-card-state player) id) *card-state-open*)
-        (vector-set! (player-card-state player) id *card-state-removed*)
-        (log-fatal "Tried to open a non-open card: player-remove-card" ""))
-)
 
 (define (player-get-card player id)
     (vector-ref (player-cards player) id)
-)
-
-(define (player-set-card! player id card)
-    (vector-set! (player-cards player) id card)
 )
 
 ; Returns the id of the highest open card or #f if there are none

@@ -56,8 +56,8 @@
 (define *deck-mean* 5)
 (define *deck-median* 4)
 
-; PLAYER CONSTANTS
-(define *player-num-cards* 12)
+; HAND CONSTANTS
+(define *hand-num-cards* 12)
 (define *card-state-hidden* 0)
 (define *card-state-open* 1)
 (define *card-state-removed* -1)
