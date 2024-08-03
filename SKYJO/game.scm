@@ -14,15 +14,37 @@
 ; You should have received a copy of the GNU Affero General Public License
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-(define-structure game id rounds round-cnt points last-round winner winner-points winner-strat)
+(define-structure game 
+    id 
+
+    ; Updated for each round
+    rounds              ;vector of round references, filled as the game progresses
+    round-cnt           ;integer incremented as new rounds are started
+    points              ;integer points for each player tallied after each round
+    last-round          ;reference to the round that ended the game
+
+    ; Updated at the end of the game
+    winning-points      ;integer points of the winner/s 
+    winner-ties?        ;boolean were there ties for winner?
+    winner              ;reference to the winning player, ties are broken randomly
+    winner-strat        ;string label of the winner's strategy, ties are broken randomly 
+)
 
 (define (new-game id)
     (make-game
-        id ; id
-        (make-vector  *max-rounds*) ; rounds
-        0 ; round-cnt
-        (make-vector  *num-players* 0) ; scores
-  
+        id                              ;id
+        
+        ; Updated for each round
+        (make-vector  *max-rounds*)     ;rounds 
+        0                               ;round-count
+        (make-vector  *num-players* 0)  ;points
+        "last-round TBD"                ;last-round
+
+        ; Updated at the end of the game
+        0                               ;winning-points
+        #f                              ;winner-ties?
+        "winner TBD"                    ;winner                          
+        "winner-strat TBD"              ;winner-strat                         
     )
 )
 
@@ -36,9 +58,9 @@
 
                 ; Add round to game
                 (game-set-round! game i round)
-                (let ((high-player (round-deal-hands round)))
-                    ; Set the round first player
-                    (if (= i 0) (round-first-player-set! round high-player)
+                (let ((high-flipper (round-deal-hands round)))
+                    ; Set the first player
+                    (if (= i 0) (round-first-player-set! round high-flipper)
                             (round-first-player-set! round (remainder (+ *num-players* (round-first-player (game-get-round game (- i 1)))) *num-players*))))
 
                 (let ((out-player (round-run round))) 
@@ -48,7 +70,7 @@
             ))
 )   
 
-; Tallys the player the player scores for this round.
+; Tallys the player scores for this round.
 ; Returns the highest player game points or #f if the game is over.
 (define (game-tally-player-points game round)
     #f

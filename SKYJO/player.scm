@@ -14,26 +14,39 @@
 ; You should have received a copy of the GNU Affero General Public License
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+
 (define-structure player
-    id
-    round
-    card-sum ; The sum of the cards left in the player's hand
-    points ; The points the player scored for the hand
-    cards ; vector value -2 to 12
-    card-state ;vector 0=hidden,  1=open, -1=removed
-    strat ;lambda
+    id              ;integer player id, unique in context
+    round           ;reference to the containing round round
+    strat           ;lambda reference to the assigned strategy
+
+    ; Updated during each play
+    card-sum        ;integer sum of the cards in the player's hand
+    card-cnt        ;integer count of the cards in the player's hand
+    open-sum        ;integer sum of the open cards in the player's hand
+    open-cnt        ;integer count of the open cards in the player's hand
+    cards           ;integer vector value -2 to 12
+    card-state      ;vector 0=hidden,  1=open, -1=removed
+
+    ;Updated at the end of the round
+    points          ;integer points the player scored for the round
+
 )
 
 ; Create a new initialized player structure.
 (define (new-player id round)
     ; Allocate structure
     (make-player
-        id ;id
-        round ;round
-        0  ;total
-        (make-vector *player-num-cards* 0) ;cards (val 0)
-        (make-vector *player-num-cards* 0) ;card-state (face down)
-        (get-player-strat id) ;strategy
+        id                                  ;id
+        round                               ;round
+        0                                   ;card-sum
+        0                                   ;card-cnt
+        0                                   ;open-sum
+        0                                   ;open-cnt
+        (make-vector *player-num-cards* 0)  ;cards
+        (make-vector *player-num-cards* 0)  ;card-state
+        (get-player-strat id)               ;strategy
+        0                                   ;points
     ))  
 
 ; Returns the index of the largest open card or #f if there are no open cards.

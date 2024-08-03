@@ -14,17 +14,25 @@
 ; You should have received a copy of the GNU Affero General Public License
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-(define-structure round id game players deck first-player)    
+(define-structure round
+    id              ;integer round id, unique in context
+    game            ;reference to the containing game
+    first           ;integer id of the player who starts the round
+    players         ;vector of player references, new for each round
 
-(define (new-round id game)
+    deck            ;reference to the deck, new for each round
+
+)    
+
+(define (new-round id game first)
 
     (let ((round 
             (make-round
-                id
-                game
-                (make-vector *num-players*) ; players
-                (new-deck) ; deck
-                0 ; first-player
+                id ; round id integer
+                game ; parent game pointer
+                (make-vector *num-players*) ; players vector of pointers
+                (new-deck) ; deck pointer
+                first-player ; first player id integer
             )))
 
         ; Create players
