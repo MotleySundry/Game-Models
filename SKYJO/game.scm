@@ -15,7 +15,7 @@
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 (define-structure game 
-    id 
+    id
 
     ; Updated for each round
     rounds              ;vector of round references, filled as the game progresses
@@ -68,42 +68,53 @@
 
                     ; run it
                     (round-run round)
+                    (game-tally-player-points game round)
 
                     ; game done
-                    (if (game-tally-player-points game round)
-                        (loop (+ i 1)))))))
+                    (if (< (vector-max-val (game-points game)) 100)
+                        (loop (+ i 1))
+                        (displayln (game-points game)))))))
 )
 
 ; Tallys the player scores for this round.
-; Returns #t or #f if the game is over.
 (define (game-tally-player-points game round)
-    #f
+    (let loop ((i 0))
+        (if (< i *num-players*)
+            (let ((player (round-get-player round i)))
+                (player-get-card-sum player)
+                (game-add-player-points game i (player-get-card-sum player)))))
 )
 
-; GAME METHODS
-
-(define (game-set-starter! game starter)
-    (game-starter-set! game starter)
-)
+; GAME GETTERS
 
 (define (game-get-starter game)
     (game-starter game)
 )
 
-(define (game-add-player-score! game id round-score)
-    (game-set-player-score! game id (+ round-score (game-player-score game id)))
-)
-
-(define (game-set-player-score! game id score)
-    (vector-set! (game-scores game) id score)
-)
-
-(define (game-player-score game id)
-    (vector-ref (game-scores game) id)
+(define (game-get-player-points game id)
+    (vector-ref (game-points game) id)
 )
 
 (define (game-get-round game id)
     (vector-ref (game-rounds game) id)
+)
+
+; GAME SETTERS
+
+(define (game-set-player-points! game id points)
+    (vector-set! (game-points game) id points)
+)
+
+(define (game-add-player-points game id points)
+    (game-set-player-points! game id (+ points (game-get-player-points game id)))
+)
+
+(define (game-set-starter! game starter)
+    (game-starter-set! game starter)
+)
+
+(define (game-set-player-score! game id score)
+    (vector-set! (game-scores game) id score)
 )
 
 (define (game-set-round! game id round)

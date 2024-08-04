@@ -46,29 +46,29 @@
 ; Returns the id of the first player to open their last card. 
 (define (round-run round)
    (define out-player (run-phase1 round))
-   (round-update-player-points round out-player)
+   (round-update-all-player-points round out-player)
 )
 
 ; Calculates the player points for the round.
 (define (round-update-all-player-points round out-player-id)
     (let loop ((i 0))
-        (round-update-player-points round i out-player-id)
-    )
+        (if (< i *num-players*)
+            (begin
+                (round-update-player-points round i out-player-id)
+                (loop (+ i 1)))))
 )
 
-(define (round-update-player-points round player-id out-player-id)
+; Calculates a player's points for the round.
 
-    (define player round-get-player player-id)
+(define (round-update-player-points round player-id out-player-id)
+    (define player (round-get-player round player-id))
     (define hand (player-hand player))
 
-        (hand ))
-            
-            (if (= player-id out-player-id)  
-                (if (< (hand-card-sum (player-hand player)) (round-min-total round out-player))
-                    (player-points-set! player (hand-card-sum (player-hand (round-get-player i))))
-                    (player-points-set! player (* 2 (hand-card-sum (player-hand player)))))
-                (player-points-set! player (hand-card-sum (player-hand player))))
-    )
+    (if (= player-id out-player-id)  
+        (if (< (hand-card-sum hand) (round-min-total round out-player-id))
+            (player-points-set! player (hand-card-sum hand))
+            (player-points-set! player (* 2 (hand-card-sum hand))))
+        (player-points-set! player (hand-card-sum hand)))
 )
 
 ; Returns the player with the lowest card total for the round.
@@ -77,8 +77,8 @@
     (let loop ((i 0)( min-id #f) (min-val 144))
         (if (= i *num-players*)
             min-id
-            (if (and (not (= i exclude-player))(< (round-player-score round i) min-val))
-                (loop (+ i 1) (round-player-score round i) i)
+            (if (and (not (= i exclude-player)) (< (hand-card-sum (player-hand (round-get-player round i))) min-val))
+                (loop (+ i 1) i (hand-card-sum (player-hand (round-get-player round i))))
                 (loop (+ i 1) min-id min-val))))
 )
 
@@ -92,8 +92,7 @@
                     (loop (+ i 1) (remainder (+ player-id 1)  *num-players*))
                     (run-phase2 round (remainder (+ player-id 1)  *num-players*))))
         )
-        player-id
-    )
+        player-id)
 )
 
 (define (run-phase2 round start-player)

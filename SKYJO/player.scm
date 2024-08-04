@@ -59,12 +59,20 @@
     (player-round player)
 )
 
+(define (player-get-card-sum player)
+    (hand-card-sum (player-hand player))
+)
+
 (define (player-get-card-value player card-id)
     (hand-get-card-value (player-get-hand player) card-id)
 )
 (define (player-get-first-hidden-card player)
     (hand-get-first-hidden-card (player-get-hand player))
 )
+
+;;;;;;;;;;;;;;;;;;
+; PLAYER QUERIES
+;;;;;;;;;;;;;;;;;;
 
 (define (player-any-cards-open? player)
     (hand-any-cards-open? (player-get-hand player))
