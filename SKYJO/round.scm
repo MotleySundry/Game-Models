@@ -46,30 +46,30 @@
 ; Returns the id of the first player to open their last card. 
 (define (round-run round)
    (define out-player (run-phase1 round))
-   (round-update-player-totals round)
    (round-update-player-points round out-player)
 )
 
- (define (round-update-player-totals round)
-    #t
+; Calculates the player points for the round.
+(define (round-update-all-player-points round out-player-id)
+    (let loop ((i 0))
+        (round-update-player-points round i out-player-id)
+    )
 )
 
-; Calculates the player scores for the round.
-(define (round-update-player-points game round out-player)
-    (let ((min-id (round-min-score round exclude-player)))
-        (let loop ((i 0))
-            (cond
-                ((< i *num-players*)
-                    (cond
-                        ((= i exclude-player)
-                            (if (< (game-player-score game i) (game-player-score game min-id))
-                                (game-add-player-score! game 1 (game-player-score game i))                            
-                                (game-add-player-score! game 1 ( * 2 (game-player-score game i)))))
+(define (round-update-player-points round player-id out-player-id)
 
-                        (else(game-add-player-score! game 1 (game-player-score game i)))))              
-                (else (loop (+ i 1))))))
+    (define player round-get-player player-id)
+    (define hand (player-hand player))
+
+        (hand ))
+            
+            (if (= player-id out-player-id)  
+                (if (< (hand-card-sum (player-hand player)) (round-min-total round out-player))
+                    (player-points-set! player (hand-card-sum (player-hand (round-get-player i))))
+                    (player-points-set! player (* 2 (hand-card-sum (player-hand player)))))
+                (player-points-set! player (hand-card-sum (player-hand player))))
+    )
 )
-
 
 ; Returns the player with the lowest card total for the round.
 ; Excludes the player that went out because a tie has to be detected for scoring.
