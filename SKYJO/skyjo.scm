@@ -25,4 +25,4 @@
 )
 
 ;(time (run-skyjo *num-games*))
-(time (run-skyjo 1))
+(time (run-skyjo 10000))

@@ -58,20 +58,24 @@
 )
 
 (define (hand-remove-matching-columns-by-ids! hand deck id1 id2 id3)
-    (let (
-        (val1 (hand-get-card-value hand id1))
-        (val2 (hand-get-card-value hand id2))
-        (val3 (hand-get-card-value hand id3)))
-        
-        (if (= val1 val2 val3)
-            (begin
-                (hand-set-card-removed! hand id1)
-                (hand-set-card-removed! hand id2)
-                (hand-set-card-removed! hand id3)
+    (and
+        (hand-is-card-open? hand id1)
+        (hand-is-card-open? hand id2)
+        (hand-is-card-open? hand id3)
+        (let (
+            (val1 (hand-get-card-value hand id1))
+            (val2 (hand-get-card-value hand id2))
+            (val3 (hand-get-card-value hand id3)))
+            
+            (if (= val1 val2 val3)
+                (begin
+                    (hand-set-card-removed! hand id1)
+                    (hand-set-card-removed! hand id2)
+                    (hand-set-card-removed! hand id3)
 
-                (deck-push-discard-pile! deck val1)
-                (deck-push-discard-pile! deck val2)
-                (deck-push-discard-pile! deck val3))))
+                    (deck-push-discard-pile! deck val1)
+                    (deck-push-discard-pile! deck val2)
+                    (deck-push-discard-pile! deck val3)))))
 )
 
 (define (hand-set-card-value! hand id card)
@@ -103,7 +107,7 @@
     (if (not(hand-is-card-open? hand id))
         (log-fatal "Tried to remove a non-open card: hand-set-card-removed!" id))
         (let ((card-val (hand-get-card-value hand id)))
-            (hand-removed-cnt-set! hand (+ (hand-removed-cnt-set hand) 1))
+            (hand-removed-cnt-set! hand (+ (hand-removed-cnt hand) 1))
             
             (hand-card-sum-set! hand (- (hand-card-sum hand) card-val))
             (hand-card-cnt-set! hand (- (hand-card-cnt hand) 1))
