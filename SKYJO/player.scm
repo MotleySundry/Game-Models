@@ -107,31 +107,26 @@
 ; PLAYER SETTERS
 ;;;;;;;;;;;;;;;;;;
 
-(define (player-set-card-value! player card-id)
-    (hand-set-card-value! (player-hand player) card-id)
+(define (player-set-card-value! player card-id card-value)
+    (hand-set-card-value! (player-hand player) card-id card-value)
 )
 
 (define (player-set-card-open! player card-id)
     (hand-set-card-open! (player-hand player) card-id)
 )
 
+(define (player-set-card-hidden! player card-id)
+    (hand-set-card-hidden! (player-hand player) card-id)
+)
+
 (define (player-set-card-removed! player card-id)
     (hand-set-card-removed! (player-hand player) card-id)
-)
-
-; Sets a player's card with a value
-(define (player-set-card-value! player card-id card-value)
-    (hand-set-card-value! (player-get-hand player) card-id card-value)
-)
-
-(define (player-set-card-open! player card-idx)
-    (hand-set-card-open! (player-get-hand player) card-idx)
 )
 
 ; Replaces a players card with a card-value, used for a card that has been taken from a pile.
 (define (player-replace-card-with-value! player card-id card-value)
     (deck-push-discard-pile! (player-get-deck player) (player-get-card-value player card-id))
-    (player-set-card-value! player card-id card-id)
+    (player-set-card-value! player card-id card-value)
     (if(player-is-card-hidden? player card-id)
         (player-set-card-open! player card-id))
 )
