@@ -150,7 +150,6 @@
     #t       
 )
 
-
 ; Returns the id of the highest open card or #f if there are none
 (define (hand-get-largest-open-card hand)
     (let loop ((i 0) (max-id #f) (max-value -3))
