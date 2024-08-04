@@ -25,8 +25,10 @@
     hidden-sum      ;integer sum of the open cards in the hand's hand
     hidden-cnt      ;integer count of the open cards in the hand's hand
     removed-cnt     ;integer sum of the open cards in the hand's hand
-    card-value      ;integer vector value -2 to 12
-    card-state      ;integer vector 0=hidden,  1=open, -1=removed
+    card-value      ;integer vector -2 to 12; 
+                    ;Index: 0=lower-left, 11=upper-right
+    card-state      ;integer vector 0=hidden, 1=open, -1=removed
+                    ;Index: 0=lower-left, 11=upper-right
 )
 
 ; Create a new initialized hand structure.
@@ -47,6 +49,30 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;               HAND SETTERS
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (hand-remove-matching-columns! hand deck)
+    (hand-remove-matching-columns-by-ids! hand deck 0 4 8)
+    (hand-remove-matching-columns-by-ids! hand deck 1 5 9)
+    (hand-remove-matching-columns-by-ids! hand deck 2 6 10)
+    (hand-remove-matching-columns-by-ids! hand deck 3 7 11)
+)
+
+(define (hand-remove-matching-columns-by-ids! hand deck id1 id2 id3)
+    (let (
+        (val1 (hand-get-card-value hand id1))
+        (val2 (hand-get-card-value hand id2))
+        (val3 (hand-get-card-value hand id3)))
+        
+        (if (= val1 val2 val3)
+            (begin
+                (hand-set-card-removed! hand id1)
+                (hand-set-card-removed! hand id2)
+                (hand-set-card-removed! hand id3)
+
+                (deck-push-discard-pile! deck val1)
+                (deck-push-discard-pile! deck val2)
+                (deck-push-discard-pile! deck val3))))
+)
 
 (define (hand-set-card-value! hand id card)
     (let ((old-val (hand-get-card-value hand id)))
@@ -74,7 +100,7 @@
 )
 
 (define (hand-set-card-removed! hand id)
-    (if (not(hand-card-open? hand id))
+    (if (not(hand-is-card-open? hand id))
         (log-fatal "Tried to remove a non-open card: hand-set-card-removed!" id))
         (let ((card-val (hand-get-card-value hand id)))
             (hand-removed-cnt-set! hand (+ (hand-removed-cnt-set hand) 1))

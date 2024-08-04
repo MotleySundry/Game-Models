@@ -58,6 +58,7 @@
 (define (player-play-phase1 player)
     ;(print (list "play-phase1: player:" (player-id player)))
     ((player-strat player) player "play-phase1")
+    (player-remove-matching-columns! player)
     (player-any-cards-hidden? player)
 
 )
@@ -65,7 +66,8 @@
 ; Returns #t if the play was executed or #f otherwise.
 (define (player-play-phase2 player)
     ;(print (list "play-phase2: player:" (player-id player)))
-    ((player-strat player) player "play-phase2") 
+    ((player-strat player) player "play-phase2")
+    (player-remove-matching-columns! player)
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -177,11 +179,6 @@
     (hand-set-card-removed! (player-hand player) card-id)
 )
 
-; Discard a card-value, used for a card that has been taken from a pile.
-(define (player-discard-card! player card-value)
-    (deck-push-discard-pile! (player-get-deck player) card-value)
-)
-
 ; PLAYER PRINT
 (define (player-print player tab)
     (display tab)(print "--- Player ---")
@@ -195,4 +192,7 @@
     (round-print (player-round player) "")
 )
 
+(define (player-remove-matching-columns! player)
+    (hand-remove-matching-columns! (player-hand player) (round-deck (player-round player)))
+)
 
