@@ -1,4 +1,4 @@
-; Motley Sundry :: Game Models :: SKYJO :: strat-vaive.scm
+; Motley Sundry :: Game Models :: SKYJO :: strat-naive.scm
 ; Copyright (C) 2024 Donald R Anderson
 ;
 ; This program is free software: you can redistribute it and/or modify
@@ -19,19 +19,17 @@
 (define (strat-naive player cmd)
 
     (cond
-        ; Returns #f if the player opened their last card, #t otherwise.
-
         ((equal? cmd "get-label") "Naive")
 
         ((equal? cmd "play-phase1") 
-            (if (strat-naive-any-phase player)
-                (player-any-cards-hidden? player)
-                (log-fatal "Player failed to make a play: play-phase1" player)))
-
-        ((equal? cmd "play-phase2")
             (or 
                 (strat-naive-any-phase player)
                 (log-fatal "Player failed to make a play: play-phase1" player)))
+        
+        ((equal? cmd "play-phase2")
+            (or 
+                (strat-naive-any-phase player)
+                (log-fatal "Player failed to make a play: play-phase2" player)))
 
         ((equal? cmd "flip-two")
             (strat-naive-flip-two player))

@@ -14,12 +14,16 @@
 ; You should have received a copy of the GNU Affero General Public License
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-(define-structure deck draw-pile discard-pile)
+(define-structure deck draw-pile discard-pile draw-cnt draw-sum discard-cnt discard-sum)
 
 (define (new-deck)
     (make-deck
         (vector-to-list (vector-rand (vector-dup *deck*)))  ;draw-pile
-        '()) ; discard-pile
+        '()         ;discard-pile
+        *deck-size* ;draw-cnt
+        *deck-sum*  ;draw-sum
+        0           ;discard-cnt
+        0)          ;discard-sum
 )
 
 ; Removes the top card on the draw pile.
@@ -32,6 +36,8 @@
         ; Pop it off
         (let ((card (car (deck-draw-pile deck))))
             (deck-draw-pile-set! deck (cdr (deck-draw-pile deck)))
+            (deck-draw-cnt-set! deck (- (deck-draw-cnt deck) 1))
+            (deck-draw-sum-set! deck (- (deck-draw-sum deck) card))
             card
         ))
 )
@@ -46,6 +52,9 @@
         ; Pop it off
         (let ((card (car (deck-discard-pile deck))))
             (deck-discard-pile-set! deck (cdr (deck-discard-pile deck)))
+            (deck-discard-cnt-set! deck (- (deck-discard-cnt deck) 1))
+            (deck-discard-sum-set! deck (- (deck-discard-sum deck) card))
+
             card
         ))
 )
@@ -61,5 +70,29 @@
 ; Places the value of the card onto the discard pile.
 (define (deck-push-discard-pile! deck card)
     (deck-discard-pile-set! deck (cons card (deck-discard-pile deck)))
+    (deck-discard-cnt-set! deck (+ (deck-discard-cnt deck) 1))
+    (deck-discard-sum-set! deck (+ (deck-discard-sum deck) card))
     #t
 )
+
+; DECK GETTERS
+(define (deck-get-draw-mean deck)
+    (/ (+ 0.0 (deck-draw-sum deck)) (+ 0.0 (deck-draw-cnt deck)))
+)
+
+(define (deck-get-draw-median deck)
+    (list-get-median (deck-draw-pile deck)))
+
+
+; DECK PRINT
+(define (deck-print deck tab)
+    (display tab)(print "--- Deck ---")
+    (display tab)(print (list "Draw Pile cnt,sum,mean,median:   " 
+        (deck-draw-cnt deck) "," 
+        (deck-draw-sum deck) "," 
+        (deck-get-draw-mean deck) "," 
+        (deck-get-draw-median deck)))
+    (display tab)(print (list "Disc Pile cnt,sum:   " (deck-discard-cnt deck) "," (deck-discard-sum deck)))
+    (newline)
+)
+

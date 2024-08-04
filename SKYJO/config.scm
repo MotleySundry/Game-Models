@@ -53,6 +53,7 @@
     -1 1 2 3 4 5 6 7 8 9 10 11 12
     -1 1 2 3 4 5 6 7 8 9 10 11 12))
 (define *deck-size* 150)
+(define *deck-sum* 760)
 (define *deck-mean* 5)
 (define *deck-median* 4)
 

@@ -171,9 +171,9 @@
 ; PLAYER PRINT
 (define (player-print player tab)
     (display tab)(print "--- Player ---")
-    (display tab)(print (list "id:       " (player-id player)))
+    (display tab)(print (list "id:      " (player-id player)))
+    (display tab)(print (list "Strategy:" (player-strat-label player)))
     (hand-print (player-hand player) (string-append tab "  "))
-
     (newline)
 )
 

@@ -14,6 +14,11 @@
 ; You should have received a copy of the GNU Affero General Public License
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+; Return  the median of a list of integers or #f if the list is empty.
+(define  (list-get-median list)
+    #f
+)
+
 ; Duplicate a vector.
 (define (vector-dup vect)
     (define (myfun vect new i)

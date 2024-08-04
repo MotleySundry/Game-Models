@@ -134,6 +134,7 @@
     (display tab)(print (list "id:       " (game-id game)))
     (display tab)(print (list "round-cnt:" (game-round-cnt game)))
     (display tab)(print (list "points:   " (game-points game)))
+    (display tab)(print (list "last-round:"))
     (round-print (game-last-round game) (string-append tab "  "))
     (newline)
 )
