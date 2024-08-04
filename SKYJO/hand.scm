@@ -120,15 +120,15 @@
 )
 
 (define (hand-any-cards-open? hand)
-    (> 1 (hand-open-cnt hand))
+    (> (hand-open-cnt hand) 1)
 )
 
 (define (hand-any-cards-hidden? hand)
-    (> 1 (hand-hidden-cnt hand))
+    (> (hand-hidden-cnt hand) 1)
 )
 
 (define (hand-any-cards-removed? hand)
-    (> 1 (hand-removed-cnt hand))
+    (> (hand-removed-cnt hand) 1)
 )
 
 ; Validate the hand's consistency

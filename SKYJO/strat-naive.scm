@@ -21,12 +21,14 @@
     (cond
         ((equal? cmd "get-label") "Naive")
 
-        ((equal? cmd "play-phase1") 
+        ((equal? cmd "play-phase1")
+            ;(print (list "Phase1" (player-id player)))
             (or 
                 (strat-naive-any-phase player)
                 (log-fatal "Player failed to make a play: play-phase1" player)))
         
         ((equal? cmd "play-phase2")
+            ;(print (list "Phase2" (player-id player)))
             (or 
                 (strat-naive-any-phase player)
                 (log-fatal "Player failed to make a play: play-phase2" player)))
@@ -51,11 +53,13 @@
         (cond
             ; Try replacing the highest open card with the discard
             ((and high-open-card (< discard-value (player-get-card player high-open-card)))
+                ;(print (list "Highest Open Discard" (player-id player)))
                 (player-replace-card-from-discard! player high-open-card)                
                 #t)
                     
             ; Try replacing the hidden card with the discard
             ((and hidden-card (<= discard-value *deck-median*))
+                ;(print (list "Hidden Discard" (player-id player)))
                 (player-replace-card-from-discard! player hidden-card)                
                 #t)
                         
@@ -65,17 +69,21 @@
                     (cond
                         ; Try replacing the highest open card with the draw
                         ((and high-open-card (< draw-value (player-get-card player high-open-card)))
+                            ;(print (list "Highest Open Draw" (player-id player)))
                             (player-replace-card-with-value! player high-open-card draw-value)
                             #t)
 
                         ; Try replacing the hidden card with the draw
                         ((and hidden-card (<= draw-value *deck-median*))
+                            ;(print (list "Hidden Draw" (player-id player)))
                             (player-replace-card-with-value! player hidden-card draw-value)
                             #t)
 
                         ; Discard the draw
                         (else
-                            (player-discard-card! player draw-value))))))                 
+                            ;(print (list "Discard Draw" (player-id player)))
+                            (player-discard-card! player draw-value)
+                            #t)))))                 
 )
 
 (define (strat-naive-flip-two player)

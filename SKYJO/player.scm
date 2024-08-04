@@ -151,20 +151,20 @@
 )
 
 (define (player-flip-two player)
-    (print (list "flip-two: player:" (player-id player)))
+    ;(print (list "flip-two: player:" (player-id player)))
     ((player-strat player) player "flip-two") 
 )
 
 ;Returns #f if the player opened their last card, #t otherwise
 (define (player-play-phase1 player)
-    (print (list "play-phase1: player:" (player-id player)))
+    ;(print (list "play-phase1: player:" (player-id player)))
     ((player-strat player) player "play-phase1")
     (player-any-cards-hidden? player)
 
 )
 
 (define (player-play-phase2 player)
-    (print (list "play-phase2: player:" (player-id player)))
+    ;(print (list "play-phase2: player:" (player-id player)))
     ((player-strat player) player "play-phase2") 
 )
 
