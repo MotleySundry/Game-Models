@@ -90,7 +90,7 @@
             (let ((player (round-get-player round player-id))) 
                 (if (player-play-phase1 player)
                     (loop (+ i 1) (remainder (+ player-id 1)  *num-players*))
-                    (run-phase2 round (remainder (+ player-id 1)  *num-players*))))
+                    (run-phase2 round (remainder (+ player-id 1)  *num-players*)))) ;Player opened last card
         )
         player-id)
 )

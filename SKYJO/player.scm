@@ -128,7 +128,6 @@
     (hand-set-card-open! (player-get-hand player) card-idx)
 )
 
-
 ; Replaces a players card with a card-value, used for a card that has been taken from a pile.
 (define (player-replace-card-with-value! player card-id card-value)
     (deck-push-discard-pile! (player-get-deck player) (player-get-card-value player card-id))
@@ -157,14 +156,20 @@
 )
 
 (define (player-flip-two player)
+    (print (list "flip-two: player:" (player-id player)))
     ((player-strat player) player "flip-two") 
 )
 
+;Returns #f if the player opened their last card, #t otherwise
 (define (player-play-phase1 player)
-    ((player-strat player) player "play-phase1") 
+    (print (list "play-phase1: player:" (player-id player)))
+    ((player-strat player) player "play-phase1")
+    (player-any-cards-hidden? player)
+
 )
 
 (define (player-play-phase2 player)
+    (print (list "play-phase2: player:" (player-id player)))
     ((player-strat player) player "play-phase2") 
 )
 

@@ -24,4 +24,5 @@
     (log-info "Finished SKYJO" "")
 )
 
-(time (run-skyjo *num-games*))
+;(time (run-skyjo *num-games*))
+(time (run-skyjo 1))
