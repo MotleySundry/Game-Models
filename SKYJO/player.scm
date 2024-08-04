@@ -177,4 +177,8 @@
     (newline)
 )
 
+(define (player-print-round player tab)
+    (round-print (player-round player) "")
+)
+
 
