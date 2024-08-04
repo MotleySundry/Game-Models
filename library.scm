@@ -61,7 +61,7 @@
     (let loop ((i 0) (max-val (vector-ref vector 0)))
         (if (< i (vector-length vector))
             (if (> (vector-ref vector i) max-val)
-                (loop (+ i 1) (vector-ref i))
+                (loop (+ i 1) (vector-ref vector i))
                 (loop (+ i 1) max-val))
         max-val))
 )
@@ -70,7 +70,7 @@
     (let loop ((i 0) (max-idx 0) (max-val (vector-ref vector 0)))
         (if (< i (vector-length vector))
             (if (> (vector-ref vector i) max-val)
-                (loop (+ i 1) i (vector-ref i))
+                (loop (+ i 1) i (vector-ref vector i))
                 (loop (+ i 1) max-idx max-val))
         max-idx))
 )
@@ -93,32 +93,46 @@
         max-idx))
 )
 
+; Displays everything on one line, a list is recursed
+(define (print value)
+    (let loop ((val value))
+        (if (not (null? val))
+                (if (list? val)
+                    (begin (loop (car val)) (loop (cdr val)))
+                    (begin (display val)(display " ")))))
+    (newline)
+)
 
-(define (displayln value)
-    (display value)(newline)
+; Displays values separate lines, a list is recursed
+(define (println value)
+    (let loop ((val value))
+        (if (not (null? val))
+                (if (list? val)
+                    (begin (loop (car val)) (loop (cdr val)))
+                    (begin (display val)(newline)))))
 )
 
 (define (log-fatal msg data)
     (display "### ")(display msg)(display " ### ")(display (time->seconds(current-time)))(newline)
-    (display "    ")(display data)(newline)
+    (println data)
     (exit 1)
 )
 
 (define (log-error msg data)
     (display "!!! ")(display msg)(display " !!! ")(display (time->seconds(current-time)))(newline)
-    (display "    ")(display data)(newline)
+    (println data)
     data
 )
 
 (define (log-warning msg data)
     (display "=== ")(display msg)(display " === ")(display (time->seconds(current-time)))(newline)
-    (display "    ")(display data)(newline)
+    (println data)
     data
 )
 
 (define (log-info msg data)
     (display "--- ")(display msg)(display " --- ")(display (time->seconds(current-time)))(newline)
-    (display "    ")(display data)(newline)
+    (println data)
     data
 )
 

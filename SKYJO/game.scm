@@ -76,10 +76,8 @@
                     ; game done
                     (if (< (vector-max-val (game-points game)) 100)
                         (loop (+ i 1))
-                        (begin
-                            (displayln (game-points game))
-                            (displayln round)
-                        ))))))
+                        (game-print game)
+                        )))))
 )
 
 ; Tallys the player scores for this round.
@@ -88,7 +86,8 @@
         (if (< i *num-players*)
             (let ((player (round-get-player round i)))
                 (player-get-card-sum player)
-                (game-add-player-points game i (player-get-card-sum player)))))
+                (game-add-player-points game i (player-get-card-sum player))
+                (loop (+ i 1)))))
 )
 
 ; GAME GETTERS
@@ -125,5 +124,12 @@
 
 (define (game-set-round! game id round)
     (vector-set! (game-rounds game) id round)
+)
+
+; GAME PRINT
+(define (game-print game)
+    (print "--- Game ---")
+    (print (list "id:" (game-id game)))
+    
 )
 
