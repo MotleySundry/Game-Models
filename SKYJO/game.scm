@@ -58,6 +58,8 @@
             ; RUN NEXT ROUND
             (let ((round (new-round i game)))
                 (game-set-round! game i round)
+                (game-last-round-set! game round)
+                (game-round-cnt-set! game (+ i 1))
                 (round-is-valid? round)
 
                 (let ((high-flip (round-deal-hands round)))
@@ -76,7 +78,7 @@
                     ; game done
                     (if (< (vector-max-val (game-points game)) 100)
                         (loop (+ i 1))
-                        (game-print game)
+                        (game-print game "")
                         )))))
 )
 
@@ -127,9 +129,12 @@
 )
 
 ; GAME PRINT
-(define (game-print game)
-    (print "--- Game ---")
-    (print (list "id:" (game-id game)))
-    
+(define (game-print game tab)
+    (display tab)(print "--- Game ---")
+    (display tab)(print (list "id:       " (game-id game)))
+    (display tab)(print (list "round-cnt:" (game-round-cnt game)))
+    (display tab)(print (list "points:   " (game-points game)))
+    (round-print (game-last-round game) (string-append tab "  "))
+    (newline)
 )
 

@@ -168,3 +168,13 @@
     ((player-strat player) player "play-phase2") 
 )
 
+; PLAYER PRINT
+(define (player-print player tab)
+    (display tab)(print "--- Player ---")
+    (display tab)(print (list "id:       " (player-id player)))
+    (hand-print (player-hand player) (string-append tab "  "))
+
+    (newline)
+)
+
+

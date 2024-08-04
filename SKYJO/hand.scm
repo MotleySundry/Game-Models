@@ -205,4 +205,11 @@
     (open 0)
 )
 
+; HAND PRINT
+(define (hand-print hand tab)
+    (display tab)(print "--- Hand ---")
+    (display tab)(print (list "card-value: " (hand-card-value hand)))
+    (display tab)(print (list "card-state: " (hand-card-state hand)))
+    (newline)
+)
 

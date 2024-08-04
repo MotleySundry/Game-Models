@@ -179,5 +179,19 @@
                 (loop (+ i 1)))))
 )
 
+; ROUND PRINT
+(define (round-print round tab)
+    (display tab)(print "--- Round ---")
+    (display tab)(print (list "id:       " (round-id round)))
+    
+    ;Players
+    (let ploop ((i 0))
+        (if (< i *num-players*)
+            (begin
+                (player-print (round-get-player round i) (string-append tab "  "))
+                (ploop (+ i 1)))))
+
+    (newline)
+)
 
 
