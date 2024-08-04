@@ -19,25 +19,29 @@
 (define (strat-naive player cmd)
 
     (cond
+        ; Returns the string label of the strategy or #f on failure.
         ((equal? cmd "get-label") "Naive")
 
+        ; Returns #t if the play was executed or #f otherwise
         ((equal? cmd "play-phase1")
-            (print (list "Phase1" (player-id player)))
-            (print (list "Enter Phase1:"))
-            (player-print-round player "  ")
+            ;(print (list "Phase1" (player-id player)))
+            ;(print (list "Enter Phase1:"))
+            ;(player-print-round player "  ")
             (or 
                 (strat-naive-any-phase player)
                 (log-fatal "Player failed to make a play: play-phase1" player))
-            (print (list "Exit Phase1:"))
-            (player-print-round player "  ")
+            ;(print (list "Exit Phase1:"))
+            ;(player-print-round player "  ")
         )
         
+        ; Returns #t if the play was executed or #f otherwise.
         ((equal? cmd "play-phase2")
             ;(print (list "Phase2" (player-id player)))
             (or 
                 (strat-naive-any-phase player)
                 (log-fatal "Player failed to make a play: play-phase2" player)))
 
+        ; Returns the sum of the cards if the flips were executed #f otherwise.
         ((equal? cmd "flip-two")
             (strat-naive-flip-two player))
         

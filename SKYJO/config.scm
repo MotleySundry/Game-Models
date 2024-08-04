@@ -37,7 +37,6 @@
 (define *min-rounds* 10)
 (define *max-rounds* 50)
 
-
 ; DECK CONSTANTS
 (define *deck* '#(
     -2 -2 -2 -2 -2
