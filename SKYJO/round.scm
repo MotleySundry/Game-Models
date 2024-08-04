@@ -112,9 +112,10 @@
 (define (round-deal-hands round)
     ; Deal cards to each player
     (let loop ((i 0))
-        (cond ( (< i *num-players*)
-            (deal-hand (round-get-deck round) (round-get-hand round i))
-            (loop (+ i 1)))))
+        (if (< i *num-players*)
+            (begin
+                (deal-hand (round-get-deck round) (round-get-hand round i))
+                (loop (+ i 1)))))
 
     ; Add the first card to the discard pile.
     (deck-push-discard-pile! (round-deck round) (deck-pop-draw-pile! (round-deck round)))
@@ -135,7 +136,7 @@
 ; Turns up two cards for each player.
 ; Returns the player with the highest two cards, for the first player of round 0. 
 (define (round-flip-two round)
-    (let loop ((i 0) (max-val 0) (max-id 0))
+    (let loop ((i 0) (max-val -4 ) (max-id 0))
         (if (< i *num-players*)
             (let ((player (round-get-player round i)))
                 (let ((value (player-flip-two player)))
@@ -167,6 +168,15 @@
 
 (define (round-set-first-player! round first)
     (round-first-set! round first)
+)
+
+; Validate the rounds's consistency
+(define (round-is-valid? round)
+    (let loop ((i 0))
+        (if (< i *num-players*)
+            (begin
+                (player-is-valid? (round-get-player round 1))
+                (loop (+ i 1)))))
 )
 
 

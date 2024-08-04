@@ -98,6 +98,10 @@
     (hand-is-card-removed? (player-hand player) icard-idd)
 )
 
+; Validate the players's consistency
+(define (player-is-valid? player)
+    (hand-is-valid? (player-hand player))
+)
 
 ;;;;;;;;;;;;;;;;;;
 ; PLAYER SETTERS
@@ -119,6 +123,11 @@
 (define (player-set-card-value! player card-id card-value)
     (hand-set-card-value! (player-get-hand player) card-id card-value)
 )
+
+(define (player-set-card-open! player card-idx)
+    (hand-set-card-open! (player-get-hand player) card-idx)
+)
+
 
 ; Replaces a players card with a card-value, used for a card that has been taken from a pile.
 (define (player-replace-card-with-value! player card-id card-value)

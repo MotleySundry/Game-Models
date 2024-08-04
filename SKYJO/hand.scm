@@ -132,11 +132,22 @@
 )
 
 ; Validate the hand's consistency
-(define (hand-is-valid?)
-    (and
-        (= *hand-num-cards* (+ (hand-open-cnt hand) (hand-hidden-cnt hand) (hand-removed-cnt hand)))
-        (= (hand-card-cnt hand) (+ (hand-open-cnt hand) (hand-hidden-cnt hand)))
-        (= (hand-card-sum hand) (+ (hand-open-sum hand) (hand-hidden-sum hand))))
+(define (hand-is-valid? hand)
+    (define test-num 0)
+
+    (if (not (= *hand-num-cards* (+ (hand-open-cnt hand) (hand-hidden-cnt hand) (hand-removed-cnt hand))))
+        (log-fatal "Hand valid test failed" test-num)
+        (set! test-num (+ test-num 1)))
+        
+    (if (not (= (hand-card-cnt hand) (+ (hand-open-cnt hand) (hand-hidden-cnt hand))))
+        (log-fatal "Hand valid test failed" test-num)
+        (set! test-num (+ test-num 1)))
+    
+    (if (not (= (hand-card-sum hand) (+ (hand-open-sum hand) (hand-hidden-sum hand))))
+        (log-fatal "Hand valid test failed" test-num)
+        (set! test-num (+ test-num 1)))
+
+    #t       
 )
 
 

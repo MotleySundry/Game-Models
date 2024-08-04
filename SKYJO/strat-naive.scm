@@ -85,8 +85,8 @@
     (define card1 (random-integer *hand-num-cards*))
     (define card2 (random-integer-exclude *hand-num-cards* card1))
 
-    (hand-set-card-open! (player-get-hand player) card1)
-    (hand-set-card-open! (player-get-hand player) card2)
+    (player-set-card-open! player card1)
+    (player-set-card-open! player card2)
 
     (+ (player-get-card-value player card1) 
         (player-get-card-value player card2))

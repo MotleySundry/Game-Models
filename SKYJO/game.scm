@@ -58,6 +58,7 @@
             ; RUN NEXT ROUND
             (let ((round (new-round i game)))
                 (game-set-round! game i round)
+                (round-is-valid? round)
 
                 (let ((high-flip (round-deal-hands round)))
                     ; set starting player
@@ -68,12 +69,17 @@
 
                     ; run it
                     (round-run round)
+                    (round-is-valid? round)
+
                     (game-tally-player-points game round)
 
                     ; game done
                     (if (< (vector-max-val (game-points game)) 100)
                         (loop (+ i 1))
-                        (displayln (game-points game)))))))
+                        (begin
+                            (displayln (game-points game))
+                            (displayln round)
+                        ))))))
 )
 
 ; Tallys the player scores for this round.
