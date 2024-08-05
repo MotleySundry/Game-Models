@@ -76,23 +76,28 @@
 
 ; Replaces a players card with a card-value.
 ; It is used for a card that has been taken from the draw pile.
-(define (player-replace-card-with-value! player card-id card-value)
+(define (player-replace-card-with-draw-card! player card-id card-value)
     (deck-push-discard-pile! (player-get-deck player) (player-get-card-value player card-id))
     (player-set-card-value! player card-id card-value)
     (if(player-is-card-hidden? player card-id)
-        (player-set-card-open! player card-id))
+        (player-set-card-open! player card-id)) 
 )
 
 ; Replaces a players card by poping the top card off the discard pile.
 ; The discard top is viewable by the strategy so it is popped here.
 (define (player-replace-card-from-discard! player card-id)
-    (player-replace-card-with-value! player card-id (deck-pop-discard-pile! (player-get-deck player))) 
+    (let ((card-value (deck-pop-discard-pile! (player-get-deck player))))
+        (deck-push-discard-pile! (player-get-deck player) (player-get-card-value player card-id))
+        (player-set-card-value! player card-id card-value)
+        (if(player-is-card-hidden? player card-id)
+            (player-set-card-open! player card-id)))
 )
 
 ; Discard a card-value
 ; It is used for a card that has been taken from the draw pile.
-(define (player-discard-card! player card-value)
+(define (player-discard-draw-card! player card-value)
     (deck-push-discard-pile! (player-get-deck player) card-value)
+    (hand-open-first-hidden-card! (player-hand player))
 )
 
 ;;;;;;;;;;;;;;;;;;

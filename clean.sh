@@ -21,4 +21,4 @@ cd "$HERE" || exit
 source include.sh
 
 rm -rf ./*.c ./*.h
-rm -rf ./SKYJO/*.c ./SKYJO*.h
+rm -rf ./SKYJO/*.c ./SKYJO*.h ./SKYJO/skyjo.bin

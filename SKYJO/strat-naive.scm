@@ -79,19 +79,19 @@
                         ; Try replacing the highest open card with the draw
                         ((and high-open-card (< draw-value (player-get-card player high-open-card)))
                             ;(print (list "HighestOpen Draw" (player-id player)))
-                            (player-replace-card-with-value! player high-open-card draw-value)
+                            (player-replace-card-with-draw-card! player high-open-card draw-value)
                             #t)
 
                         ; Try replacing the hidden card with the draw
                         ((and hidden-card (<= draw-value *deck-median*))
                             ;(print (list "Hidden-Draw" (player-id player)))
-                            (player-replace-card-with-value! player hidden-card draw-value)
+                            (player-replace-card-with-draw-card! player hidden-card draw-value)
                             #t)
 
                         ; Discard the draw
                         (else
                             ;(print (list "Discard-Draw" (player-id player)))
-                            (player-discard-card! player draw-value)
+                            (player-discard-draw-card! player draw-value)
                             #t)))))                 
 )
 

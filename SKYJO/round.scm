@@ -65,9 +65,9 @@
     (define hand (player-hand player))
 
     (if (= player-id out-player-id)  
-        (if (< (hand-card-sum hand) (round-min-total round out-player-id))
-            (player-points-set! player (hand-card-sum hand))
-            (player-points-set! player (* 2 (hand-card-sum hand))))
+        (if (and (>= (hand-card-sum hand) (round-min-total round out-player-id)) (> (hand-card-sum hand) 0)   )
+            (player-points-set! player (* 2 (hand-card-sum hand)))
+            (player-points-set! player (hand-card-sum hand)))
         (player-points-set! player (hand-card-sum hand)))
 )
 
