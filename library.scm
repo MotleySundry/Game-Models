@@ -23,24 +23,24 @@
 )
 
 ; Prints all elements with an optional separator.
-(define (print #!rest r #!key (separator #f))
+(define (print #!rest r #!key (sep #f))
     (if r 
         (let loop ((lst r))
             (if (not (null? lst))
                 (begin 
                     (display (car lst)) 
-                    (if (and separator (not (null? (cdr lst)))) (display separator))
+                    (if (and sep (not (null? (cdr lst)))) (display sep))
                     (loop (cdr lst))))))
 )
 
 ; Prints all elements on a line with an optional separator.
-(define (println #!rest r #!key (separator #f))
+(define (println #!rest r #!key (sep #f))
     (if r 
         (let loop ((lst r))
             (if (not (null? lst))
                 (begin 
                     (display (car lst)) 
-                    (if (and separator (not (null? (cdr lst)))) (display separator))
+                    (if (and sep (not (null? (cdr lst)))) (display sep))
                     (loop (cdr lst))))))
     (newline)
 )

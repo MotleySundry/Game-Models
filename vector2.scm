@@ -47,3 +47,23 @@
             (vector-set! (vector2-rows vect2) row (make-vector (vector2-row-len) init))
             (vector-set! (vector2-rows vect2) row (make-vector (vector2-row-len)))))
 )
+
+(define (vector2-get-row vect2 row)
+    (vector-sum (vector-ref (vector2-rows vect2) row))
+)
+
+(define (vector2-get-column vect2 col)
+    (let(
+        (rows (vector2-rows vect2))
+        (vect (make-vector (vector2-num-rows vect2) 0))
+        (num-rows (vector2-num-rows vect2)))
+        
+        (let loop ((i 0))
+            (if (< i num-rows)
+                (begin
+                    (if (vector-ref rows i) 
+                        (vector-set! vect i (vector-ref (vector-ref rows i) col)))
+                    (loop (+ i 1))
+                )))
+        vect)
+)
