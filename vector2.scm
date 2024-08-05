@@ -14,14 +14,36 @@
 ; You should have received a copy of the GNU Affero General Public License
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-(define (new-vector2 num-vectors vector-size #!optional init)
-    (let ((v2 (make-vector num-vectors)))
+; A sparse two-dimensional vector of vectors
+(define-structure vector2 num-rows row-len rows)
+
+(define (new-vector2 num-rows row-len #!optional init)
+    (define rows (make-vector num-rows #f))
+    (define vect2 (make-vector2 num-rows row-len rows))
+    (if init 
         (let loop ((i 0))
-            (if (< i num-vectors)
+            (if (< i num-rows)
                 (begin
-                    (vector-set! v2 i ( if init 
-                        (make-vector vector-size init)
-                        (make-vector vector-size)))
-                    (loop (+ i 1)))
-                v2)))
+                    (vector-set! rows (make-vector row-length init))
+                    (loop (+ i 1))))))
+    vect2
+)
+
+(define (vector2-row-set! vect2 row data)
+    (cond 
+        ((vector? data)
+            (if (not (= (vector-length data) (vector2-row-len vect2)))
+                (log-fatal "The vect2 length does not match: vector2-set-row!"
+                    (vector-length data) (vector2-row-len vect2))
+                (vector-set! (vector2-rows vect2) row (vector-dup data))))
+
+        (else
+            (vector-set! (vector2-rows vect2) row (make-vector (vector2-row-len vect2) data))))
+)
+
+(define (vector2-insure-row! vect2 row #!optional init)
+    (if (not (vector-ref (vector2-rows vect2) row))
+        (if init
+            (vector-set! (vector2-rows vect2) row (make-vector (vector2-row-len) init))
+            (vector-set! (vector2-rows vect2) row (make-vector (vector2-row-len)))))
 )

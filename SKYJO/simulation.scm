@@ -14,41 +14,29 @@
 ; You should have received a copy of the GNU Affero General Public License
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-(define-structure simulation id num-games games score-total score-mean)
+(define-structure simulation id num-games game-scores)
 
 (define (new-simulation id num-games)
     (make-simulation
         id
         num-games
-        (make-vector  num-games "Games TBD")    ; games
-        (make-vector  *num-players* 0)          ; score-total
-        (make-vector  *num-players* 0.0)        ; score-mean
+        (new-vector2  num-games *num-players*)          ; game-scores
     )
 )
 
-(define (simulation-run simulation)    
+(define (simulation-run sim)    
     
     (let loop ((i 0) )
         (let ((game (new-game i))) 
             ;(simulation-set-game! simulation i game) ; Add game to simulation
 
         (game-run game)
-        (simulation-tally-game simulation game)
+        (vector2-row-set! (simulation-game-scores sim) i (game-points game))
 
-        (if (< (+ i 1) (simulation-num-games simulation))
+        (if (< (+ i 1) (simulation-num-games sim))
             (loop (+ i 1))))
     )
-    (simulation-calc-means simulation)
-    (simulation-print simulation "")  
-)
-
-(define (simulation-tally-game sim game)
-    (vector-add (game-points game) (simulation-score-total sim) (simulation-score-total sim))
-)
-
-(define (simulation-calc-means sim)
-    (vector-divide-scalar (simulation-score-total sim) (simulation-score-mean sim) 
-        (simulation-num-games sim))
+    (simulation-print sim "")  
 )
 
 
@@ -67,8 +55,6 @@
     (println tab "--- Simulation ---")
     (println tab "id:         " (simulation-id sim))
     (println tab "num-games:  " (simulation-num-games sim))
-    (println tab "score-total:" (simulation-score-total sim))
-    (println tab "score-mean: " (vector->real (simulation-score-mean sim)))
 )
 
 
