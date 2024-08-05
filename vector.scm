@@ -25,6 +25,17 @@
             new)
 )
 
+; Returns a new vector with real elements.
+(define (vector->real vect)
+    (define new-vect (make-vector (vector-length vect)))
+    (let loop ((i 0))
+        (if (< i (vector-length vect))
+            (begin
+                (vector-set! new-vect i (+ 0.0 (vector-ref vect i)))
+                (loop (+ i 1)))))
+    new-vect
+)
+
 ; Returns the median of the vector or #f if it doesn't exist.
 (define (vector-median vect)
     (let

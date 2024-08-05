@@ -22,47 +22,60 @@
             rnd))
 )
 
-; Displays everything on one line, a list is recursed
-(define (print value)
-    (let loop ((val value))
-        (if (not (null? val))
-                (if (list? val)
-                    (begin (loop (car val)) (loop (cdr val)))
-                    (begin (display val)(display " ")))))
+; Prints all elements with an optional separator.
+(define (print #!rest r #!key (separator #f))
+    (if r 
+        (let loop ((lst r))
+            (if (not (null? lst))
+                (begin 
+                    (display (car lst)) 
+                    (if (and separator (not (null? (cdr lst)))) (display separator))
+                    (loop (cdr lst))))))
+)
+
+; Prints all elements on a line with an optional separator.
+(define (println #!rest r #!key (separator #f))
+    (if r 
+        (let loop ((lst r))
+            (if (not (null? lst))
+                (begin 
+                    (display (car lst)) 
+                    (if (and separator (not (null? (cdr lst)))) (display separator))
+                    (loop (cdr lst))))))
     (newline)
 )
 
-; Displays values separate lines, a list is recursed
-(define (println value)
-    (let loop ((val value))
-        (if (not (null? val))
-                (if (list? val)
-                    (begin (loop (car val)) (loop (cdr val)))
-                    (begin (display val)(newline)))))
+; Prints all elements of the list on separate lines, with an optional prefix.
+(define (print-list lst #!optional prefix)
+    (let loop ((lst lst))
+        (if (not (null? lst))
+            (begin 
+                (if prefix (display prefix))
+                (display (car lst)) 
+                (newline)
+                (loop (cdr lst)))))
+
 )
 
-(define (log-fatal msg data)
-    (display "### ")(display msg)(display " ### ")(display (time->seconds(current-time)))(newline)
-    (println data)
+(define (log-fatal msg #!rest data)
+    (println "### " msg " ### " (time->seconds(current-time)))
+    (if data (print-list data "  "))
     (exit 1)
 )
 
-(define (log-error msg data)
-    (display "!!! ")(display msg)(display " !!! ")(display (time->seconds(current-time)))(newline)
-    (println data)
-    data
+(define (log-error msg #!rest data)
+    (println "!!! " msg " !!! " (time->seconds(current-time)))
+    (if data (print-list data "  "))
 )
 
-(define (log-warning msg data)
-    (display "=== ")(display msg)(display " === ")(display (time->seconds(current-time)))(newline)
-    (println data)
-    data
+(define (log-warning msg #!rest data)
+    (println "=== " msg " === " (time->seconds(current-time)))
+    (if data (print-list data "  "))
 )
 
-(define (log-info msg data)
-    (display "--- ")(display msg)(display " --- ")(display (time->seconds(current-time)))(newline)
-    (println data)
-    data
+(define (log-info msg #!rest data)
+    (println "--- " msg " --- " (time->seconds(current-time)))
+    (if data (print-list data "  "))
 )
 
 

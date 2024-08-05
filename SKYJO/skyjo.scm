@@ -15,13 +15,14 @@
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 (define (run-skyjo num-games)
-    (log-info "Starting SKYJO" "")
+    (log-info "Starting SKYJO")
 
     (random-source-randomize! default-random-source)
 
     (simulation-run (new-simulation 0 num-games))
 
-    (log-info "Finished SKYJO" "")
+    (log-info "Finished SKYJO")
+    (newline)
 )
 
 (time (run-skyjo *num-games*))

@@ -64,12 +64,11 @@
 
 ; SIMULATION PRINT
 (define (simulation-print sim tab)
-    (display tab)(print "--- Simulation ---")
-    (display tab)(print (list "id:         " (simulation-id sim)))
-    (display tab)(print (list "num-games:  " (simulation-num-games sim)))
-    (display tab)(print (list "score-total:" (simulation-score-total sim)))
-    (display tab)(print (list "score-mean: " (simulation-score-mean sim)))
-    (newline)
+    (println tab "--- Simulation ---")
+    (println tab "id:         " (simulation-id sim))
+    (println tab "num-games:  " (simulation-num-games sim))
+    (println tab "score-total:" (simulation-score-total sim))
+    (println tab "score-mean: " (vector->real (simulation-score-mean sim)))
 )
 
 
