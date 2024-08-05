@@ -79,7 +79,7 @@
                     (if (< (vector-max-val (game-points game)) 100)
                         (loop (+ i 1))
                         ;(game-print game "")
-                        (print (list "Game" ( + (game-id game) 1) "Points:" (game-points game)))
+                        ;(print (list "Game" ( + (game-id game) 1) "Points:" (game-points game)))
                         )))))
 )
 

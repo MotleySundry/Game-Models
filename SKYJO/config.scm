@@ -16,7 +16,7 @@
 
 ; CONFIGURATION
 (define *num-players* 4) ; Number of players in the game.
-(define *num-games* 5) ; Number of games to simulate.
+(define *num-games* 100000) ; Number of games to simulate.
 
 (define (get-player-strat id)
     (if (= id 0) strat-naive
@@ -68,23 +68,7 @@
 (define *round-max-plays* 150)
 (define *round-min-plays* 5)
 
-; SIMULATION CONSTANTS
-(define *simulation-min-games* 5)
-(define *simulation-max-games* 150)
-
 ; CONFIGURATION VALIDATION
-(if (> *num-games* *simulation-max-games*)
-    (begin
-        (display (list "Too many simulation games:" *num-games* ))
-        (exit 1)
-    )
-)
-(if (< *num-games* *simulation-min-games* 5)
-    (begin
-        (display (list "Too few simulation games:" *num-games* ))
-        (exit 1)
-    )
-)
 (if (> *num-players* *max-players*)
     (begin
         (display (list "Too many players:" *num-players* ))
