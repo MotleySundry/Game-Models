@@ -181,8 +181,8 @@
 
 ; ROUND PRINT
 (define (round-print round tab)
-    (display tab)(print "--- Round ---")
-    (display tab)(print (list "id:       " (round-id round)))
+    (ptintln tab "--- Round ---")
+    (ptintln tab (list "id:       " (round-id round)))
     (display tab)(deck-print (round-deck round) (string-append tab "  "))
     
     ;Players

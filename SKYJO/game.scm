@@ -131,11 +131,11 @@
 
 ; GAME PRINT
 (define (game-print game tab)
-    (display tab)(print "--- Game ---")
-    (display tab)(print (list "id:       " (game-id game)))
-    (display tab)(print (list "round-cnt:" (game-round-cnt game)))
-    (display tab)(print (list "points:   " (game-points game)))
-    (display tab)(print (list "last-round:"))
+    (println tab "--- Game ---")
+    (println tab (list "id:       " (game-id game)))
+    (println tab (list "round-cnt:" (game-round-cnt game)))
+    (println tab (list "points:   " (game-points game)))
+    (println tab (list "last-round:"))
     (round-print (game-last-round game) (string-append tab "  "))
     (newline)
 )

@@ -237,12 +237,12 @@
 
 ; HAND PRINT
 (define (hand-print hand tab)
-    (display tab)(print "--- Hand ---")
-    (display tab)(print (list "card-value:" (hand-card-value hand)))
-    (display tab)(print (list "card-state:" (hand-card-state hand)))
-    (display tab)(print (list "hidden  cnt,sum:" (hand-hidden-cnt hand) "," (hand-hidden-sum hand)))
-    (display tab)(print (list "open    cnt,sum:" (hand-open-cnt hand) "," (hand-open-sum hand)))
-    (display tab)(print (list "removed cnt:    " (hand-removed-cnt hand)))
+    (ptintln tab "--- Hand ---")
+    (ptintln tab (list "card-value:" (hand-card-value hand)))
+    (ptintln tab (list "card-state:" (hand-card-state hand)))
+    (ptintln tab (list "hidden  cnt,sum:" (hand-hidden-cnt hand) "," (hand-hidden-sum hand)))
+    (ptintln tab (list "open    cnt,sum:" (hand-open-cnt hand) "," (hand-open-sum hand)))
+    (ptintln tab (list "removed cnt:    " (hand-removed-cnt hand)))
     (newline)
 )
 
