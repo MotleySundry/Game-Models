@@ -17,11 +17,11 @@
 (define (new-vector2 num-vectors vector-size #!optional init)
     (let ((v2 (make-vector num-vectors)))
         (let loop ((i 0))
-            if (< i num-vectors)
+            (if (< i num-vectors)
                 (begin
                     (vector-set! v2 i ( if init 
                         (make-vector vector-size init)
                         (make-vector vector-size)))
-                    (loop (+ i 1))))
-        v2)
+                    (loop (+ i 1)))
+                v2)))
 )

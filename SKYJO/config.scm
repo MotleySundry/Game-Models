@@ -16,7 +16,7 @@
 
 ; CONFIGURATION
 (define *num-players* 4) ; Number of players in the game.
-(define *num-games* 100000) ; Number of games to simulate.
+(define *num-games* 1000) ; Number of games to simulate.
 
 (define (get-player-strat id)
     (if (= id 0) strat-naive

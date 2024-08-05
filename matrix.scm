@@ -22,9 +22,9 @@
     data ; number vector containing the elements
 )
 
-(define (new-matrix size #!optional(init) #!key (rowwise? #t) )
+(define (new-matrix size #!optional(init #f) #!key (rowwise? #t))
     (let ((len (vector-product-of-elements size)))
-        (make-matrix
+            (make-matrix
             rowwise?
             size
             (if init (make-vector len init) (make-vector len))))
