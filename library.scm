@@ -30,6 +30,34 @@
             new)
 )
 
+; Divides a vector by a scalar and puts the result into a second.
+; The to can be the from vector.
+(define (vector-divide-scalar from to scalar)
+    (if (not (= (vector-length from) (vector-length to)))
+        (log-fatal "The two vectors are not the same length"))
+
+    (let loop ((i 0))
+        (if (< i (vector-length from))
+            (begin
+                (vector-set! to i (/ (vector-ref from i) (+ 0.0 scalar)))
+                (loop (+ i 1)))
+        ))
+)
+
+; Adds two vectors and puts the result into a third.
+; The to can be one of the from vectors.
+(define (vector-add from1 from2 to)
+    (if (not (= (vector-length from1) (vector-length from2) (vector-length to)))
+        (log-fatal "The three vectors are not the same length"))
+
+    (let loop ((i 0))
+        (if (< i (vector-length from1))
+            (begin
+                (vector-set! to i (+ (vector-ref from1 i) (vector-ref from2 i)))
+                (loop (+ i 1)))
+        ))
+)
+
 ; Copy a vector to a list.
 (define (vector-to-list vect)
     (define (myfun vect lst i)
