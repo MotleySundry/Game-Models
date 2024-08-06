@@ -23,7 +23,7 @@
 )
 
 (define (new-matrix size #!optional(init #f) #!key (rowwise? #t))
-    (let ((len (vector-product-of-elements size)))
+    (let ((len (vector-product size)))
             (make-matrix
             rowwise?
             size

@@ -48,8 +48,17 @@
             (vector-set! (vector2-rows vect2) row (make-vector (vector2-row-len)))))
 )
 
-(define (vector2-get-row vect2 row)
-    (vector-sum (vector-ref (vector2-rows vect2) row))
+(define (vector2-get-column-sums vect2 col)
+    (let(
+        (sums (make-vector (vector2-row-len vect2)))
+        (row-len (vector2-row-len vect2)))
+         (let loop ((i 0))
+            (if (< i row-len)
+                (begin
+                    (vector-set! sums i (vector-sum (vector2-get-column vect2, i)))
+                    (loop (+ i 1))
+                    )))
+    )
 )
 
 (define (vector2-get-column vect2 col)

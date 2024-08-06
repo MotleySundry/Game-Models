@@ -14,30 +14,67 @@
 ; You should have received a copy of the GNU Affero General Public License
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-(define-structure simulation id num-games game-scores)
+(define-structure simulation 
+    id 
+    num-games
+    last-game 
+    game-scores 
+    player-strat
+    player-mean 
+    player-std 
+    player-max 
+    player-min
+)
 
 (define (new-simulation id num-games)
     (make-simulation
         id
         num-games
-        (new-vector2  num-games *num-players*)          ; game-scores
+        "last-game"
+        (new-vector2  num-games *num-players*)  ;game-scores
+        (make-vector *num-players*) ;player-strat
+        (make-vector *num-players*) ;player-mean
+        (make-vector *num-players*) ;player-std
+        (make-vector *num-players*) ;player-max
+        (make-vector *num-players*) ;player-min
     )
 )
 
 (define (simulation-run sim)    
-    
     (let loop ((i 0) )
-        (let ((game (new-game i))) 
-            ;(simulation-set-game! simulation i game) ; Add game to simulation
-
-        (game-run game)
-        (vector2-row-set! (simulation-game-scores sim) i (game-points game))
-
         (if (< (+ i 1) (simulation-num-games sim))
-            (loop (+ i 1))))
-    )
+            (begin
+                (let ((game (new-game i))) 
+                (game-run game)
+                (simulation-last-game-set! sim game)
+                (vector2-row-set! (simulation-game-scores sim) i (game-points game))
+                (loop (+ i 1))))))
+    
+    (simulation-calc-stats sim)
     (simulation-print sim "")  
 )
+
+(define (simulation-calc-stats sim)
+    (define game-scores (simulation-game-scores sim))
+    (define players (round-players (game-last-round (simulation-last-game sim))))
+    (let loop ((i 0))
+        (if (< i *num-players*)
+            (let ((player-scores (vector2-get-column game-scores i)))
+                (vector-set! (simulation-player-mean sim) i
+                    (vector-mean player-scores))
+                (vector-set! (simulation-player-std sim) i
+                    (vector-standard-deviation player-scores))
+                (vector-set! (simulation-player-max sim) i
+                    (vector-max player-scores))
+                (vector-set! (simulation-player-min sim) i
+                    (vector-min player-scores))
+                (vector-set! (simulation-player-strat sim) i
+                    (player-strat-label (vector-ref players i)))
+                (loop (+ i 1))
+            )
+    ))
+)
+
 
 
 ; SIMULATION ACCESSORS
@@ -53,8 +90,13 @@
 ; SIMULATION PRINT
 (define (simulation-print sim tab)
     (println tab "--- Simulation ---")
-    (println tab "id:         " (simulation-id sim))
-    (println tab "num-games:  " (simulation-num-games sim))
+    (println tab "id:           " (simulation-id sim))
+    (println tab "num-games:    " (simulation-num-games sim))
+    (println tab "player-strat: " (simulation-player-strat sim))
+    (println tab "player-mean:  " (vector->real(simulation-player-mean sim)))
+    (println tab "player-std:   " (simulation-player-std sim))
+    (println tab "player-max:   " (simulation-player-max sim))
+    (println tab "player-min:   " (simulation-player-min sim))
 )
 
 
