@@ -15,8 +15,9 @@
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ; CONFIGURATION
-(define *num-players* 4) ; Number of players in the game.
-(define *num-games* 100) ; Number of games to simulate.
+(define *num-players* 4)        ; Number of players in the game.
+(define *num-games* 100)        ; Number of games to simulate.
+(define *cheating-allowed?* #t) ; Allows calls outside the rules, strat-omnipotent
 
 (define (get-player-strat id)
     (if (= id 0) strat-naive

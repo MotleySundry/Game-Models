@@ -39,12 +39,12 @@
     (hand-get-largest-open-card (player-get-hand player))
  )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;
-; PLAYER STRATEGY CALLS
-;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+; PLAYER STRATEGY COMMANDS
+;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; Returns the string label of the strategy or #f on failure.
-(define (player-strat-label player)
+(define (player-get-strat-label player)
     ((player-strat player) player *strat-cmd-get-label*) 
 )
 
@@ -71,8 +71,20 @@
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; PLAYER STRATEGY CALLBACKS
+; PLAYER STRATEGY API CALLS
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; A strategy should only use these calls
+
+(define (player-discard-top-card-val player)
+    (deck-discard-top-card-val (player-get-deck player))
+)
+
+(define (player-cheat-next-draw-card-val player)
+    (if (not *cheating-allowed?*)
+        (log-fatal "Cheating is not allowed: player-cheat-next-draw-card-val"
+            (player-get-strat-label player))
+    (deck-cheat-next-draw-card-val (player-get-deck player)))
+)
 
 ; Replaces a players card with a card-value.
 ; It is used for a card that has been taken from the draw pile.
@@ -83,7 +95,7 @@
         (player-set-card-open! player card-id)) 
 )
 
-; Replaces a players card by poping the top card off the discard pile.
+; Replaces a players card by popping the top card off the discard pile.
 ; The discard top is viewable by the strategy so it is popped here.
 (define (player-replace-card-from-discard! player card-id)
     (let ((card-value (deck-pop-discard-pile! (player-get-deck player))))

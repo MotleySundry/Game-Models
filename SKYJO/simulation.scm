@@ -69,7 +69,7 @@
                 (vector-set! (simulation-player-min sim) i
                     (vector-min player-scores))
                 (vector-set! (simulation-player-strat sim) i
-                    (player-strat-label (vector-ref players i)))
+                    (player-get-strat-label (vector-ref players i)))
                 (loop (+ i 1))
             )
     ))

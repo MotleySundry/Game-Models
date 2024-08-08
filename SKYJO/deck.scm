@@ -60,11 +60,16 @@
 )
 
 ; Returns the value of the top card on the discard pile.
-; Returns #f if the discard pile is empty.
-(define (deck-discard-value deck)
+(define (deck-discard-top-card-val deck)
     (if (null? (deck-discard-pile deck))
         (log-fatal "The discard pile is empty: deck-pop-discard-pile!" "")
         (car (deck-discard-pile deck)))
+)
+; Returns the value of the top card on the discard pile.
+(define (deck-cheat-next-draw-card-val deck)
+    (if (null? (deck-draw-pile deck))
+        (log-fatal "The draw pile is empty: deck-pop-discard-pile!" "")
+        (car (deck-draw-pile deck)))
 )
 
 ; Places the value of the card onto the discard pile.

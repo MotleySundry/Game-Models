@@ -56,7 +56,7 @@
 (define (strat-naive-any-phase player)
 
     (define high-open-card (player-get-largest-open-card player))
-    (define discard-value (deck-discard-value (player-get-deck player)))
+    (define discard-value (player-discard-top-card-val player))
     (define hidden-card (player-get-first-hidden-card player))
 
         (cond

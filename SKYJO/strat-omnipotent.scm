@@ -28,7 +28,7 @@
             ;(print (list "Enter Phase1:"))
             ;(player-print-round player "  ")
             (or 
-                (strat-naive-any-phase player)
+                (strat-omnipotent-any-phase player)
                 (log-fatal "Player failed to make a play: play-phase1" player))
             ;(print (list "Exit Phase1:"))
             ;(player-print-round player "  ")
@@ -38,12 +38,12 @@
         ((= cmd *strat-cmd-play-phase2*)
             ;(print (list "Phase2" (player-id player)))
             (or 
-                (strat-naive-any-phase player)
+                (strat-omnipotent-any-phase player)
                 (log-fatal "Player failed to make a play: play-phase2" player)))
 
         ; Returns the sum of the cards if the flips were executed #f otherwise.
         ((= cmd *strat-cmd-flip-two*)
-            (strat-naive-flip-two player))
+            (strat-omnipotent-flip-two player))
         
         (else
             (display "Unknown command: ")
@@ -53,10 +53,11 @@
 )
 
 ; Returns #t if the a play was executed #f otherwise
-(define (strat-naive-any-phase player)
+(define (strat-omnipotent-any-phase player)
 
     (define high-open-card (player-get-largest-open-card player))
-    (define discard-value (deck-discard-value (player-get-deck player)))
+    (define discard-value (player-discard-top-card-val player))
+    (define next-draw-value (player-cheat-next-draw-card-val player))
     (define hidden-card (player-get-first-hidden-card player))
 
         (cond
@@ -95,7 +96,7 @@
                             #t)))))                 
 )
 
-(define (strat-naive-flip-two player)
+(define (strat-omnipotent-flip-two player)
     
     (define card1 (random-integer *hand-num-cards*))
     (define card2 (random-integer-exclude *hand-num-cards* card1))
