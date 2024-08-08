@@ -20,13 +20,13 @@
 
 (define (get-player-strat id)
     (if (= id 0) strat-naive
-    (if (= id 1) strat-naive
+    (if (= id 1) strat-omnipotent
     (if (= id 2) strat-naive
-    (if (= id 3) strat-naive
+    (if (= id 3) strat-omnipotent
     (if (= id 4) strat-naive
-    (if (= id 5) strat-naive
+    (if (= id 5) strat-omnipotent
     (if (= id 6) strat-naive
-    (if (= id 7) strat-naive
+    (if (= id 7) strat-omnipotent
 )))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

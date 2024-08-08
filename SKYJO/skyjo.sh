@@ -39,6 +39,7 @@ SRC+=('game.scm')
 SRC+=('round.scm')
 SRC+=('simulation.scm') 
 SRC+=('strat-naive.scm')
+SRC+=('strat-omnipotent.scm')
 
 # Check the arguments
 if [[ $# -eq 1 ]]; then
