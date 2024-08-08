@@ -45,19 +45,19 @@
 
 ; Returns the string label of the strategy or #f on failure.
 (define (player-strat-label player)
-    ((player-strat player) player "get-label") 
+    ((player-strat player) player *strat-cmd-get-label*) 
 )
 
 ; Returns #t if the play was executed or #f otherwise.
 (define (player-flip-two player)
     ;(print (list "flip-two: player:" (player-id player)))
-    ((player-strat player) player "flip-two") 
+    ((player-strat player) player *strat-cmd-flip-two*) 
 )
 
 ; Returns #t if the play was executed or #f otherwise.
 (define (player-play-phase1 player)
     ;(print (list "play-phase1: player:" (player-id player)))
-    ((player-strat player) player "play-phase1")
+    ((player-strat player) player *strat-cmd-play-phase1*)
     (player-remove-matching-columns! player)
     (player-any-cards-hidden? player)
 
@@ -66,7 +66,7 @@
 ; Returns #t if the play was executed or #f otherwise.
 (define (player-play-phase2 player)
     ;(print (list "play-phase2: player:" (player-id player)))
-    ((player-strat player) player "play-phase2")
+    ((player-strat player) player *strat-cmd-play-phase2*)
     (player-remove-matching-columns! player)
 )
 

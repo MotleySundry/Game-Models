@@ -21,8 +21,7 @@ source ../include.sh
 
 print_usage(){
 cat << USAGE
-    $(basename "$0") [ repl ]
-
+    Usage: $(basename "$0") [ repl ]
 USAGE
 }
 
@@ -45,9 +44,11 @@ SRC+=('strat-omnipotent.scm')
 if [[ $# -eq 1 ]]; then
     if [[ $1 = 'repl' ]]; then
         repl_gambit skyjo "${SRC[@]}"
-        exit 1
+        exit 0
     else
-        usage
+        print_usage
+        echo "!!! Invalid argument: $1"
+        exit 1
     fi
 fi
 

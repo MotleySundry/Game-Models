@@ -20,10 +20,10 @@
 
     (cond
         ; Returns the string label of the strategy or #f on failure.
-        ((equal? cmd "get-label") "Omnipotent")
+        ((= cmd *strat-cmd-get-label*) "Omnipotent")
 
         ; Returns #t if the play was executed or #f otherwise
-        ((equal? cmd "play-phase1")
+        ((= cmd *strat-cmd-play-phase1*)
             ;(print (list "Phase1" (player-id player)))
             ;(print (list "Enter Phase1:"))
             ;(player-print-round player "  ")
@@ -35,14 +35,14 @@
         )
         
         ; Returns #t if the play was executed or #f otherwise.
-        ((equal? cmd "play-phase2")
+        ((= cmd *strat-cmd-play-phase2*)
             ;(print (list "Phase2" (player-id player)))
             (or 
                 (strat-naive-any-phase player)
                 (log-fatal "Player failed to make a play: play-phase2" player)))
 
         ; Returns the sum of the cards if the flips were executed #f otherwise.
-        ((equal? cmd "flip-two")
+        ((= cmd *strat-cmd-flip-two*)
             (strat-naive-flip-two player))
         
         (else

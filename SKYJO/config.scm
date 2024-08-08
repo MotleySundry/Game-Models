@@ -33,6 +33,12 @@
 ; Generally, no changes are needed below here.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+; STRATEGY CONSTANTS
+(define *strat-cmd-get-label*   0)
+(define *strat-cmd-flip-two*    1)
+(define *strat-cmd-play-phase1* 2)
+(define *strat-cmd-play-phase2* 3)
+
 ; GAME CONSTANTS
 (define *min-rounds* 10)
 (define *max-rounds* 50)
