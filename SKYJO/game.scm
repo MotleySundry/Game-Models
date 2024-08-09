@@ -88,8 +88,7 @@
     (let loop ((i 0))
         (if (< i *num-players*)
             (let ((player (round-get-player round i)))
-                (player-get-card-sum player)
-                (game-add-player-points game i (player-get-card-sum player))
+                (game-add-player-points game i (hand-card-sum (player-hand player)))
                 (loop (+ i 1)))))
 )
 

@@ -24,19 +24,13 @@
 
         ; Returns #t if the play was executed or #f otherwise
         ((= cmd *strat-cmd-play-phase1*)
-            ;(print (list "Phase1" (player-id player)))
-            ;(print (list "Enter Phase1:"))
-            ;(player-print-round player "  ")
             (or 
                 (strat-naive-any-phase player)
                 (log-fatal "Player failed to make a play: play-phase1" player))
-            ;(print (list "Exit Phase1:"))
-            ;(player-print-round player "  ")
         )
         
         ; Returns #t if the play was executed or #f otherwise.
         ((= cmd *strat-cmd-play-phase2*)
-            ;(print (list "Phase2" (player-id player)))
             (or 
                 (strat-naive-any-phase player)
                 (log-fatal "Player failed to make a play: play-phase2" player)))
@@ -46,7 +40,7 @@
             (strat-naive-flip-two player))
         
         (else
-            (display "Unknown command: ")
+            (display "Unknown fommand: ")
             (display cmd)
             (newline)
             (exit 1)))
@@ -55,54 +49,46 @@
 ; Returns #t if the a play was executed #f otherwise
 (define (strat-naive-any-phase player)
 
-    (define high-open-card (player-get-largest-open-card player))
-    (define discard-value (player-discard-top-card-val player))
-    (define hidden-card (player-get-first-hidden-card player))
+    (define high-open-card (player-api-get-highest-open-card player))
+    (define discard-value (player-api-get-discard-val player))
+    (define hidden-card (player-api-random-hidden-card-id player))
 
         (cond
             ; Try replacing the highest open card with the discard
             ((and high-open-card (< discard-value (player-get-card player high-open-card)))
-                ;(print (list "Highest-Open Discard" (player-id player)))
                 (player-replace-card-from-discard! player high-open-card)                
                 #t)
                     
             ; Try replacing the hidden card with the discard
             ((and hidden-card (<= discard-value *deck-median*))
-                ;(print (list "Hidden-Discard" (player-id player)))
-                (player-replace-card-from-discard! player hidden-card)                
+                (player-api-replace-card-from-discard! player hidden-card)                
                 #t)
                         
             (else
                     ; Draw a card
-                    (let ((draw-value (deck-pop-draw-pile! (player-get-deck player))))
+                    (let ((draw-value (player-api-draw-card player)))
                     (cond
                         ; Try replacing the highest open card with the draw
-                        ((and high-open-card (< draw-value (player-get-card player high-open-card)))
-                            ;(print (list "HighestOpen Draw" (player-id player)))
-                            (player-replace-card-with-draw-card! player high-open-card draw-value)
+                        ((and high-open-card (< draw-value (player-api-get-card player high-open-card)))
+                            (player-api-replace-card-with-draw-card! player high-open-card draw-value)
                             #t)
 
                         ; Try replacing the hidden card with the draw
                         ((and hidden-card (<= draw-value *deck-median*))
-                            ;(print (list "Hidden-Draw" (player-id player)))
-                            (player-replace-card-with-draw-card! player hidden-card draw-value)
+                            (player-api-replace-card-with-draw-card! player hidden-card draw-value)
                             #t)
 
                         ; Discard the draw
                         (else
-                            ;(print (list "Discard-Draw" (player-id player)))
-                            (player-discard-draw-card! player draw-value)
+                            (player-api-discard-draw-card! player draw-value 
+                                (player-api-random-hidden-card-id player))
                             #t)))))                 
 )
 
+; Returns (card1 card2)
 (define (strat-naive-flip-two player)
-    
     (define card1 (random-integer *hand-num-cards*))
-    (define card2 (random-integer-exclude *hand-num-cards* card1))
-
-    (player-set-card-open! player card1)
-    (player-set-card-open! player card2)
-
-    (+ (player-get-card-value player card1) 
-        (player-get-card-value player card2))
+    (list 
+        card1
+        (random-integer-exclude *hand-num-cards* card1))
 )

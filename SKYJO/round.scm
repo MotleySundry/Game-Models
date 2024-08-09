@@ -114,7 +114,7 @@
     (let loop ((i 0))
         (if (< i *num-players*)
             (begin
-                (deal-hand (round-get-deck round) (round-get-hand round i))
+                (deal-hand (round-deck round) (player-hand (round-get-player round i)))
                 (loop (+ i 1)))))
 
     ; Add the first card to the discard pile.
@@ -152,14 +152,6 @@
 
 (define (round-get-player round id)
     (vector-ref (round-players round) id)
-)
-
-(define (round-get-hand round id)
-    (player-get-hand (round-get-player round id))
-)
-
-(define (round-get-deck round)
-    (round-deck round)
 )
 
 (define (round-set-player! round id player)

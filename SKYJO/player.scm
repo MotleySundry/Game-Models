@@ -34,11 +34,6 @@
         0                                   ;points
     ))  
 
-; Returns the index of the largest open card or #f if there are no open cards.
- (define (player-get-largest-open-card player)
-    (hand-get-largest-open-card (player-get-hand player))
- )
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; PLAYER STRATEGY COMMANDS
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -48,19 +43,25 @@
     ((player-strat player) player *strat-cmd-get-label*) 
 )
 
-; Returns #t if the play was executed or #f otherwise.
+; Returns the sun of the cards
 (define (player-flip-two player)
-    ;(print (list "flip-two: player:" (player-id player)))
-    ((player-strat player) player *strat-cmd-flip-two*) 
+    (define resp ((player-strat player) player *strat-cmd-flip-two*))
+
+    (if (or (not (car resp))(not (cadr resp)))
+        (log-fatal "A card id is false in the response: player-flip-two player" resp (player-get-strat-label)))
+
+    (hand-set-card-open! (player-hand player) (car resp))
+    (hand-set-card-open! (player-hand player) (cadr resp))
+
+    (+ (hand-get-card-value (player-hand player) (car resp))
+        (hand-get-card-value (player-hand player) (cadr resp)))
 )
 
 ; Returns #t if the play was executed or #f otherwise.
 (define (player-play-phase1 player)
-    ;(print (list "play-phase1: player:" (player-id player)))
     ((player-strat player) player *strat-cmd-play-phase1*)
     (player-remove-matching-columns! player)
-    (player-any-cards-hidden? player)
-
+    (hand-any-cards-hidden? (player-hand player))
 )
 
 ; Returns #t if the play was executed or #f otherwise.
@@ -70,130 +71,132 @@
     (player-remove-matching-columns! player)
 )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; PLAYER STRATEGY API CALLS
-;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; A strategy should only use these calls
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; PLAYER STRATEGY LEGAL CALLBACKS
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; A legal strategy should only use these calls,
 
-(define (player-discard-top-card-val player)
-    (deck-discard-top-card-val (player-get-deck player))
+; Returns a random hidden card id or #f on failure
+(define (player-api-random-hidden-card-id player)
+    (hand-random-card-state-id (player-hand player) *card-state-hidden*)
+)
+
+
+(define (player-api-get-open-card-value player card-id)
+    (if (not card-id)
+        (log-fatal "Card Id is false: player-api-get-open-card-value" (player-get-strat-label player)))
+    (if (not (hand-is-card-open? (player-hand player) card-id))
+        (log-fatal "The card is not open: player-get-open-card-value"
+            (player-api-get-strat-label player))
+    (hand-get-card-value (player-get-hand player) card-id))
+)
+
+(define (player-api-draw-card player)
+    (deck-pop-draw-pile! (round-deck (player-round player)))
+)
+    
+(define (player-api-any-cards-open? player)
+    (hand-any-cards-open? (player-hand player))
+)
+
+(define (player-api-any-cards-hidden? player)
+    (hand-any-cards-hidden? (player-hand player))
+)
+
+(define (player-api-any-cards-removed? player)
+    (hand-any-cards-removed? (player-hand player))
+)
+
+(define (player-api-card-open? player card-id)
+    (if (not card-id)
+        (log-fatal "Card Id is false: player-api-card-open?" (player-get-strat-label player)))
+    (hand-is-card-open? (player-hand player) card-id)
+)
+
+(define (player-api-card-hidden? player card-id)
+    (if (not card-id)
+        (log-fatal "Card Id is false: player-api-card-hidden?" (player-get-strat-label player)))
+    (hand-is-card-hidden? (player-hand player) card-id)
+)
+
+(define (player-api-card-removed? player card-id)
+    (if (not card-id)
+        (log-fatal "Card Id is false: player-api-card-hidden?" (player-get-strat-label player)))
+    (hand-is-card-removed? (player-hand player) icard-idd)
+)
+
+; Returns the index of the highest open card or #f if there are no open cards.
+(define (player-api-get-highest-open-card player)
+    (hand-get-highest-open-card (player-hand player))
+) 
+
+(define (player-api-get-discard-val player)
+    (deck-discard-top-card-val (round-deck (player-round player)))
+)
+
+; Replaces a players card with a card-value.
+; It is used for a card that has been taken from the draw pile.
+(define (player-api-replace-card-with-draw-card! player card-id card-value)
+    (if (not card-id)
+        (log-fatal "Card Id is false: player-api-replace-card-with-draw-card!" (player-get-strat-label player)))
+    (deck-push-discard-pile! (round-deck (player-round player)) 
+        (hand-get-card-value (player-hand player) card-id))
+    (hand-set-card-value! (player-hand player) card-id card-value)
+    (if(hand-is-card-hidden? (player-hand player) card-id)
+        (hand-set-card-open! (player-hand player) card-id)) 
+)
+
+; Replaces a players card by popping the top card off the discard pile.
+; The discard top is viewable by the strategy so it is popped here.
+(define (player-api-replace-card-from-discard! player card-id)
+    (if (not card-id)
+        (log-fatal "Card Id is false: player-api-replace-card-from-discard!" (player-get-strat-label player)))
+    (let ((card-value (deck-pop-discard-pile! (round-deck (player-round player)))))
+        (deck-push-discard-pile! (round-deck (player-round  player)) 
+            (hand-get-card-value (player-hand player) card-id))
+        (hand-set-card-value! (player-hand player) card-id card-value)
+        (if(hand-is-card-hidden? (player-hand player) card-id)
+            (hand-set-card-open! (player-hand player) card-id)))
+)
+
+; Discard a card-value
+; It is used for a card that has been taken from the draw pile.
+(define (player-api-discard-draw-card! player card-value hidden-id)
+    (if (not hidden-id)
+        (log-fatal "Hidden Id is false: player-api-discard-draw-card" (player-get-strat-label player)))
+    (deck-push-discard-pile! (round-deck (player-round player)) card-value)
+    (hand-set-card-open! (player-hand player) hidden-id)
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; PLAYER STRATEGY CHEAT CALLBACKS
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; A cheating strategy can use these calls,
+
+(define (player-cheat-get-card-value player card-id)
+    (if (not *cheating-allowed?*)
+        (log-fatal "Cheating is not allowed: player-cheat-get-card-value"
+            (player-get-strat-label player))
+    (hand-get-card-value (player-get-hand player) card-id))
 )
 
 (define (player-cheat-next-draw-card-val player)
     (if (not *cheating-allowed?*)
         (log-fatal "Cheating is not allowed: player-cheat-next-draw-card-val"
             (player-get-strat-label player))
-    (deck-cheat-next-draw-card-val (player-get-deck player)))
+    (deck-cheat-next-draw-card-val (round-deck (player-round player))))
 )
 
-; Replaces a players card with a card-value.
-; It is used for a card that has been taken from the draw pile.
-(define (player-replace-card-with-draw-card! player card-id card-value)
-    (deck-push-discard-pile! (player-get-deck player) (player-get-card-value player card-id))
-    (player-set-card-value! player card-id card-value)
-    (if(player-is-card-hidden? player card-id)
-        (player-set-card-open! player card-id)) 
-)
-
-; Replaces a players card by popping the top card off the discard pile.
-; The discard top is viewable by the strategy so it is popped here.
-(define (player-replace-card-from-discard! player card-id)
-    (let ((card-value (deck-pop-discard-pile! (player-get-deck player))))
-        (deck-push-discard-pile! (player-get-deck player) (player-get-card-value player card-id))
-        (player-set-card-value! player card-id card-value)
-        (if(player-is-card-hidden? player card-id)
-            (player-set-card-open! player card-id)))
-)
-
-; Discard a card-value
-; It is used for a card that has been taken from the draw pile.
-(define (player-discard-draw-card! player card-value)
-    (deck-push-discard-pile! (player-get-deck player) card-value)
-    (hand-open-first-hidden-card! (player-hand player))
-)
-
-;;;;;;;;;;;;;;;;;;
-; PLAYER GETTERS
-;;;;;;;;;;;;;;;;;;
-
-(define (player-get-hand player)
-    (player-hand player)
-)
-
-(define (player-get-deck player)
-    (round-deck (player-round player))
-)
-
-(define (player-get-game player)
-    (round-game (player-round player))
-)
-
-(define (player-get-round player)
-    (player-round player)
-)
-
-(define (player-get-card-sum player)
-    (hand-card-sum (player-hand player))
-)
-
-(define (player-get-card-value player card-id)
-    (hand-get-card-value (player-get-hand player) card-id)
-)
-(define (player-get-first-hidden-card player)
-    (hand-get-first-hidden-card (player-get-hand player))
-)
-
-;;;;;;;;;;;;;;;;;;
-; PLAYER QUERIES
-;;;;;;;;;;;;;;;;;;
-
-(define (player-any-cards-open? player)
-    (hand-any-cards-open? (player-get-hand player))
-)
-
-(define (player-any-cards-hidden? player)
-    (hand-any-cards-hidden? (player-get-hand player))
-)
-
-(define (player-any-cards-removed? player)
-    (hand-any-cards-removed? (player-get-hand player))
-)
-
-(define (player-is-card-open? player card-id)
-    (hand-is-card-open? (player-hand player) icard-idd)
-)
-
-(define (player-is-card-hidden? player card-id)
-    (hand-is-card-hidden? (player-hand player) card-id)
-)
-
-(define (player-is-card-removed? player card-id)
-    (hand-is-card-removed? (player-hand player) icard-idd)
-)
+ (define (player-cheat-get-highest-hidden-card player)
+     (if (not *cheating-allowed?*)
+        (log-fatal "Cheating is not allowed: player-cheat-get-largest-hidden-card"
+            (player-get-strat-label player))
+    (hand-get-highest-hidden-card (player-hand player)))
+ )
 
 ; Validate the players's consistency
 (define (player-is-valid? player)
     (hand-is-valid? (player-hand player))
-)
-
-;;;;;;;;;;;;;;;;;;
-; PLAYER SETTERS
-;;;;;;;;;;;;;;;;;;
-
-(define (player-set-card-value! player card-id card-value)
-    (hand-set-card-value! (player-hand player) card-id card-value)
-)
-
-(define (player-set-card-open! player card-id)
-    (hand-set-card-open! (player-hand player) card-id)
-)
-
-(define (player-set-card-hidden! player card-id)
-    (hand-set-card-hidden! (player-hand player) card-id)
-)
-
-(define (player-set-card-removed! player card-id)
-    (hand-set-card-removed! (player-hand player) card-id)
 )
 
 ; PLAYER PRINT

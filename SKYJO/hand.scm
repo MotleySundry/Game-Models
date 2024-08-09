@@ -133,6 +133,14 @@
     (vector-ref (hand-card-state hand) id)
 )
 
+(define (hand-random-card-state-id hand state)
+    (define n (vector-count-values (hand-card-state hand) state ))
+    (if (< n 1)
+         (log-fatal "There are no cards in this state: hand-random-card-state-id:" state))
+    (vector-get-value-idx (hand-card-state hand) state (random-integer n))
+)
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;               HAND QUERIES
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -181,10 +189,22 @@
 )
 
 ; Returns the id of the highest open card or #f if there are none
-(define (hand-get-largest-open-card hand)
+; The first highest card found wins.
+(define (hand-get-highest-open-card hand)
     (let loop ((i 0) (max-id #f) (max-value -3))
         (if (< i *hand-num-cards*)
             (if (and (hand-is-card-open? hand i) (< (hand-get-card-value hand i) max-value))
+                (loop (+ i 1) i (hand-get-card-value hand i))
+                (loop (+ i 1) max-id max-value))
+            #f))
+)
+
+; Returns the id of the highest hidden card or #f if there are none
+; The first highest card found wins.
+(define (hand-get-highest-hidden-card hand)
+    (let loop ((i 0) (max-id #f) (max-value -3))
+        (if (< i *hand-num-cards*)
+            (if (and (hand-is-card-hidden? hand i) (< (hand-get-card-value hand i) max-value))
                 (loop (+ i 1) i (hand-get-card-value hand i))
                 (loop (+ i 1) max-id max-value))
             #f))

@@ -39,6 +39,7 @@
 (define *strat-cmd-flip-two*    1)
 (define *strat-cmd-play-phase1* 2)
 (define *strat-cmd-play-phase2* 3)
+(define *strat-look-ahead* 1)
 
 ; GAME CONSTANTS
 (define *min-rounds* 10)

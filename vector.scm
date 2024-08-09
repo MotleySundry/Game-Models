@@ -14,6 +14,28 @@
 ; You should have received a copy of the GNU Affero General Public License
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+(define (vector-count-values vect val)
+    (let loop ((i 0) (cnt 0))
+        (if (< i (vector-length vect))
+            (if (= (vector-ref vect i) val)
+                (loop (+ i 1) (+ cnt 1))
+                (loop (+ i 1) cnt ))
+            cnt))
+)
+
+; Returns the idx of the value or #f if it can't be found.
+; Optionally an occurence of the value, where 0 is the first occurence.
+(define (vector-get-value-idx vect val #!optional occurence)
+    (define oc (if occurence occurence 0))
+    (let loop ((i 0) (cnt -1) (idx #f))
+        (if (and (< i (vector-length vect)) (not(= cnt oc)))
+            (if (= (vector-ref vect i) val) 
+                (loop (+ i 1) (+ cnt 1) i)
+                (loop (+ i 1) cnt idx ))
+ 
+        (if (= cnt oc) idx #f)))
+)
+
 ; Duplicate a vector.
 (define (vector-dup vect)
     (define (myfun vect new i)

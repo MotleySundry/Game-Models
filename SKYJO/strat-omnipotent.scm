@@ -24,14 +24,9 @@
 
         ; Returns #t if the play was executed or #f otherwise
         ((= cmd *strat-cmd-play-phase1*)
-            ;(print (list "Phase1" (player-id player)))
-            ;(print (list "Enter Phase1:"))
-            ;(player-print-round player "  ")
             (or 
                 (strat-omnipotent-any-phase player)
                 (log-fatal "Player failed to make a play: play-phase1" player))
-            ;(print (list "Exit Phase1:"))
-            ;(player-print-round player "  ")
         )
         
         ; Returns #t if the play was executed or #f otherwise.
@@ -55,55 +50,117 @@
 ; Returns #t if the a play was executed #f otherwise
 (define (strat-omnipotent-any-phase player)
 
-    (define high-open-card (player-get-largest-open-card player))
-    (define discard-value (player-discard-top-card-val player))
-    (define next-draw-value (player-cheat-next-draw-card-val player))
-    (define hidden-card (player-get-first-hidden-card player))
+    (define high-open-card-idx      (player-api-get-highest-open-card player))
+    (define high-hidden-card-idx    (player-cheat-get-highest-hidden-card player))
+    (define discard-val (player-api-get-discard-val player))
+    (define draw-val (player-cheat-next-draw-card-val player))
 
-        (cond
-            ; Try replacing the highest open card with the discard
-            ((and high-open-card (< discard-value (player-get-card player high-open-card)))
-                ;(print (list "Highest-Open Discard" (player-id player)))
-                (player-replace-card-from-discard! player high-open-card)                
-                #t)
-                    
-            ; Try replacing the hidden card with the discard
-            ((and hidden-card (<= discard-value *deck-median*))
-                ;(print (list "Hidden-Discard" (player-id player)))
-                (player-replace-card-from-discard! player hidden-card)                
-                #t)
-                        
-            (else
-                    ; Draw a card
-                    (let ((draw-value (deck-pop-draw-pile! (player-get-deck player))))
-                    (cond
-                        ; Try replacing the highest open card with the draw
-                        ((and high-open-card (< draw-value (player-get-card player high-open-card)))
-                            ;(print (list "HighestOpen Draw" (player-id player)))
-                            (player-replace-card-with-draw-card! player high-open-card draw-value)
-                            #t)
+    (cond 
+        ; Both Open and Hidden are available (Open is higher) 
+        ((and high-open-card-idx high-hidden-card-idx 
+            (>= (player-api-get-open-card-value player high-open-card-idx) 
+            (player-cheat-get-card-value player high-hidden-card-idx ))
+                (or
+                    (strat-omnipotent-try-open 
+                        draw-val discard-val 
+                        high-open-card-idx)
 
-                        ; Try replacing the hidden card with the draw
-                        ((and hidden-card (<= draw-value *deck-median*))
-                            ;(print (list "Hidden-Draw" (player-id player)))
-                            (player-replace-card-with-draw-card! player hidden-card draw-value)
-                            #t)
+                    (strat-omnipotent-try-hidden
+                            draw-val discard-val 
+                            high-hidden-card-idx)
+                            
+                    (player-api-discard-draw-card! player (player-api-draw-card player)
+                        (player-api-random-hidden-card-id player))))
+            #t)
 
-                        ; Discard the draw
-                        (else
-                            ;(print (list "Discard-Draw" (player-id player)))
-                            (player-discard-draw-card! player draw-value)
-                            #t)))))                 
+        ; Both Open and Hidden are available (Hidden is higher 
+        ((and high-open-card-idx high-hidden-card-idx 
+            (<= (player-api-get-open-card-value player high-open-card-idx) 
+                (player-cheat-get-card-value player high-hidden-card-idx ))
+
+                (or
+                    (strat-omnipotent-try-hidden
+                            draw-val discard-val 
+                            high-hidden-card-idx)
+
+                    (strat-omnipotent-try-open 
+                        draw-val discard-val 
+                        high-open-card-idx)
+                            
+                    (player-api-discard-draw-card! player (player-api-draw-card player)
+                        (player-api-random-hidden-card-id player))))
+            #t)
+
+        ; Only Open is available  
+        (high-open-card-idx
+            (or
+                (strat-omnipotent-try-open 
+                    draw-val discard-val 
+                    high-open-card-idx)
+
+                    (player-api-discard-draw-card! player (player-api-draw-card player)
+                        (player-api-random-hidden-card-id player)))
+            #t)
+
+        ; Only Hidden is available  
+        (high-hidden-card-idx
+            (or
+                (strat-omnipotent-try-hidden
+                        draw-val discard-val 
+                        high-hidden-card-idx)
+
+                    (player-api-discard-draw-card! player (player-api-draw-card player)
+                        (player-api-random-hidden-card-id player)))
+            #t)
+
+        ; Neither Open or Hidden is a vailable
+        (else
+            (player-api-discard-draw-card! player  (player-api-draw-card player)     
+                (player-api-random-hidden-card-id player))
+        #t)
+    )
 )
 
+; Returns #t if the exchange was made, #f otherwise
+(define (strat-omnipotent-try-open draw-val discard-val high-open-card-idx)
+    (define high-open-card-val      (player-api-get-open-card-value player high-open-card-idx))
+
+    (cond     
+        ; Discard --> Open 
+        ((and (<= discard-val draw-val) (< discard-val high-open-card-val))
+            (player-api-replace-card-from-discard! player)
+            #t)
+        
+        ; Draw --> Open 
+        ((< draw-val high-open-card-val)
+            (player-api-replace-card-with-draw-card! player high-open-card (player-api-draw-card player))
+            #t)
+            
+        (else #f))
+)
+
+; Returns #t if the exchange was made, #f otherwise
+(define (strat-omnipotent-try-hidden draw-val discard-val high-hidden-card-idx)
+    (define high-hidden-card-val    (player-cheat-get-card-value player high-hidden-card-idx ))
+
+    (cond     
+        ; Discard --> hidden 
+        ((and (<= discard-val draw-val) (< discard-val high-hidden-card-val))
+            (player-api-replace-card-from-discard! player)
+            #t)
+        
+        ; Draw --> hidden 
+        ((< draw-val high-hidden-card-val)
+            (player-api-replace-card-with-draw-card! player high-hidden-card (player-api-draw-card player))
+            #t)
+            
+        (else #f))
+)
+
+; Returns (card1 card2)
 (define (strat-omnipotent-flip-two player)
-    
     (define card1 (random-integer *hand-num-cards*))
-    (define card2 (random-integer-exclude *hand-num-cards* card1))
-
-    (player-set-card-open! player card1)
-    (player-set-card-open! player card2)
-
-    (+ (player-get-card-value player card1) 
-        (player-get-card-value player card2))
+    (list 
+        card1
+        (random-integer-exclude *hand-num-cards* card1))
 )
