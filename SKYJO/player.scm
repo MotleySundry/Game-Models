@@ -48,7 +48,8 @@
     (define resp ((player-strat player) player *strat-cmd-flip-two*))
 
     (if (or (not (car resp))(not (cadr resp)))
-        (log-fatal "A card id is false in the response: player-flip-two player" resp (player-get-strat-label)))
+        (log-fatal "A card id is false in the response: player-flip-two player" 
+            resp (player-get-strat-label player)))
 
     (hand-set-card-open! (player-hand player) (car resp))
     (hand-set-card-open! (player-hand player) (cadr resp))
@@ -57,17 +58,20 @@
         (hand-get-card-value (player-hand player) (cadr resp)))
 )
 
-; Returns #t if the play was executed or #f otherwise.
+; Returns #f if phase1 ended
 (define (player-play-phase1 player)
-    ((player-strat player) player *strat-cmd-play-phase1*)
+    (if (not ((player-strat player) player *strat-cmd-play-phase1*))
+        (log-fatal "Player failed to make a play: play-phase1" 
+            (player-id player) (player-get-strat-label player)))
+
     (player-remove-matching-columns! player)
     (hand-any-cards-hidden? (player-hand player))
 )
 
-; Returns #t if the play was executed or #f otherwise.
 (define (player-play-phase2 player)
-    ;(print (list "play-phase2: player:" (player-id player)))
-    ((player-strat player) player *strat-cmd-play-phase2*)
+    (if (not ((player-strat player) player *strat-cmd-play-phase2*))
+        (log-fatal "Player failed to make a play: play-phase2" 
+            (player-id player) (player-get-strat-label player)))
     (player-remove-matching-columns! player)
 )
 

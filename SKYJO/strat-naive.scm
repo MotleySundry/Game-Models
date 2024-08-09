@@ -24,16 +24,11 @@
 
         ; Returns #t if the play was executed or #f otherwise
         ((= cmd *strat-cmd-play-phase1*)
-            (or 
-                (strat-naive-any-phase player)
-                (log-fatal "Player failed to make a play: play-phase1" player))
-        )
+                (strat-naive-any-phase player))
         
         ; Returns #t if the play was executed or #f otherwise.
         ((= cmd *strat-cmd-play-phase2*)
-            (or 
-                (strat-naive-any-phase player)
-                (log-fatal "Player failed to make a play: play-phase2" player)))
+                (strat-naive-any-phase player))
 
         ; Returns the sum of the cards if the flips were executed #f otherwise.
         ((= cmd *strat-cmd-flip-two*)

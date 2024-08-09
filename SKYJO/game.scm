@@ -65,9 +65,9 @@
                 (let ((high-flip (round-deal-hands round)))
                     ; set starting player
                     (if (= i 0)
-                        (game-set-starter! game high-flip)
-                        (game-set-starter! game (remainder ( + (game-get-starter game) *num-players*) *num-players*)))
-                    (round-set-first-player! round (game-get-starter game))
+                        (game-starter-set! game high-flip)
+                        (game-starter-set! game (remainder ( + (game-get-starter game) *num-players*) *num-players*)))
+                    (round-set-first-player! round (game-starter game))
 
                     ; run it
                     (round-run round)
@@ -94,10 +94,6 @@
 
 ; GAME GETTERS
 
-(define (game-get-starter game)
-    (game-starter game)
-)
-
 (define (game-get-player-points game id)
     (vector-ref (game-points game) id)
 )
@@ -114,10 +110,6 @@
 
 (define (game-add-player-points game id points)
     (game-set-player-points! game id (+ points (game-get-player-points game id)))
-)
-
-(define (game-set-starter! game starter)
-    (game-starter-set! game starter)
 )
 
 (define (game-set-player-score! game id score)
