@@ -92,7 +92,7 @@
     (if (not (hand-is-card-open? (player-hand player) card-id))
         (log-fatal "The card is not open: player-get-open-card-value"
             (player-api-get-strat-label player))
-    (hand-get-card-value (player-get-hand player) card-id))
+    (hand-get-card-value (player-hand player) card-id))
 )
 
 (define (player-api-draw-card player)
@@ -181,7 +181,7 @@
     (if (not *cheating-allowed?*)
         (log-fatal "Cheating is not allowed: player-cheat-get-card-value"
             (player-get-strat-label player))
-    (hand-get-card-value (player-get-hand player) card-id))
+    (hand-get-card-value (player-hand player) card-id))
 )
 
 (define (player-cheat-next-draw-card-val player)

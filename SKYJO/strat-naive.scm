@@ -50,8 +50,8 @@
 
         (cond
             ; Try replacing the highest open card with the discard
-            ((and high-open-card (< discard-value (player-get-card player high-open-card)))
-                (player-replace-card-from-discard! player high-open-card)                
+            ((and high-open-card (< discard-value (player-api-get-open-card-value player high-open-card)))
+                (player-api-replace-card-from-discard! player high-open-card)                
                 #t)
                     
             ; Try replacing the hidden card with the discard
@@ -64,7 +64,7 @@
                     (let ((draw-value (player-api-draw-card player)))
                     (cond
                         ; Try replacing the highest open card with the draw
-                        ((and high-open-card (< draw-value (player-api-get-card player high-open-card)))
+                        ((and high-open-card (< draw-value (player-api-get-open-card-value player high-open-card)))
                             (player-api-replace-card-with-draw-card! player high-open-card draw-value)
                             #t)
 

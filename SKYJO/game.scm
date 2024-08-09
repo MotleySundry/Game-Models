@@ -66,7 +66,7 @@
                     ; set starting player
                     (if (= i 0)
                         (game-starter-set! game high-flip)
-                        (game-starter-set! game (remainder ( + (game-get-starter game) *num-players*) *num-players*)))
+                        (game-starter-set! game (remainder ( + (game-starter game) *num-players*) *num-players*)))
                     (round-set-first-player! round (game-starter game))
 
                     ; run it
