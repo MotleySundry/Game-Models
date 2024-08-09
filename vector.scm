@@ -58,27 +58,6 @@
     new-vect
 )
 
-; Returns the median of the vector or #f if it doesn't exist.
-(define (vector-median vect)
-    (let
-        ((tmp (vector-dup vect))
-        (len (vector-length vect))
-        (floor (floor/ len 2)))
-
-        (vector-sort! (lambda (a b) (< a b)) vect)
-        (vector-sort-in-place tmp)
-        (cond 
-            ((= len 0) #f)
-            ((= len 1) (vector-ref vect 0))
-            ((even? len) 
-                (mean
-                    (vector-ref vect floor)
-                    (vector-ref vect (- floor 1))))
-            (else (vector-ref vect floor))
-        )
-    )
-)
-
 (define (vector-mean vect)
     (/ (vector-sum vect) (vector-length vect))
 )
