@@ -88,6 +88,18 @@
             new)
 )
 
+; Map the elements of a vector to new values in a copy.
+(define (vector-map vect mapping)
+    (define (myfun vect new i)
+        (if (>= i 0) (vector-set! new i (mapping (vector-ref vect i)) ))
+        (if (> i 0) (myfun vect new (- i 1))) )
+    (let 
+        ((new (make-vector(vector-length vect))))
+            (myfun vect new (- (vector-length vect) 1))
+            new)
+)
+
+
 ; Returns a new vector with real elements.
 (define (vector->real vect)
     (define new-vect (make-vector (vector-length vect)))

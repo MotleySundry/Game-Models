@@ -21,7 +21,8 @@
     game-scores 
     player-strat
     player-mean 
-    player-std 
+    player-std
+    player-median
     player-max 
     player-min
 )
@@ -35,6 +36,7 @@
         (make-vector *num-players*) ;player-strat
         (make-vector *num-players*) ;player-mean
         (make-vector *num-players*) ;player-std
+        (make-vector *num-players*) ;player-median
         (make-vector *num-players*) ;player-max
         (make-vector *num-players*) ;player-min
     )
@@ -55,6 +57,7 @@
 )
 
 (define (simulation-calc-stats sim)
+    (define (mapping v) (floor (+ 0.5 v)))
     (define game-scores (simulation-game-scores sim))
     (define players (round-players (game-last-round (simulation-last-game sim))))
     (let loop ((i 0))
@@ -64,6 +67,8 @@
                     (vector-mean player-scores))
                 (vector-set! (simulation-player-std sim) i
                     (vector-standard-deviation player-scores))
+                (vector-set! (simulation-player-median sim) i
+                    (vector-median player-scores))
                 (vector-set! (simulation-player-max sim) i
                     (vector-max player-scores))
                 (vector-set! (simulation-player-min sim) i
@@ -73,9 +78,11 @@
                 (loop (+ i 1))
             )
     ))
+
+    (simulation-player-mean-set! sim (vector-map (simulation-player-mean sim) mapping))
+    (simulation-player-median-set! sim (vector-map (simulation-player-median sim) mapping))
+    (simulation-player-std-set! sim (vector-map (simulation-player-std sim) mapping))
 )
-
-
 
 ; SIMULATION ACCESSORS
 
@@ -90,13 +97,14 @@
 ; SIMULATION PRINT
 (define (simulation-print sim tab)
     (println tab "--- Simulation ---")
-    (println tab "id:           " (simulation-id sim))
-    (println tab "num-games:    " (simulation-num-games sim))
-    (println tab "player-strat: " (simulation-player-strat sim))
-    (println tab "player-mean:  " (vector->real(simulation-player-mean sim)))
-    (println tab "player-std:   " (simulation-player-std sim))
-    (println tab "player-max:   " (simulation-player-max sim))
-    (println tab "player-min:   " (simulation-player-min sim))
+    (println tab "id:            " (simulation-id sim))
+    (println tab "num-games:     " (simulation-num-games sim))
+    (println tab "player-strat:  " (simulation-player-strat sim))
+    (println tab "player-median: " (simulation-player-median sim))
+    (println tab "player-mean:   " (vector->real(simulation-player-mean sim)))
+    (println tab "player-std:    " (simulation-player-std sim))
+    (println tab "player-max:    " (simulation-player-max sim))
+    (println tab "player-min:    " (simulation-player-min sim))
 )
 
 
