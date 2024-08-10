@@ -19,7 +19,7 @@
 
     ; Updated for each round
     rounds              ;vector of round references, filled as the game progresses
-    round-cnt           ;integer incremented as new rounds are started
+    num-rounds          ;integer incremented as new rounds are started
     points              ;integer points for each player tallied after each round
     removed             ;total columns removed
     last-round          ;reference to the round that ended the game
@@ -61,7 +61,7 @@
             (let ((round (new-round i game)))
                 (game-set-round! game i round)
                 (game-last-round-set! game round)
-                (game-round-cnt-set! game (+ i 1))
+                (game-num-rounds-set! game (+ i 1))
                 (round-is-valid? round)
 
                 (let ((high-flip (round-deal-hands round)))
@@ -136,7 +136,7 @@
 (define (game-print game tab)
     (println tab "--- Game ---")
     (println tab (list "id:       " (game-id game)))
-    (println tab (list "round-cnt:" (game-round-cnt game)))
+    (println tab (list "num-rounds:" (game-num-rounds game)))
     (println tab (list "points:   " (game-points game)))
     (println tab (list "last-round:"))
     (round-print (game-last-round game) (string-append tab "  "))

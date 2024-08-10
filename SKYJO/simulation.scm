@@ -17,6 +17,7 @@
 (define-structure simulation 
     id 
     num-games
+    num-rounds
     last-game 
     game-points 
     game-removed 
@@ -33,7 +34,8 @@
     (make-simulation
         id
         num-games
-        "last-game"
+        0                                       ;num-rounds
+        "last-game"                             ;last-game
         (new-vector2  num-games *num-players*)  ;game-points
         (new-vector2  num-games *num-players*)  ;game-removed
         (make-vector *num-players*)             ;player-strat
@@ -53,6 +55,7 @@
                 (let ((game (new-game i))) 
                 (game-run game)
                 (simulation-last-game-set! sim game)
+                (simulation-num-rounds-set! sim (+ (simulation-num-rounds sim) (game-num-rounds game)))
                 (vector2-row-set! (simulation-game-points sim) i (game-points game))
                 (vector2-row-set! (simulation-game-removed sim) i (game-removed game))
                 (loop (+ i 1))))))
@@ -118,8 +121,9 @@
     (println tab "--- Simulation ---")
     (println tab "Simulation Id: " (simulation-id sim))
     (println tab "Num Games:     " (simulation-num-games sim))
+    (println tab "Num Rounds:    " (simulation-num-rounds sim))
     (println tab "Player Strat:  " (simulation-player-strat sim))
-    (println tab "Removed Cols  " (simulation-player-removed sim))
+    (println tab "Removed Cols:  " (simulation-player-removed sim))
     (println tab "Point Median:  " (simulation-player-median sim))
     (println tab "Point Mean:    " (vector->real(simulation-player-mean sim)))
     (println tab "Point STD:     " (simulation-player-std sim))
