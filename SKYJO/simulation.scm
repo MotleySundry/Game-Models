@@ -77,7 +77,7 @@
 
                 ; REMOVED
                 (vector-set! (simulation-player-removed sim) i
-                    (vector-mean player-removed))
+                    (vector-sum player-removed))
 
 
                 ; PLAYER POINT STATISTICS
@@ -101,7 +101,6 @@
     (simulation-player-mean-set! sim (vector-map (simulation-player-mean sim) mapping))
     (simulation-player-median-set! sim (vector-map (simulation-player-median sim) mapping))
     (simulation-player-std-set! sim (vector-map (simulation-player-std sim) mapping))
-    (simulation-player-removed-set! sim (vector-map (simulation-player-removed sim) mapping))
 )
 
 ; SIMULATION ACCESSORS
@@ -120,9 +119,9 @@
     (println tab "Simulation Id: " (simulation-id sim))
     (println tab "Num Games:     " (simulation-num-games sim))
     (println tab "Player Strat:  " (simulation-player-strat sim))
-    ;(println tab "Removed Mean:  " (simulation-player-removed sim))
+    (println tab "Removed Cols  " (simulation-player-removed sim))
     (println tab "Point Median:  " (simulation-player-median sim))
-    (println tab "Point Meam:    " (vector->real(simulation-player-mean sim)))
+    (println tab "Point Mean:    " (vector->real(simulation-player-mean sim)))
     (println tab "Point STD:     " (simulation-player-std sim))
     (println tab "Point Max:     " (simulation-player-max sim))
     (println tab "Point Min:     " (simulation-player-min sim))

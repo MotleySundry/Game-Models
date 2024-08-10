@@ -221,7 +221,4 @@
 (define (player-remove-matching-columns! player)
     (define removed (hand-remove-matching-columns! (player-hand player) (round-deck (player-round player))))
     (player-removed-set! player (+ (player-removed player) removed ))
-    (if (> 0 (player-removed player)) (println "Removed: " (player-removed player)))
-
 )
-

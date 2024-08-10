@@ -80,8 +80,6 @@
                     ; game done
                     (if (< (vector-max-val (game-points game)) 100)
                         (loop (+ i 1))
-                        ;(game-print game "")
-                        ;(print (list "Game" ( + (game-id game) 1) "Points:" (game-points game)))
                         )))))
 )
 
@@ -91,7 +89,7 @@
         (if (< i *num-players*)
             (let ((player (round-get-player round i)))
                 (game-add-player-points game i (hand-card-sum (player-hand player)))
-                (game-add-player-removed game i (hand-card-sum (player-hand player)))
+                (game-add-player-removed game i (player-removed player))
                 (loop (+ i 1)))))
 )
 
