@@ -14,6 +14,47 @@
 ; You should have received a copy of the GNU Affero General Public License
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+; Swaps two vector elements.
+(define (vector-swap! vect a b)
+    (define tmp (vector-ref vect a))
+    (vector-set! vect a (vector-ref vect b))
+    (vector-set! vect b tmp)
+    vect
+)
+
+; Sorts a vector in ascending order in place.
+; The optional cmp should return #t if (<= a b)
+(define (vector-sort! vect #!optional cmp)
+    (if cmp
+        (vector-quicksort! vect cmp 0 (- (vector-length vect) 1))
+        (vector-quicksort! vect <= 0 (- (vector-length vect) 1)))
+    vect
+)
+
+(define (vector-quicksort! vect cmp low high)
+
+    (define (partition vect cmp low high)
+        (define pivot (vector-ref vect high))
+        (define i (- low 1) )
+        (let loop ((j low))
+            (if (< j high) 
+                (begin
+                    (if (cmp (vector-ref vect j) pivot)
+                        (begin
+                            (set! i (+ i 1))
+                            (vector-swap! vect i j)
+                        ))
+                    (loop (+ j 1)))))
+        (vector-swap! vect (+ i 1) high)
+        (+ i 1) 
+    )
+ 
+    (if (< low high)
+        (let ((pivot-idx (partition vect cmp low high)))
+            (vector-quicksort! vect cmp low (- pivot-idx 1))
+            (vector-quicksort! vect cmp (+ pivot-idx 1) high)))
+)
+
 (define (vector-count-values vect val)
     (let loop ((i 0) (cnt 0))
         (if (< i (vector-length vect))
