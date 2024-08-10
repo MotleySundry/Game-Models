@@ -22,17 +22,16 @@
 ; 2) If the discard is lower than the highest open card then replace it.
 ; 3) If the discard is five or lower, then replace any hidden card.
 ; 4) Otherwise; Draw a card.
-; 5) If the draw is lower than the highest card in the hand, draw and exchange it.
-; 6) Otherwise draw and discard it,
-
+; 5) If the draw is lower than the highest card in the hand, exchange it.
+; 6) Otherwise; discard it.
 
 ; The most basic strategy that follows the rules with random choices.
 ; Returns #f when the last card is turned over.
-(define (strat-naive player cmd)
+(define (strat-level1 player cmd)
 
     (cond
         ; Returns the string label of the strategy or #f on failure.
-        ((= cmd *strat-cmd-get-label*) "Naive")
+        ((= cmd *strat-cmd-get-label*) "Level-1")
 
         ; Returns #t if the play was executed or #f otherwise
         ((= cmd *strat-cmd-play-phase1*)
