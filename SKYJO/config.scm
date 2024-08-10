@@ -62,7 +62,7 @@
 (define *deck-size* 150)
 (define *deck-sum* 760)
 (define *deck-mean* 5)
-(define *deck-median* 4)
+(define *deck-median* 5)
 
 ; HAND CONSTANTS
 (define *hand-num-cards* 12)

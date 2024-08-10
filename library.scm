@@ -14,6 +14,19 @@
 ; You should have received a copy of the GNU Affero General Public License
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+; Returns the mean of the arguments
+(define (mean #!rest args)
+    (if args (list-mean args) 0)
+)
+
+; Returns the mean of the list elements
+(define (list-mean lst)
+    (let loop ((lst lst) (sum 0) (cnt 0))
+        (if (not (null? lst))
+            (loop (cdr lst) (+ sum (car lst)) (+ cnt 1))
+            (/ sum cnt)))
+)
+
 ; Generate a random integer from 0 to (max -1) excluding an intereg value.
 (define (random-integer-exclude max exclude)
     (let loop ((rnd (random-integer max)))

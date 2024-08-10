@@ -103,6 +103,21 @@
     (/ (vector-sum vect) (vector-length vect))
 )
 
+(define (vector-median vect)
+    (if (= 0 (vector-length vect))
+        (begin
+            (log-warning "Taking thhe media of an empty vector"
+            "This is undefined, returning 0")
+            0)
+
+        (let ((tmp (vector-dup vect)))
+            (vector-sort! tmp)
+            (let ((flr (floor (/ (vector-length vect) 2))))
+                (if (odd? (vector-length vect))
+                    (vector-ref vect flr) 
+                    (mean (vector-ref vect flr) (vector-ref vect (- flr 1)))))))
+)
+
 (define (vector-standard-deviation vect) 
     (sqrt (vector-variance vect))
 )
