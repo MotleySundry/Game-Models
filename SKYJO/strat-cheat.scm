@@ -14,13 +14,24 @@
 ; You should have received a copy of the GNU Affero General Public License
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-; The most powerful strategy with the ability to break the rules by looking at all cards.
-; It is useful to measure the random nature of the game and inform legal stragegy development.
-(define (strat-omnipotent player cmd)
+;
+; === Steps for the Cheat Strategy ===
+;
+; Cheating must be enabled in the config.
+;
+; 1) On the first-round two-flip open the highest two cards.
+;    ---- Game Play ----
+; 2) If the discard is lower than or equal to the discard card
+;       and is lower than the highest card in the hand, exchange it.
+; 3) If the draw is lower than the highest card in the hand, draw and exchange it.
+; 4) Otherwise draw and discard it.
+;
+
+(define (strat-cheat player cmd)
 
     (cond
         ; Returns the string label of the strategy or #f on failure.
-        ((= cmd *strat-cmd-get-label*) "Omnipotent")
+        ((= cmd *strat-cmd-get-label*) "Cheat")
 
         ; Returns #t if the play was executed or #f otherwise
         ((= cmd *strat-cmd-play-phase1*)

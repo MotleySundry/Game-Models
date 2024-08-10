@@ -14,8 +14,20 @@
 ; You should have received a copy of the GNU Affero General Public License
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+;
+; === Steps for the Level1 strategy ===
+;
+; 1) On the first-round two-flip, open any two cards.
+;    ---- Game Play ----
+; 2) If the discard is lower than the highest open card then replace it.
+; 3) If the discard is five or lower, then replace any hidden card.
+; 4) Otherwise; Draw a card.
+; 5) If the draw is lower than the highest card in the hand, draw and exchange it.
+; 6) Otherwise draw and discard it,
+
+
 ; The most basic strategy that follows the rules with random choices.
-; Returns #f when the last card is turned over
+; Returns #f when the last card is turned over.
 (define (strat-naive player cmd)
 
     (cond

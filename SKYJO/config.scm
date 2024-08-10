@@ -16,18 +16,18 @@
 
 ; CONFIGURATION
 (define *num-players* 4)        ; Number of players in the game.
-(define *num-games* 1000)        ; Number of games to simulate.
+(define *num-games* 10000)        ; Number of games to simulate.
 (define *cheating-allowed?* #t) ; Allows calls outside the rules, strat-omnipotent
 
 (define (get-player-strat id)
-    (if (= id 0) strat-naive
-    (if (= id 1) strat-omnipotent
-    (if (= id 2) strat-naive
-    (if (= id 3) strat-omnipotent
-    (if (= id 4) strat-naive
-    (if (= id 5) strat-omnipotent
-    (if (= id 6) strat-naive
-    (if (= id 7) strat-omnipotent
+    (if (= id 0) strat-level1
+    (if (= id 1) strat-cheat
+    (if (= id 2) strat-level1
+    (if (= id 3) strat-cheat
+    (if (= id 4) strat-level1
+    (if (= id 5) strat-cheat
+    (if (= id 6) strat-level1
+    (if (= id 7) strat-cheat
 )))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
