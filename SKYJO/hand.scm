@@ -51,23 +51,23 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (hand-remove-matching-columns! hand deck)
-    (hand-remove-matching-columns-by-ids! hand deck 0 4 8)
-    (hand-remove-matching-columns-by-ids! hand deck 1 5 9)
-    (hand-remove-matching-columns-by-ids! hand deck 2 6 10)
-    (hand-remove-matching-columns-by-ids! hand deck 3 7 11)
+    (+ (hand-remove-matching-columns-by-ids! hand deck 0 4 8)
+        (hand-remove-matching-columns-by-ids! hand deck 1 5 9)
+        (hand-remove-matching-columns-by-ids! hand deck 2 6 10)
+        (hand-remove-matching-columns-by-ids! hand deck 3 7 11))
 )
 
 (define (hand-remove-matching-columns-by-ids! hand deck id1 id2 id3)
-    (and
+    (if (and
         (hand-is-card-open? hand id1)
         (hand-is-card-open? hand id2)
-        (hand-is-card-open? hand id3)
+        (hand-is-card-open? hand id3))
         (let (
             (val1 (hand-get-card-value hand id1))
             (val2 (hand-get-card-value hand id2))
             (val3 (hand-get-card-value hand id3)))
             
-            (if (= val1 val2 val3)
+            (if (and (< 0 val1) (= val1 val2 val3))
                 (begin
                     (hand-set-card-removed! hand id1)
                     (hand-set-card-removed! hand id2)
@@ -75,7 +75,10 @@
 
                     (deck-push-discard-pile! deck val1)
                     (deck-push-discard-pile! deck val2)
-                    (deck-push-discard-pile! deck val3)))))
+                    (deck-push-discard-pile! deck val3)
+                    1)
+                0))
+        0)
 )
 
 (define (hand-set-card-value! hand id card)

@@ -18,8 +18,10 @@
     id 
     num-games
     last-game 
-    game-scores 
+    game-points 
+    game-removed 
     player-strat
+    player-removed
     player-mean 
     player-std
     player-median
@@ -32,13 +34,15 @@
         id
         num-games
         "last-game"
-        (new-vector2  num-games *num-players*)  ;game-scores
-        (make-vector *num-players*) ;player-strat
-        (make-vector *num-players*) ;player-mean
-        (make-vector *num-players*) ;player-std
-        (make-vector *num-players*) ;player-median
-        (make-vector *num-players*) ;player-max
-        (make-vector *num-players*) ;player-min
+        (new-vector2  num-games *num-players*)  ;game-points
+        (new-vector2  num-games *num-players*)  ;game-removed
+        (make-vector *num-players*)             ;player-strat
+        (make-vector *num-players*)             ;player-removed
+        (make-vector *num-players*)             ;player-mean
+        (make-vector *num-players*)             ;player-std
+        (make-vector *num-players*)             ;player-median
+        (make-vector *num-players*)             ;player-max
+        (make-vector *num-players*)             ;player-min
     )
 )
 
@@ -49,7 +53,8 @@
                 (let ((game (new-game i))) 
                 (game-run game)
                 (simulation-last-game-set! sim game)
-                (vector2-row-set! (simulation-game-scores sim) i (game-points game))
+                (vector2-row-set! (simulation-game-points sim) i (game-points game))
+                (vector2-row-set! (simulation-game-removed sim) i (game-removed game))
                 (loop (+ i 1))))))
     
     (simulation-calc-stats sim)
@@ -58,30 +63,45 @@
 
 (define (simulation-calc-stats sim)
     (define (mapping v) (floor (+ 0.5 v)))
-    (define game-scores (simulation-game-scores sim))
+    (define game-points (simulation-game-points sim))
+    (define game-removed (simulation-game-removed sim))
     (define players (round-players (game-last-round (simulation-last-game sim))))
     (let loop ((i 0))
         (if (< i *num-players*)
-            (let ((player-scores (vector2-get-column game-scores i)))
-                (vector-set! (simulation-player-mean sim) i
-                    (vector-mean player-scores))
-                (vector-set! (simulation-player-std sim) i
-                    (vector-standard-deviation player-scores))
-                (vector-set! (simulation-player-median sim) i
-                    (vector-median player-scores))
-                (vector-set! (simulation-player-max sim) i
-                    (vector-max player-scores))
-                (vector-set! (simulation-player-min sim) i
-                    (vector-min player-scores))
+            (let ((player-points (vector2-get-column game-points i))
+            (player-removed (vector2-get-column game-removed i)))
+
+                ; STRATEGY
                 (vector-set! (simulation-player-strat sim) i
                     (player-get-strat-label (vector-ref players i)))
+
+                ; REMOVED
+                (vector-set! (simulation-player-removed sim) i
+                    (vector-mean player-removed))
+
+
+                ; PLAYER POINT STATISTICS
+                (vector-set! (simulation-player-mean sim) i
+                    (vector-mean player-points))
+                (vector-set! (simulation-player-std sim) i
+                    (vector-standard-deviation player-points))
+                (vector-set! (simulation-player-median sim) i
+                    (vector-median player-points))
+                (vector-set! (simulation-player-max sim) i
+                    (vector-max player-points))
+                (vector-set! (simulation-player-min sim) i
+                    (vector-min player-points))
+
                 (loop (+ i 1))
+
+                
             )
     ))
 
     (simulation-player-mean-set! sim (vector-map (simulation-player-mean sim) mapping))
     (simulation-player-median-set! sim (vector-map (simulation-player-median sim) mapping))
     (simulation-player-std-set! sim (vector-map (simulation-player-std sim) mapping))
+    (simulation-player-removed-set! sim (vector-map (simulation-player-removed sim) mapping))
 )
 
 ; SIMULATION ACCESSORS
@@ -97,14 +117,15 @@
 ; SIMULATION PRINT
 (define (simulation-print sim tab)
     (println tab "--- Simulation ---")
-    (println tab "id:            " (simulation-id sim))
-    (println tab "num-games:     " (simulation-num-games sim))
-    (println tab "player-strat:  " (simulation-player-strat sim))
-    (println tab "player-median: " (simulation-player-median sim))
-    (println tab "player-mean:   " (vector->real(simulation-player-mean sim)))
-    (println tab "player-std:    " (simulation-player-std sim))
-    (println tab "player-max:    " (simulation-player-max sim))
-    (println tab "player-min:    " (simulation-player-min sim))
+    (println tab "Simulation Id: " (simulation-id sim))
+    (println tab "Num Games:     " (simulation-num-games sim))
+    (println tab "Player Strat:  " (simulation-player-strat sim))
+    ;(println tab "Removed Mean:  " (simulation-player-removed sim))
+    (println tab "Point Median:  " (simulation-player-median sim))
+    (println tab "Point Meam:    " (vector->real(simulation-player-mean sim)))
+    (println tab "Point STD:     " (simulation-player-std sim))
+    (println tab "Point Max:     " (simulation-player-max sim))
+    (println tab "Point Min:     " (simulation-player-min sim))
 )
 
 

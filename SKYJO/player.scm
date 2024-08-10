@@ -21,17 +21,19 @@
     hand            ;reference to the players hand
     strat           ;lambda reference to the assigned strategy
     points          ;integer points the player scored for the round, updated at the end of the round
+    removed         ;sum of the number of coulmns removed
 )
 
 ; Create a new initialized player structure.
 (define (new-player id round)
     ; Allocate structure
     (make-player
-        id                                  ;id
-        round                               ;round
-        (new-hand)                          ;hand
-        (get-player-strat id)               ;strat
-        0                                   ;points
+        id                      ;id
+        round                   ;round
+        (new-hand)              ;hand
+        (get-player-strat id)   ;strat
+        0                       ;points
+        0                       ;removed
     ))  
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -217,6 +219,9 @@
 )
 
 (define (player-remove-matching-columns! player)
-    (hand-remove-matching-columns! (player-hand player) (round-deck (player-round player)))
+    (define removed (hand-remove-matching-columns! (player-hand player) (round-deck (player-round player))))
+    (player-removed-set! player (+ (player-removed player) removed ))
+    (if (> 0 (player-removed player)) (println "Removed: " (player-removed player)))
+
 )
 

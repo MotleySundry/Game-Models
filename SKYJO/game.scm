@@ -21,6 +21,7 @@
     rounds              ;vector of round references, filled as the game progresses
     round-cnt           ;integer incremented as new rounds are started
     points              ;integer points for each player tallied after each round
+    removed             ;total columns removed
     last-round          ;reference to the round that ended the game
     starter             ;integer the starter for the round
 
@@ -39,6 +40,7 @@
         (make-vector  *max-rounds*)     ;rounds 
         0                               ;round-count
         (make-vector  *num-players* 0)  ;points
+        (make-vector  *num-players* 0)  ;removed
         "last-round TBD"                ;last-round
         "starter TBD"                   ;starter
 
@@ -73,7 +75,7 @@
                     (round-run round)
                     (round-is-valid? round)
 
-                    (game-tally-player-points game round)
+                    (game-tally-player game round)
 
                     ; game done
                     (if (< (vector-max-val (game-points game)) 100)
@@ -84,11 +86,12 @@
 )
 
 ; Tallys the player scores for this round.
-(define (game-tally-player-points game round)
+(define (game-tally-player game round)
     (let loop ((i 0))
         (if (< i *num-players*)
             (let ((player (round-get-player round i)))
                 (game-add-player-points game i (hand-card-sum (player-hand player)))
+                (game-add-player-removed game i (hand-card-sum (player-hand player)))
                 (loop (+ i 1)))))
 )
 
@@ -98,12 +101,17 @@
     (vector-ref (game-points game) id)
 )
 
+(define (game-get-player-removed game id)
+    (vector-ref (game-removed game) id)
+)
+
 (define (game-get-round game id)
     (vector-ref (game-rounds game) id)
 )
 
 ; GAME SETTERS
 
+; POINTS
 (define (game-set-player-points! game id points)
     (vector-set! (game-points game) id points)
 )
@@ -112,9 +120,15 @@
     (game-set-player-points! game id (+ points (game-get-player-points game id)))
 )
 
-(define (game-set-player-score! game id score)
-    (vector-set! (game-scores game) id score)
+; REMOVED CNT
+(define (game-set-player-removed! game id removed)
+    (vector-set! (game-removed game) id removed)
 )
+
+(define (game-add-player-removed game id removed)
+    (game-set-player-removed! game id (+ removed (game-get-player-removed game id)))
+)
+
 
 (define (game-set-round! game id round)
     (vector-set! (game-rounds game) id round)
