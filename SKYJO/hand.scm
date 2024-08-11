@@ -204,10 +204,13 @@
 
 ; Returns the id of the highest hidden card or #f if there are none
 ; The first highest card found wins.
-(define (hand-get-highest-hidden-card hand)
+(define (hand-get-highest-hidden-card hand #!optional exclude)
     (let loop ((i 0) (max-id #f) (max-value -3))
         (if (< i *hand-num-cards*)
-            (if (and (hand-is-card-hidden? hand i) (> (hand-get-card-value hand i) max-value))
+            (if (and
+                    (hand-is-card-hidden? hand i)
+                    (not (and exclude (= i exclude)))
+                    (> (hand-get-card-value hand i) max-value))
                 (loop (+ i 1) i (hand-get-card-value hand i))
                 (loop (+ i 1) max-id max-value))
             max-id))

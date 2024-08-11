@@ -193,11 +193,11 @@
     (deck-cheat-next-draw-card-val (round-deck (player-round player))))
 )
 
- (define (player-cheat-get-highest-hidden-card player)
+ (define (player-cheat-get-highest-hidden-card player #!optional exclude)
      (if (not *cheating-allowed?*)
         (log-fatal "Cheating is not allowed: player-cheat-get-largest-hidden-card"
             (player-get-strat-label player))
-    (hand-get-highest-hidden-card (player-hand player)))
+    (hand-get-highest-hidden-card (player-hand player) exclude))
  )
 
 ; Validate the players's consistency

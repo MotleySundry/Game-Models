@@ -163,8 +163,9 @@
 
 ; Returns (card1 card2)
 (define (strat-omnipotent-flip-two player)
-    (define card1 (random-integer *hand-num-cards*))
-    (list 
-        card1
-        (random-integer-exclude *hand-num-cards* card1))
+
+    (define card1 (player-cheat-get-highest-hidden-card player))
+    (define card2 (player-cheat-get-highest-hidden-card player card1))
+    
+    (list card1 card2)
 )
