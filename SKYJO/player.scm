@@ -76,6 +76,7 @@
     (if (not ((player-strat player) player *strat-cmd-play-phase2*))
         (log-fatal "Player failed to make a play: play-phase2" 
             (player-id player) (player-get-strat-label player)))
+    (hand-open-all-hidden-cards! (player-hand player))
     (player-remove-matching-columns! player)
 )
 

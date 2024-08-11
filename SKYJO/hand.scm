@@ -50,6 +50,15 @@
 ;               HAND SETTERS
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+; Open all hidden cards
+(define (hand-open-all-hidden-cards! hand)
+    (let loop ((i 0))
+        (if (< i *hand-num-cards*)
+            (begin 
+                (if (hand-is-card-hidden? hand i) (hand-set-card-open! hand i))
+                (loop (+ i 1)))))
+)
+
 (define (hand-remove-matching-columns! hand deck)
     (+ (hand-remove-matching-columns-by-ids! hand deck 0 4 8)
         (hand-remove-matching-columns-by-ids! hand deck 1 5 9)
