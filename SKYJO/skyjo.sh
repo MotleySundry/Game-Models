@@ -21,13 +21,19 @@ source ../include.sh
 
 print_usage(){
 cat << USAGE
-    Usage: $(basename "$0") [ repl ]
+    Usage: $(basename "$0") [ repl | batch ]
+    Run the SKYJO simulation, the default is compile and run the binary.
+        Options:
+        repl - Load the source into the REPL for interactive debugging.
+        batch - Run the simulation in the interpreter.
+
 USAGE
 }
 
 SRC=()
 SRC+=('../library.scm')
-SRC+=('../matrix.scm')
+SRC+=('../f64matrix.scm')
+SRC+=('../f64vector.scm')
 SRC+=('../vector.scm')
 SRC+=('../vector2.scm')
 SRC+=('config.scm')
@@ -43,7 +49,10 @@ SRC+=('strat-cheat.scm')
 # Check the arguments
 if [[ $# -eq 1 ]]; then
     if [[ $1 = 'repl' ]]; then
-        repl_gambit skyjo "${SRC[@]}"
+        repl_gambit
+        exit 0
+    elif [[ $1 = 'batch' ]]; then
+        batch_gambit skyjo "${SRC[@]}"
         exit 0
     else
         print_usage
@@ -52,5 +61,5 @@ if [[ $# -eq 1 ]]; then
     fi
 fi
 
-build_gambit skyjo "${SRC[@]}"
+compile_gambit skyjo "${SRC[@]}"
 ./skyjo.bin "$@"

@@ -1,4 +1,4 @@
-; Motley Sundry :: Game Models :: matrix.scm
+; Motley Sundry :: Game Models :: f64Matrix.scm
 ; Copyright (C) 2024 Donald R Anderson
 ;
 ; This program is free software: you can redistribute it and/or modify
@@ -14,18 +14,18 @@
 ; You should have received a copy of the GNU Affero General Public License
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-; Functions for an n-dimensional matrix.
+; Functions for an n-dimensional f64matrix.
 
-(define-structure matrix
+(define-structure f64matrix
     rowwise? ; #t if the matrix is stored rowwise, #f is it is stored columnwise
     size ; integer vector containing size of each dimension
-    data ; number vector containing the elements
+    data ; f64vector containing the elements
 )
 
-(define (new-matrix size #!optional(init #f) #!key (rowwise? #t))
+(define (new-f64matrix size #!optional(init #f) #!key (rowwise? #t))
     (let ((len (vector-product size)))
-            (make-matrix
+            (make-f64matrix
             rowwise?
             size
-            (if init (make-vector len init) (make-vector len))))
+            (if init (make-f64vector len init) (make-f64vector len))))
 )
