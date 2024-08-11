@@ -59,16 +59,22 @@
 )
 
 ; Calculates a player's points for the round.
-
 (define (round-update-player-points round player-id out-player-id)
     (define player (round-get-player round player-id))
     (define hand (player-hand player))
+    (define hand-pts (hand-card-sum hand))
 
-    (if (= player-id out-player-id)  
-        (if (and (>= (hand-card-sum hand) (round-min-total round out-player-id)) (> (hand-card-sum hand) 0)   )
-            (player-points-set! player (* 2 (hand-card-sum hand)))
-            (player-points-set! player (hand-card-sum hand)))
-        (player-points-set! player (hand-card-sum hand)))
+    (if (not (= player-id out-player-id))
+        ; Just set hand points if not out player
+        (player-points-set! player hand-pts)
+        
+        ; Possible penalty?
+        (if (>= hand-pts (round-min-total round out-player-id))
+            (if (< hand-pts 0)
+                (player-points-set! player hand-pts) ; No penalty points with negative hand
+                (begin ; Yes penalty points            
+                    (player-points-set! player (* 2 hand-pts))
+                    (player-penalties-set! player hand-pts)))))  
 )
 
 ; Returns the player with the lowest card total for the round.
@@ -146,8 +152,8 @@
         max-id))
 )
 
-(define (round-get-player-score round id)
-    (player-score (round-get-player round id))
+(define (round-get-player-points round id)
+    (player-points (round-get-player round id))
 )
 
 (define (round-get-player round id)

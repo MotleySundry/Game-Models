@@ -21,8 +21,10 @@
     last-game 
     game-points 
     game-removed 
+    game-penalties 
     player-strat
     player-removed
+    player-penalties
     player-mean 
     player-std
     player-median
@@ -38,8 +40,10 @@
         "last-game"                             ;last-game
         (new-vector2  num-games *num-players*)  ;game-points
         (new-vector2  num-games *num-players*)  ;game-removed
+        (new-vector2  num-games *num-players*)  ;game-penalties
         (make-vector *num-players*)             ;player-strat
         (make-vector *num-players*)             ;player-removed
+        (make-vector *num-players*)             ;player-penalties
         (make-vector *num-players*)             ;player-mean
         (make-vector *num-players*)             ;player-std
         (make-vector *num-players*)             ;player-median
@@ -58,6 +62,7 @@
                 (simulation-num-rounds-set! sim (+ (simulation-num-rounds sim) (game-num-rounds game)))
                 (vector2-row-set! (simulation-game-points sim) i (game-points game))
                 (vector2-row-set! (simulation-game-removed sim) i (game-removed game))
+                (vector2-row-set! (simulation-game-penalties sim) i (game-penalties game))
                 (loop (+ i 1))))))
     
     (simulation-calc-stats sim)
@@ -68,11 +73,13 @@
     (define (mapping v) (floor (+ 0.5 v)))
     (define game-points (simulation-game-points sim))
     (define game-removed (simulation-game-removed sim))
+    (define game-penalties (simulation-game-penalties sim))
     (define players (round-players (game-last-round (simulation-last-game sim))))
     (let loop ((i 0))
         (if (< i *num-players*)
             (let ((player-points (vector2-get-column game-points i))
-            (player-removed (vector2-get-column game-removed i)))
+                    (player-removed (vector2-get-column game-removed i))
+                    (player-penalties (vector2-get-column game-penalties i)))
 
                 ; STRATEGY
                 (vector-set! (simulation-player-strat sim) i
@@ -82,6 +89,9 @@
                 (vector-set! (simulation-player-removed sim) i
                     (vector-sum player-removed))
 
+                ; PENALTIES
+                (vector-set! (simulation-player-penalties sim) i
+                    (vector-sum player-penalties))
 
                 ; PLAYER POINT STATISTICS
                 (vector-set! (simulation-player-mean sim) i
@@ -119,16 +129,17 @@
 ; SIMULATION PRINT
 (define (simulation-print sim tab)
     (println tab "--- Simulation ---")
-    (println tab "Simulation Id: " (simulation-id sim))
-    (println tab "Num Games:     " (simulation-num-games sim))
-    (println tab "Num Rounds:    " (simulation-num-rounds sim))
-    (println tab "Player Strat:  " (simulation-player-strat sim))
-    (println tab "Removed Cols:  " (simulation-player-removed sim))
-    (println tab "Point Median:  " (simulation-player-median sim))
-    (println tab "Point Mean:    " (vector->real(simulation-player-mean sim)))
-    (println tab "Point STD:     " (simulation-player-std sim))
-    (println tab "Point Max:     " (simulation-player-max sim))
-    (println tab "Point Min:     " (simulation-player-min sim))
+    (println tab "Simulation Id:    " (simulation-id sim))
+    (println tab "Num Games:        " (simulation-num-games sim))
+    (println tab "Num Rounds:       " (simulation-num-rounds sim))
+    (println tab "Player Strat:     " (simulation-player-strat sim))
+    (println tab "Removed columns:  " (simulation-player-removed sim))
+    (println tab "Penalty Points:   " (simulation-player-penalties sim))
+    (println tab "Point Median:     " (simulation-player-median sim))
+    (println tab "Point Mean:       " (vector->real(simulation-player-mean sim)))
+    (println tab "Point STD:        " (simulation-player-std sim))
+    (println tab "Point Max:        " (simulation-player-max sim))
+    (println tab "Point Min:        " (simulation-player-min sim))
 )
 
 

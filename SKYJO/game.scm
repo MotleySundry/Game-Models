@@ -21,7 +21,8 @@
     rounds              ;vector of round references, filled as the game progresses
     num-rounds          ;integer incremented as new rounds are started
     points              ;integer points for each player tallied after each round
-    removed             ;total columns removed
+    removed             ;total columns removed for each player tallied after each round
+    penalties           ;total penalties for each player tallied after each round
     last-round          ;reference to the round that ended the game
     starter             ;integer the starter for the round
 
@@ -41,6 +42,7 @@
         0                               ;round-count
         (make-vector  *num-players* 0)  ;points
         (make-vector  *num-players* 0)  ;removed
+        (make-vector  *num-players* 0)  ;penalties
         "last-round TBD"                ;last-round
         "starter TBD"                   ;starter
 
@@ -83,13 +85,14 @@
                         )))))
 )
 
-; Tallys the player scores for this round.
+; Tallys the player stats for this round.
 (define (game-tally-player game round)
     (let loop ((i 0))
         (if (< i *num-players*)
             (let ((player (round-get-player round i)))
                 (game-add-player-points game i (hand-card-sum (player-hand player)))
                 (game-add-player-removed game i (player-removed player))
+                (game-add-player-penalties game i (player-penalties player))
                 (loop (+ i 1)))))
 )
 
@@ -101,6 +104,10 @@
 
 (define (game-get-player-removed game id)
     (vector-ref (game-removed game) id)
+)
+
+(define (game-get-player-penalties game id)
+    (vector-ref (game-penalties game) id)
 )
 
 (define (game-get-round game id)
@@ -118,6 +125,15 @@
     (game-set-player-points! game id (+ points (game-get-player-points game id)))
 )
 
+; PENALTIES
+(define (game-set-player-penalties! game id penalties)
+    (vector-set! (game-penalties game) id penalties)
+)
+
+(define (game-add-player-penalties game id penalties)
+    (game-set-player-penalties! game id (+ penalties (game-get-player-penalties game id)))
+)
+
 ; REMOVED CNT
 (define (game-set-player-removed! game id removed)
     (vector-set! (game-removed game) id removed)
@@ -127,7 +143,7 @@
     (game-set-player-removed! game id (+ removed (game-get-player-removed game id)))
 )
 
-
+; ROUND
 (define (game-set-round! game id round)
     (vector-set! (game-rounds game) id round)
 )

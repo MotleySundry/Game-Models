@@ -16,12 +16,13 @@
 
 
 (define-structure player
-    id              ;integer player id, unique in context
-    round           ;reference to the containing round round
-    hand            ;reference to the players hand
-    strat           ;lambda reference to the assigned strategy
-    points          ;integer points the player scored for the round, updated at the end of the round
-    removed         ;sum of the number of coulmns removed
+    id          ;integer player id, unique in context
+    round       ;reference to the containing round round
+    hand        ;reference to the players hand
+    strat       ;lambda reference to the assigned strategy
+    points      ;integer points the player scored for the round, updated at the end of the round
+    removed     ;integer count of uni-value columns removed
+    penalties   ;integer penalty points for going out first and too high
 )
 
 ; Create a new initialized player structure.
@@ -34,6 +35,7 @@
         (get-player-strat id)   ;strat
         0                       ;points
         0                       ;removed
+        0                       ;penalties
     ))  
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
