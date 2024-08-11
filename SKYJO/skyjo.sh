@@ -22,10 +22,12 @@ source ../include.sh
 print_usage(){
 cat << USAGE
     Usage: $(basename "$0") [ repl | batch ]
-    Run the SKYJO simulation, the default is compile and run the binary.
+    Runs the SKYJO simulation, the default is compile and run the binary.
         Options:
-        repl - Load the source into the REPL for interactive debugging.
-        batch - Run the simulation in the interpreter.
+            batch - Run the simulation in the interpreter.
+            repl - Starts the interpreter REPL in the SKYJO directory.
+                Load the source:    (load "load-skyjo.scm") (load-skyjo)
+                Run the simulation: (run-skyjo 100)
 
 USAGE
 }
@@ -49,6 +51,8 @@ SRC+=('strat-cheat.scm')
 # Check the arguments
 if [[ $# -eq 1 ]]; then
     if [[ $1 = 'repl' ]]; then
+        echo 'Load the source:    (load "load-skyjo.scm") (load-skyjo)'
+        echo 'Run the simulation: (run-skyjo 100)'
         repl_gambit
         exit 0
     elif [[ $1 = 'batch' ]]; then
