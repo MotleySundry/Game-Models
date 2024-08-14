@@ -24,13 +24,14 @@ Simulation Id:        0
 Number of Games:      10000
 Rounds per Game:      3.2
 Player Strategy:      #(Level-1 Cheat Level-1 Cheat)
-Removed Columns Mean: #(.3 .27 .3 .26)
-Penalty Points Mean:  #(2. 19.1 1.5 14.7)
-Point Median:         #(127. 36. 103. 38.)
+Player Plays Mean:    #(43.3 43.7 43.5 43.5)
+Removed Columns Mean: #(.32 .28 .31 .29)
+Penalty Points Mean:  #(0. 0. 0. 0.)
+Point Median:         #(100. 40. 109. 42.)
 Point Mean:           #(107. 34. 103. 35.)
-Point STD:            #(21. 18. 23. 18.)
-Point Max:            #(175 121 175 111)
-Point Min:            #(-15 -80 -91 -71)
+Point STD:            #(22. 18. 23. 18.)
+Point Max:            #(176 108 174 110)
+Point Min:            #(-54 -76 -84 -115)
 
 ```
 
