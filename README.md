@@ -8,13 +8,15 @@ The models are written in Gambit Scheme.
 * brew install gcc@13
 * brew install shellcheck
 
+# SKYJO Card Game
+
 ## There are two strategies implemented:
 * **Cheat** - Is allowed to break the rules and is mainly used to find lower bounds for the higher strategies.
 * **Level 1** - It is the most basic strategy where the rules are followed and decisions are made randomly.
 
 Look at the comments at the top of the strategy modules for  more details.
 
-## This is a sample output from a run:
+### This is a sample output from a run:
 
 ```
 
@@ -32,7 +34,7 @@ Point Min:            #(-15 -80 -91 -71)
 
 ```
 
-## Command Line Usage:
+### Command Line Usage:
 
 ```
 
