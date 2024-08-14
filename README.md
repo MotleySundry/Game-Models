@@ -18,20 +18,33 @@ Look at the comments at the top of the strategy modules for  more details.
 
 ```
 
-Simulation Id: 0
-Num Games:     10000
-Num Rounds:    30640
-Player Strat:  #(Level-1 Cheat Level-1 Cheat)
-Removed Cols:  #(2333 2345 2010 2367)
-Point Median:  #(108. 29. 89. 19.)
-Point Mean:    #(108. 40. 105. 41.)
-Point STD:     #(22. 20. 23. 19.)
-Point Max:     #(178 129 179 121)
-Point Min:     #(-17 -86 -78 -69)
+Simulation Id:    0
+Num Games:        10000
+Num Rounds:       31781
+Player Strat:     #(Level-1 Cheat Level-1 Cheat)
+Removed columns:  #(2974 2517 2909 2858)
+Penalty Points:   #(20441 191300 14918 146582)
+Point Median:     #(83. 15. 105. 43.)
+Point Mean:       #(107. 34. 103. 35.)
+Point STD:        #(22. 18. 23. 18.)
+Point Max:        #(167 136 164 107)
+Point Min:        #(-25 -78 -12 -91)
 
 ```
 
+## Command Line Usage:
 
+```
+
+Usage: skyjo.sh [ repl | batch ]
+Runs the SKYJO simulation, the default is to compile and run the binary.
+    Options:
+        batch - Run the simulation in the interpreter.
+        repl - Starts the interpreter REPL in the SKYJO directory.
+            Load the source:    (load "load-skyjo.scm") (load-skyjo)
+            Run the simulation: (run-skyjo 100)
+
+```
 
 
  

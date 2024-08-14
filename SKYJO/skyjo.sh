@@ -22,7 +22,7 @@ source ../include.sh
 print_usage(){
 cat << USAGE
     Usage: $(basename "$0") [ repl | batch ]
-    Runs the SKYJO simulation, the default is compile and run the binary.
+    Runs the SKYJO simulation, the default is to compile and run the binary.
         Options:
             batch - Run the simulation in the interpreter.
             repl - Starts the interpreter REPL in the SKYJO directory.
