@@ -23,6 +23,7 @@
     points              ;integer points for each player tallied after each round
     removed             ;total columns removed for each player tallied after each round
     penalties           ;total penalties for each player tallied after each round
+    plays           ;total penalties for each player tallied after each round
     last-round          ;reference to the round that ended the game
     starter             ;integer the starter for the round
 
@@ -43,6 +44,7 @@
         (make-vector  *num-players* 0)  ;points
         (make-vector  *num-players* 0)  ;removed
         (make-vector  *num-players* 0)  ;penalties
+        (make-vector  *num-players* 0)  ;plays
         "last-round TBD"                ;last-round
         "starter TBD"                   ;starter
 
@@ -92,7 +94,7 @@
             (let ((player (round-get-player round i)))
                 (game-add-player-points game i (hand-card-sum (player-hand player)))
                 (game-add-player-removed game i (player-removed player))
-                (game-add-player-penalties game i (player-penalties player))
+                (game-add-player-plays game i (player-plays player))
                 (loop (+ i 1)))))
 )
 
@@ -109,6 +111,9 @@
 (define (game-get-player-penalties game id)
     (vector-ref (game-penalties game) id)
 )
+(define (game-get-player-plays game id)
+    (vector-ref (game-plays game) id)
+)
 
 (define (game-get-round game id)
     (vector-ref (game-rounds game) id)
@@ -123,6 +128,15 @@
 
 (define (game-add-player-points game id points)
     (game-set-player-points! game id (+ points (game-get-player-points game id)))
+)
+
+; PLAYS
+(define (game-set-player-plays! game id plays)
+    (vector-set! (game-plays game) id plays)
+)
+
+(define (game-add-player-plays game id plays)
+    (game-set-player-plays! game id (+ plays (game-get-player-plays game id)))
 )
 
 ; PENALTIES

@@ -17,12 +17,13 @@
 
 (define-structure player
     id          ;integer player id, unique in context
-    round       ;reference to the containing round round
+    round       ;reference to the containing round
     hand        ;reference to the players hand
     strat       ;lambda reference to the assigned strategy
     points      ;integer points the player scored for the round, updated at the end of the round
     removed     ;integer count of uni-value columns removed
     penalties   ;integer penalty points for going out first and too high
+    plays       ;integer number of plays
 )
 
 ; Create a new initialized player structure.
@@ -36,6 +37,7 @@
         0                       ;points
         0                       ;removed
         0                       ;penalties
+        0                       ;plays
     ))  
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -68,6 +70,7 @@
         (log-fatal "Player failed to make a play: play-phase1" 
             (player-id player) (player-get-strat-label player)))
 
+    (player-plays-set! player (+ 1 (player-plays player)))
     (player-remove-matching-columns! player)
     (hand-any-cards-hidden? (player-hand player))
 )
@@ -76,6 +79,7 @@
     (if (not ((player-strat player) player *strat-cmd-play-phase2*))
         (log-fatal "Player failed to make a play: play-phase2" 
             (player-id player) (player-get-strat-label player)))
+    (player-plays-set! player (+ 1 (player-plays player)))
     (hand-open-all-hidden-cards! (player-hand player))
     (player-remove-matching-columns! player)
 )
