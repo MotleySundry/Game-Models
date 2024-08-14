@@ -18,6 +18,8 @@
     id 
     num-games
     num-rounds
+    max-rounds
+    min-rounds
     last-game 
     game-points 
     game-removed 
@@ -39,6 +41,8 @@
         id
         num-games
         0                                       ;num-rounds
+        0                                       ;max-rounds
+        1000                                    ;min-rounds
         "last-game"                             ;last-game
         (new-vector2  num-games *num-players*)  ;game-points
         (new-vector2  num-games *num-players*)  ;game-removed
@@ -64,6 +68,8 @@
                 (game-run game)
                 (simulation-last-game-set! sim game)
                 (simulation-num-rounds-set! sim (+ (simulation-num-rounds sim) (game-num-rounds game)))
+                (simulation-max-rounds-set! sim (max (simulation-max-rounds sim) (game-num-rounds game)))
+                (simulation-min-rounds-set! sim (min (simulation-max-rounds sim) (game-num-rounds game)))
                 (vector2-row-set! (simulation-game-points sim) i (game-points game))
                 (vector2-row-set! (simulation-game-removed sim) i (game-removed game))
                 (vector2-row-set! (simulation-game-penalties sim) i (game-penalties game))
@@ -142,11 +148,14 @@
 ; SIMULATION PRINT
 (define (simulation-print sim tab)
     (println tab "--- Simulation ---")
-    (println tab "Simulation Id:        " (simulation-id sim))
-    (println tab "Number of Games:      " (simulation-num-games sim))
-    (println tab "Rounds per Game:      " (round1 (/ (simulation-num-rounds sim) (simulation-num-games sim))))
+    (println tab "Simulation Id:    " (simulation-id sim))
+    (println tab "Number of Games:  " (simulation-num-games sim))
+    (println tab "Rounds Mean:      " (round1 (/ (simulation-num-rounds sim) (simulation-num-games sim))))
+    (println tab "Rounds Max:       " (simulation-max-rounds sim))
+    (println tab "Rounds Min:       " (simulation-min-rounds sim))
+    (newline)
     (println tab "Player Strategy:      " (simulation-player-strat sim))
-    (println tab "Player Plays Mean:    " (simulation-player-plays sim))
+    (println tab "Plays Mean:           " (simulation-player-plays sim))
     (println tab "Removed Columns Mean: " (simulation-player-removed sim))
     (println tab "Penalty Points Mean:  " (simulation-player-penalties sim))
     (println tab "Point Median:         " (simulation-player-median sim))

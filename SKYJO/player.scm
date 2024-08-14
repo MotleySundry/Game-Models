@@ -207,11 +207,6 @@
     (hand-get-highest-hidden-card (player-hand player) exclude))
  )
 
-; Validate the players's consistency
-(define (player-is-valid? player)
-    (hand-is-valid? (player-hand player))
-)
-
 ; PLAYER PRINT
 (define (player-print player tab)
     (ptintln tab "--- Player ---")

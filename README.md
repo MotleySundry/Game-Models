@@ -20,18 +20,21 @@ Look at the comments at the top of the strategy modules for  more details.
 
 ```
 
-Simulation Id:        0
-Number of Games:      10000
-Rounds per Game:      3.2
+Simulation Id:    0
+Number of Games:  10000
+Rounds Mean:      3.3
+Rounds Max:       5
+Rounds Min:       3
+
 Player Strategy:      #(Level-1 Cheat Level-1 Cheat)
-Player Plays Mean:    #(43.3 43.7 43.5 43.5)
-Removed Columns Mean: #(.32 .28 .31 .29)
-Penalty Points Mean:  #(0. 0. 0. 0.)
-Point Median:         #(100. 40. 109. 42.)
-Point Mean:           #(107. 34. 103. 35.)
-Point STD:            #(22. 18. 23. 18.)
-Point Max:            #(176 108 174 110)
-Point Min:            #(-54 -76 -84 -115)
+Plays Mean:           #(50.3 50.6 50.5 50.4)
+Removed Columns Mean: #(.53 .43 .5 .44)
+Penalty Points Mean:  #(2. 13.1 1.4 10.1)
+Point Median:         #(100. 32. 98. 43.)
+Point Mean:           #(107. 30. 103. 32.)
+Point STD:            #(20. 16. 21. 16.)
+Point Max:            #(170 101 172 119)
+Point Min:            #(0 -14 0 -15)
 
 ```
 

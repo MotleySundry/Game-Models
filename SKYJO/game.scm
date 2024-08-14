@@ -66,7 +66,6 @@
                 (game-set-round! game i round)
                 (game-last-round-set! game round)
                 (game-num-rounds-set! game (+ i 1))
-                (round-is-valid? round)
 
                 (let ((high-flip (round-deal-hands round)))
                     ; set starting player
@@ -77,7 +76,6 @@
 
                     ; run it
                     (round-run round)
-                    (round-is-valid? round)
 
                     (game-tally-player game round)
 
@@ -92,8 +90,9 @@
     (let loop ((i 0))
         (if (< i *num-players*)
             (let ((player (round-get-player round i)))
-                (game-add-player-points game i (hand-card-sum (player-hand player)))
+                (game-add-player-points game i (hand-total (player-hand player)))
                 (game-add-player-removed game i (player-removed player))
+                (game-add-player-penalties game i (player-penalties player))
                 (game-add-player-plays game i (player-plays player))
                 (loop (+ i 1)))))
 )

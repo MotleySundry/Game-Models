@@ -62,30 +62,30 @@
 (define (round-update-player-points round player-id out-player-id)
     (define player (round-get-player round player-id))
     (define hand (player-hand player))
-    (define hand-pts (hand-card-sum hand))
+    (define hand-pts (hand-total hand))
 
     (if (not (= player-id out-player-id))
         ; Just set hand points if not out player
         (player-points-set! player hand-pts)
         
         ; Possible penalty?
-        (if (>= hand-pts (round-min-total round out-player-id))
+        (if (>= hand-pts (round-min-hand round out-player-id))
             (if (< hand-pts 0)
                 (player-points-set! player hand-pts) ; No penalty points with negative hand
-                (begin ; Yes penalty points            
+                (begin ; Yes penalty points 
                     (player-points-set! player (* 2 hand-pts))
                     (player-penalties-set! player hand-pts)))))  
 )
 
 ; Returns the player with the lowest card total for the round.
 ; Excludes the player that went out because a tie has to be detected for scoring.
-(define (round-min-total round exclude-player)
+(define (round-min-hand round exclude-player)
     (let loop ((i 0)( min-id #f) (min-val 144))
-        (if (= i *num-players*)
-            min-id
-            (if (and (not (= i exclude-player)) (< (hand-card-sum (player-hand (round-get-player round i))) min-val))
-                (loop (+ i 1) i (hand-card-sum (player-hand (round-get-player round i))))
-                (loop (+ i 1) min-id min-val))))
+        (if (< i *num-players*)
+            (if (and (not (= i exclude-player)) (< (hand-total (player-hand (round-get-player round i))) min-val))
+                (loop (+ i 1) i (hand-total (player-hand (round-get-player round i))))
+                (loop (+ i 1) min-id min-val))
+            min-val))
 )
 
 ; Returns the id of the first player to open their last card. 
