@@ -155,7 +155,6 @@
     (println tab "Rounds Min:       " (simulation-min-rounds sim))
     (newline)
     (println tab "Player Strategy:      " (simulation-player-strat sim))
-    (println tab "Plays Mean:           " (simulation-player-plays sim))
     (println tab "Removed Columns Mean: " (simulation-player-removed sim))
     (println tab "Penalty Points Mean:  " (simulation-player-penalties sim))
     (println tab "Point Median:         " (simulation-player-median sim))

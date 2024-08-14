@@ -27,7 +27,6 @@ Rounds Max:       5
 Rounds Min:       3
 
 Player Strategy:      #(Level-1 Cheat Level-1 Cheat)
-Plays Mean:           #(50.3 50.6 50.5 50.4)
 Removed Columns Mean: #(.53 .43 .5 .44)
 Penalty Points Mean:  #(2. 13.1 1.4 10.1)
 Point Median:         #(100. 32. 98. 43.)
