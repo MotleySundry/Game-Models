@@ -18,17 +18,17 @@ Look at the comments at the top of the strategy modules for  more details.
 
 ```
 
-Simulation Id:    0
-Num Games:        10000
-Num Rounds:       31781
-Player Strat:     #(Level-1 Cheat Level-1 Cheat)
-Removed columns:  #(2974 2517 2909 2858)
-Penalty Points:   #(20441 191300 14918 146582)
-Point Median:     #(83. 15. 105. 43.)
-Point Mean:       #(107. 34. 103. 35.)
-Point STD:        #(22. 18. 23. 18.)
-Point Max:        #(167 136 164 107)
-Point Min:        #(-25 -78 -12 -91)
+Simulation Id:        0
+Number of Games:      10000
+Rounds per Game:      3.2
+Player Strategy:      #(Level-1 Cheat Level-1 Cheat)
+Removed Columns Mean: #(.3 .27 .3 .26)
+Penalty Points Mean:  #(2. 19.1 1.5 14.7)
+Point Median:         #(127. 36. 103. 38.)
+Point Mean:           #(107. 34. 103. 35.)
+Point STD:            #(21. 18. 23. 18.)
+Point Max:            #(175 121 175 111)
+Point Min:            #(-15 -80 -91 -71)
 
 ```
 
