@@ -70,7 +70,6 @@
 )
 
 (define (simulation-calc-stats sim)
-    (define (mapping v) (floor (+ 0.5 v)))
     (define game-points (simulation-game-points sim))
     (define game-removed (simulation-game-removed sim))
     (define game-penalties (simulation-game-penalties sim))
@@ -87,11 +86,11 @@
 
                 ; REMOVED
                 (vector-set! (simulation-player-removed sim) i
-                    (vector-sum player-removed))
+                    (vector-mean player-removed))
 
                 ; PENALTIES
                 (vector-set! (simulation-player-penalties sim) i
-                    (vector-sum player-penalties))
+                    (vector-mean player-penalties))
 
                 ; PLAYER POINT STATISTICS
                 (vector-set! (simulation-player-mean sim) i
@@ -111,9 +110,11 @@
             )
     ))
 
-    (simulation-player-mean-set! sim (vector-map (simulation-player-mean sim) mapping))
-    (simulation-player-median-set! sim (vector-map (simulation-player-median sim) mapping))
-    (simulation-player-std-set! sim (vector-map (simulation-player-std sim) mapping))
+    (simulation-player-mean-set! sim (vector-map (simulation-player-mean sim) round0))
+    (simulation-player-median-set! sim (vector-map (simulation-player-median sim) round0))
+    (simulation-player-std-set! sim (vector-map (simulation-player-std sim) round0))
+    (simulation-player-removed-set! sim (vector-map (simulation-player-removed sim) round2))
+    (simulation-player-penalties-set! sim (vector-map (simulation-player-penalties sim) round1))
 )
 
 ; SIMULATION ACCESSORS
@@ -129,17 +130,17 @@
 ; SIMULATION PRINT
 (define (simulation-print sim tab)
     (println tab "--- Simulation ---")
-    (println tab "Simulation Id:    " (simulation-id sim))
-    (println tab "Num Games:        " (simulation-num-games sim))
-    (println tab "Num Rounds:       " (simulation-num-rounds sim))
-    (println tab "Player Strat:     " (simulation-player-strat sim))
-    (println tab "Removed columns:  " (simulation-player-removed sim))
-    (println tab "Penalty Points:   " (simulation-player-penalties sim))
-    (println tab "Point Median:     " (simulation-player-median sim))
-    (println tab "Point Mean:       " (vector->real(simulation-player-mean sim)))
-    (println tab "Point STD:        " (simulation-player-std sim))
-    (println tab "Point Max:        " (simulation-player-max sim))
-    (println tab "Point Min:        " (simulation-player-min sim))
+    (println tab "Simulation Id:        " (simulation-id sim))
+    (println tab "Number of Games:      " (simulation-num-games sim))
+    (println tab "Rounds per Game:      " (round1 (/ (simulation-num-rounds sim) (simulation-num-games sim))))
+    (println tab "Player Strategy:      " (simulation-player-strat sim))
+    (println tab "Removed Columns Mean: " (simulation-player-removed sim))
+    (println tab "Penalty Points Mean:  " (simulation-player-penalties sim))
+    (println tab "Point Median:         " (simulation-player-median sim))
+    (println tab "Point Mean:           " (vector->real(simulation-player-mean sim)))
+    (println tab "Point STD:            " (simulation-player-std sim))
+    (println tab "Point Max:            " (simulation-player-max sim))
+    (println tab "Point Min:            " (simulation-player-min sim))
 )
 
 

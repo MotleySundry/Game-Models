@@ -14,6 +14,12 @@
 ; You should have received a copy of the GNU Affero General Public License
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+
+; Round to a fixed precision
+(define (round0 v) (floor (+ 0.5 v)))
+(define (round1 v) (/ (floor (+ 0.5 (* 10 v))) 10))
+(define (round2 v) (/ (floor (+ 0.5 (* 100 v))) 100))
+
 ; Returns the mean of the arguments
 (define (mean #!rest args)
     (if args (list-mean args) 0)
