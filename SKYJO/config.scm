@@ -15,9 +15,10 @@
 ; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ; CONFIGURATION
-(define *num-players* 4)        ; Number of players in the game.
-(define *num-games* 1000)      ; Number of games to simulate.
-(define *cheating-allowed?* #t) ; Allows calls outside the rules, strat-omnipotent
+(define *num-players* 4)                ; Number of players in the game.
+(define *num-games* 1000)               ; Number of games to simulate.
+(define *cheating-allowed?* #t)         ; Allows calls outside the rules, strat-omnipotent
+(define *write-ml-training-set?* #f)    ; If #t the simulation writes the ML training set.
 
 (define (get-player-strat id)
     (if (= id 0) strat-level1
@@ -33,6 +34,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Generally, no changes are needed below here.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; ML TRAINING SET CONSTANTS
+(define *ml-training-set-path* "/tmp/ml-training-set.txt")
 
 ; STRATEGY CONSTANTS
 (define *strat-cmd-get-label*   0)
