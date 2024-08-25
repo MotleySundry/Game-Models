@@ -23,9 +23,8 @@
     points              ;integer points for each player tallied after each round
     removed             ;total columns removed for each player tallied after each round
     penalties           ;total penalties for each player tallied after each round
-    plays           ;total penalties for each player tallied after each round
+    plays               ;total penalties for each player tallied after each round
     last-round          ;reference to the round that ended the game
-    starter             ;integer the starter for the round
 
     ; Updated at the end of the game
     winning-points      ;integer points of the winner/s 
@@ -46,7 +45,6 @@
         (make-vector  *num-players* 0)  ;penalties
         (make-vector  *num-players* 0)  ;plays
         "last-round TBD"                ;last-round
-        "starter TBD"                   ;starter
 
         ; Updated at the end of the game
         0                               ;winning-points
@@ -57,6 +55,7 @@
 )
 
 (define (game-run game)
+    (define last-out-player #f)
     (let loop ((i 0))
         (if (>= i *max-rounds*)
             (log-fatal "The game run has reached *max-rounds*" *max-rounds*)
@@ -67,15 +66,14 @@
                 (game-last-round-set! game round)
                 (game-num-rounds-set! game (+ i 1))
 
-                (let ((high-flip (round-deal-hands round)))
+                (let ((high-flip (round-deal-hands round (= i 0))))
                     ; set starting player
                     (if (= i 0)
-                        (game-starter-set! game high-flip)
-                        (game-starter-set! game (remainder ( + (game-starter game) *num-players*) *num-players*)))
-                    (round-set-first-player! round (game-starter game))
+                        (round-set-first-player! round high-flip)
+                        (round-set-first-player! round last-out-player))
 
                     ; run it
-                    (round-run round)
+                    (set! last-out-player (round-run round))
 
                     (game-tally-player game round)
 

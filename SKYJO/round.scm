@@ -47,6 +47,7 @@
 (define (round-run round)
    (define out-player (run-phase1 round))
    (round-update-all-player-points round out-player)
+    out-player
 )
 
 ; Calculates the player points for the round.
@@ -114,8 +115,8 @@
 
 ; Deals all player's hands.
 ; Turns up two cards for each player.
-; Returns the player with the highest two cards, for the first player of round 0. 
-(define (round-deal-hands round)
+; Returns the player with the highest two cards, or #f if flip-two? is false.
+(define (round-deal-hands round flip-two?)
     ; Deal cards to each player
     (let loop ((i 0))
         (if (< i *num-players*)
@@ -127,7 +128,9 @@
     (deck-push-discard-pile! (round-deck round) (deck-pop-draw-pile! (round-deck round)))
 
     ; each player flip two cards
-    (round-flip-two round)
+    (if flip-two?
+        (round-flip-two round)
+        #f)
 )
 
 ; Deals one player's hand.
