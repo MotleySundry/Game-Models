@@ -41,7 +41,7 @@
 ; 14) If it is lower than the highest open card replace it.
 ; 15) Otherwise discard it.
 ;
-;    ---- If you are less than ??? higher ---- 
+;    ---- If you are equal to the lowest or less than ??? higher ---- 
 ; 
 ;    ---- Otherwise ----
 
