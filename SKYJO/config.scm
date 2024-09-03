@@ -21,14 +21,14 @@
 (define *write-ml-training-set?* #f)    ; If #t the simulation writes the ML training set.
 
 (define (get-player-strat id)
-    (if (= id 0) strat-level1
-    (if (= id 1) strat-cheat
-    (if (= id 2) strat-level1
-    (if (= id 3) strat-cheat
-    (if (= id 4) strat-level1
-    (if (= id 5) strat-cheat
-    (if (= id 6) strat-level1
-    (if (= id 7) strat-cheat
+    (if (= id 0) strat-cheat
+    (if (= id 1) strat-level1
+    (if (= id 2) strat-cheat
+    (if (= id 3) strat-level2
+    (if (= id 4) strat-cheat
+    (if (= id 5) strat-level1
+    (if (= id 6) strat-cheat
+    (if (= id 7) strat-level2
 )))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

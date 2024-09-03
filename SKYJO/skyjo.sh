@@ -45,6 +45,7 @@ SRC+=('player.scm')
 SRC+=('game.scm')
 SRC+=('round.scm')
 SRC+=('simulation.scm') 
+SRC+=('strat-level2.scm')
 SRC+=('strat-level1.scm')
 SRC+=('strat-cheat.scm')
 

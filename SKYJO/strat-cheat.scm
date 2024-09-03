@@ -35,15 +35,15 @@
 
         ; Returns #t if the play was executed or #f otherwise
         ((= cmd *strat-cmd-play-phase1*)
-            (strat-omnipotent-any-phase player))
+            (strat-cheat-any-phase player))
         
         ; Returns #t if the play was executed or #f otherwise.
         ((= cmd *strat-cmd-play-phase2*)
-                (strat-omnipotent-any-phase player))
+                (strat-cheat-any-phase player))
 
         ; Returns the sum of the cards if the flips were executed #f otherwise.
         ((= cmd *strat-cmd-flip-two*)
-            (strat-omnipotent-flip-two player))
+            (strat-cheat-flip-two player))
         
         (else
             (display "Unknown command: ")
@@ -53,7 +53,7 @@
 )
 
 ; Returns #t if the a play was executed #f otherwise
-(define (strat-omnipotent-any-phase player)
+(define (strat-cheat-any-phase player)
 
     (define high-open-card-idx      (player-api-get-highest-open-card player))
     (define high-hidden-card-idx    (player-cheat-get-highest-hidden-card player))
@@ -66,11 +66,11 @@
             (>= (player-api-get-open-card-value player high-open-card-idx) 
             (player-cheat-get-card-value player high-hidden-card-idx ))
                 (or
-                    (strat-omnipotent-try-open player 
+                    (strat-cheat-try-open player 
                         draw-val discard-val 
                         high-open-card-idx)
 
-                    (strat-omnipotent-try-hidden player
+                    (strat-cheat-try-hidden player
                             draw-val discard-val 
                             high-hidden-card-idx)
                             
@@ -84,11 +84,11 @@
                 (player-cheat-get-card-value player high-hidden-card-idx ))
 
                 (or
-                    (strat-omnipotent-try-hidden player
+                    (strat-cheat-try-hidden player
                             draw-val discard-val 
                             high-hidden-card-idx)
 
-                    (strat-omnipotent-try-open player 
+                    (strat-cheat-try-open player 
                         draw-val discard-val 
                         high-open-card-idx)
                             
@@ -99,7 +99,7 @@
         ; Only Open is available  
         (high-open-card-idx
             (or
-                (strat-omnipotent-try-open player 
+                (strat-cheat-try-open player 
                     draw-val discard-val 
                     high-open-card-idx)
 
@@ -110,7 +110,7 @@
         ; Only Hidden is available  
         (high-hidden-card-idx
             (or
-                (strat-omnipotent-try-hidden player
+                (strat-cheat-try-hidden player
                         draw-val discard-val 
                         high-hidden-card-idx)
 
@@ -120,13 +120,13 @@
 
         ; Neither Open or Hidden is a vailable
         (else 
-            (log-fatal "Neither Open or Hidden was available: strat-omnipotent-any-phase")
+            (log-fatal "Neither Open or Hidden was available: strat-cheat-any-phase")
             #f)
     )
 )
 
 ; Returns #t if the exchange was made, #f otherwise
-(define (strat-omnipotent-try-open player draw-val discard-val high-open-card-idx)
+(define (strat-cheat-try-open player draw-val discard-val high-open-card-idx)
     (define high-open-card-val (player-api-get-open-card-value player high-open-card-idx))
 
     (cond     
@@ -144,7 +144,7 @@
 )
 
 ; Returns #t if the exchange was made, #f otherwise
-(define (strat-omnipotent-try-hidden player draw-val discard-val high-hidden-card-idx)
+(define (strat-cheat-try-hidden player draw-val discard-val high-hidden-card-idx)
     (define high-hidden-card-val (player-cheat-get-card-value player high-hidden-card-idx ))
 
     (cond     
@@ -162,7 +162,7 @@
 )
 
 ; Returns (card1 card2)
-(define (strat-omnipotent-flip-two player)
+(define (strat-cheat-flip-two player)
 
     (define card1 (player-cheat-get-highest-hidden-card player))
     (define card2 (player-cheat-get-highest-hidden-card player card1))

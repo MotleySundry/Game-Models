@@ -35,15 +35,15 @@
 
         ; Returns #t if the play was executed or #f otherwise
         ((= cmd *strat-cmd-play-phase1*)
-                (strat-naive-any-phase player))
+                (strat-level1-any-phase player))
         
         ; Returns #t if the play was executed or #f otherwise.
         ((= cmd *strat-cmd-play-phase2*)
-                (strat-naive-any-phase player))
+                (strat-level1-any-phase player))
 
         ; Returns the sum of the cards if the flips were executed #f otherwise.
         ((= cmd *strat-cmd-flip-two*)
-            (strat-naive-flip-two player))
+            (strat-level1-flip-two player))
         
         (else
             (display "Unknown fommand: ")
@@ -53,7 +53,7 @@
 )
 
 ; Returns #t if the a play was executed #f otherwise
-(define (strat-naive-any-phase player)
+(define (strat-level1-any-phase player)
 
     (define high-open-card (player-api-get-highest-open-card player))
     (define discard-value (player-api-get-discard-val player))
@@ -92,7 +92,7 @@
 )
 
 ; Returns (card1 card2)
-(define (strat-naive-flip-two player)
+(define (strat-level1-flip-two player)
     (define card1 (random-integer *hand-num-cards*))
     (list 
         card1
