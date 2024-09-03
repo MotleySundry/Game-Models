@@ -27,7 +27,7 @@
 ; 4) If the discard is five or lower, then replace any hidden card.
 ; 5) Otherwise; Draw a card.
 ; 6) If the draw card is lower than the highest open card and the highest open card is 5 or greater then replace it.
-; 7) If the draw card is five or lower, then replace a hidden card in a column with a matching open card.
+; 7) If the draw card is between one and five, then replace a hidden card in a column with a matching open card.
 ; 8) If the draw card is five or lower, then replace any hidden card.
 ; 9) Otherwise; discard it.
 
@@ -40,9 +40,9 @@
 ; 13) Draw a card and if it is five or lower replace the hidden card.
 ; 14) If it is lower than the highest open card replace it.
 ; 15) Otherwise discard it.
-;
+
 ;    ---- If you are equal to the lowest or less than ??? higher ---- 
-; 
+
 ;    ---- Otherwise ----
 
 
