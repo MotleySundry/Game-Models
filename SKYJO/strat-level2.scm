@@ -21,7 +21,7 @@
 ;
 ; 1) On the first-round two-flip, open any two cards in separate columns.
 
-;    ---- If you have more that one open card ----
+;    ---- If you have more that one hidden card ----
 ; 2) If the discard is lower than the highest open card and the highest open card is 5 or greater then replace it.
 ; 3) If the discard is five or lower, then replace a hidden card in a column with a matching open card.
 ; 4) If the discard is five or lower, then replace any hidden card.
@@ -31,7 +31,7 @@
 ; 8) If the draw card is five or lower, then replace any hidden card.
 ; 9) Otherwise; discard it.
 
-;    ---- If you have only one open card ----
+;    ---- If you have only one hidden card ----
 ; 10) Estimate your hand value, by adding all the open cards plus five for the hidden card.
 ; 11) Estimate your opponents hand values, by adding up their open cards plus five points for each hidden card.
 ;
