@@ -36,7 +36,7 @@
 ; 11) Estimate your opponents hand values, by adding up their open cards plus five points for each hidden card.
 ;
 ;    ---- If you have the lowest hand estimate ----
-; 12) If the discard is five or lower, replace: any the highest open card greater than five otherwise the hidden card. 
+; 12) If the discard is five or lower, replace: the highest open card greater than five otherwise the hidden card. 
 ; 13) Draw a card and if it is five or lower replace the hidden card otherwise discard it.
 ;
 ;    ---- If you are less than ??? higher ---- 
