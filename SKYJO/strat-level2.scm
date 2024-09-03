@@ -1,4 +1,4 @@
-; Motley Sundry :: Game Models :: SKYJO :: strat-level1.scm
+; Motley Sundry :: Game Models :: SKYJO :: strat-level2.scm
 ; Copyright (C) 2024 Donald R Anderson
 ;
 ; This program is free software: you can redistribute it and/or modify
@@ -16,16 +16,35 @@
 
 ; Returns #f when the last card is turned over.
 ;
-; === Steps for the Level1 strategy ===
-; The most basic strategy that follows the rules with random choices.
+; === Steps for the Level2 strategy ===
+; The second tier strategy that follows the rules and makes some round-level strategic decisions.
+;
+; 1) On the first-round two-flip, open any two cards in separate columns.
 
-; 1) On the first-round two-flip, open any two cards.
-;    ---- Game Play ----
-; 2) If the discard is lower than the highest open card then replace it.
-; 3) If the discard is five or lower, then replace any hidden card.
-; 4) Otherwise; Draw a card.
-; 5) If the draw is lower than the highest card in the hand, exchange it.
-; 6) Otherwise; discard it.
+;    ---- If you have more that one open card ----
+; 2) If the discard is lower than the highest open card and the highest open card is 5 or greater then replace it.
+; 3) If the discard is five or lower, then replace a hidden card in a column with a matching open card.
+; 4) If the discard is five or lower, then replace any hidden card.
+; 5) Otherwise; Draw a card.
+; 6) If the draw card is lower than the highest open card and the highest open card is 5 or greater then replace it.
+; 7) If the draw card is five or lower, then replace a hidden card in a column with a matching open card.
+; 8) If the draw card is five or lower, then replace any hidden card.
+; 9) Otherwise; discard it.
+
+;    ---- If you have only one open card ----
+; 10) Estimate your hand value, by adding all the open cards plus five for the hidden card.
+; 11) Estimate your opponents hand values, by adding up their open cards plus five points for each hidden card.
+;
+;    ---- If you have the lowest hand estimate ----
+; 12) If the discard is five or lower, replace: any the highest open card greater than five otherwise the hidden card. 
+; 13) Draw a card and if it is five or lower replace the hidden card otherwise discard it.
+;
+;    ---- If you are less than ??? higher ---- 
+; 
+;    ---- Otherwise ----
+
+
+
 
 (define (strat-level1 player cmd)
 

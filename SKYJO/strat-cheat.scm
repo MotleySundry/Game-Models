@@ -1,4 +1,4 @@
-; Motley Sundry :: Game Models :: SKYJO :: strat-omnipotent.scm
+; Motley Sundry :: Game Models :: SKYJO :: strat-cheat.scm
 ; Copyright (C) 2024 Donald R Anderson
 ;
 ; This program is free software: you can redistribute it and/or modify
