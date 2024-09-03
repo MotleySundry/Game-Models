@@ -37,7 +37,9 @@
 ;
 ;    ---- If you have the lowest hand estimate ----
 ; 12) If the discard is five or lower, replace: the highest open card greater than five otherwise the hidden card. 
-; 13) Draw a card and if it is five or lower replace the hidden card otherwise discard it.
+; 13) Draw a card and if it is five or lower replace the hidden card.
+; 14) If it is lower than the highest open card replace it.
+; 15) Otherwise discard it.
 ;
 ;    ---- If you are less than ??? higher ---- 
 ; 
