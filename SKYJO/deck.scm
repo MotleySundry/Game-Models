@@ -18,7 +18,7 @@
 
 (define (new-deck)
     (make-deck
-        (vector-to-list (vector-rand (vector-dup *deck*)))  ;draw-pile
+        (vector-to-list (vector-rand (vector-rand (vector-dup *deck*))))  ;draw-pile
         '()         ;discard-pile
         *deck-size* ;draw-cnt
         *deck-sum*  ;draw-sum
