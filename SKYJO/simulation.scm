@@ -158,7 +158,7 @@
     (println tab "Rounds Min:       " (simulation-min-rounds sim))
     (newline)
     (println tab "Player Strategy:      " (simulation-player-strat sim))
-    (println tab "Player % Wins %:      " (vector-map (simulation-player-wins sim) (lambda (v) (round0 (* 100 (/ v (simulation-num-games sim)))))))
+    (println tab "Player % Wins:        " (vector-map (simulation-player-wins sim) (lambda (v) (round0 (* 100 (/ v (simulation-num-games sim)))))))
     (println tab "Removed Columns Mean: " (simulation-player-removed sim))
     (println tab "Penalty Points Mean:  " (simulation-player-penalties sim))
     (println tab "Point Median:         " (simulation-player-median sim))
