@@ -34,6 +34,7 @@
     player-median
     player-max 
     player-min
+    player-wins
 )
 
 (define (new-simulation id num-games)
@@ -57,6 +58,7 @@
         (make-vector *num-players*)             ;player-median
         (make-vector *num-players*)             ;player-max
         (make-vector *num-players*)             ;player-min
+        (make-vector *num-players*)             ;player-wins
     )
 )
 
@@ -70,6 +72,7 @@
                 (simulation-num-rounds-set! sim (+ (simulation-num-rounds sim) (game-num-rounds game)))
                 (simulation-max-rounds-set! sim (max (simulation-max-rounds sim) (game-num-rounds game)))
                 (simulation-min-rounds-set! sim (min (simulation-max-rounds sim) (game-num-rounds game)))
+                (vector-set! (simulation-player-wins sim) (game-winner game) (+ 1 (vector-ref (simulation-player-wins sim) (game-winner game))))
                 (vector2-row-set! (simulation-game-points sim) i (game-points game))
                 (vector2-row-set! (simulation-game-removed sim) i (game-removed game))
                 (vector2-row-set! (simulation-game-penalties sim) i (game-penalties game))
@@ -155,6 +158,7 @@
     (println tab "Rounds Min:       " (simulation-min-rounds sim))
     (newline)
     (println tab "Player Strategy:      " (simulation-player-strat sim))
+    (println tab "Player % Wins %:      " (vector-map (simulation-player-wins sim) (lambda (v) (round0 (* 100 (/ v (simulation-num-games sim)))))))
     (println tab "Removed Columns Mean: " (simulation-player-removed sim))
     (println tab "Penalty Points Mean:  " (simulation-player-penalties sim))
     (println tab "Point Median:         " (simulation-player-median sim))

@@ -81,6 +81,7 @@
                     (if (< (vector-max-val (game-points game)) 100)
                         (loop (+ i 1))
                         )))))
+    (game-winner-set! game (vector-min-val-idx (game-points game)))
 )
 
 ; Tallys the player stats for this round.
