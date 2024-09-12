@@ -17,7 +17,7 @@
 ; CONFIGURATION
 (define *num-players* 4)                ; Number of players in the game.
 (define *num-games* 1000)            ; Number of games to simulate.
-(define *cheating-allowed?* #t)         ; Allows calls outside the rules, strat-omnipotent
+(define *cheating-allowed?* #f)         ; Allows calls outside the rules, strat-omnipotent
 (define *write-ml-training-set?* #f)    ; If #t the simulation writes the ML training set.
 
 (define (get-player-strat id)
