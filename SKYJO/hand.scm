@@ -186,14 +186,14 @@
     )
 )
 
-; Returns #t if the card at position matches value and is open, otherwise #f.
+; Returns #t if the card at idx matches value and is open, otherwise #f.
 (define (card-matches? value cs cv idx)
     (and 
         (= *card-state-open* (vector-ref cs idx))
         (= value (vector-ref cv idx)))
 )
 
-; Returns the position where a card of value will create a tripple in col, otherwise #f.
+; Returns the idx where a card of value will create a tripple in col, otherwise #f.
 (define (col-complete-row hand col value)
     (define cs (hand-card-state hand))
     (define cv (hand-card-value hand))
