@@ -96,7 +96,7 @@
 (define (player-lowest-opponent-value-estimate player)
     (define players (round-players (player-round player)))
     (define my-id (player-id player))
-    (loop ((i 0) (low 13))
+    (let loop ((i 0) (low 13))
         (if (< i *num-players*)
             (let ((estimate (player-hand-value-estimate (vector-ref players i))))
                 (if (and (< estimate low) (not (= i my-id)))
