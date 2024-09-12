@@ -22,10 +22,11 @@
 ; 1) On the first-round two-flip, open any two cards.
 ;    ---- Game Play ----
 ; 2) If the discard is lower than the highest open card then replace it.
-; 3) If the discard is five or lower, then replace any hidden card.
-; 4) Otherwise; Draw a card.
+; 3) If the discard is 5 or lower, then replace any hidden card.
+; 4) Othrwise; Draw a card.
 ; 5) If the draw is lower than the highest card in the hand, exchange it.
-; 6) Otherwise; discard it.
+; 6) If the draw is lower than 5, exchange it with a hidden card.
+; 7) Otherwise; discard it.
 
 (define (strat-level1 player cmd)
 
@@ -33,68 +34,69 @@
         ; Returns the string label of the strategy or #f on failure.
         ((= cmd *strat-cmd-get-label*) "Level-1")
 
-        ; Returns #t if the play was executed or #f otherwise
+        ; Returns #t if a play was executed or #f otherwise
         ((= cmd *strat-cmd-play-phase1*)
                 (strat-level1-any-phase player))
         
-        ; Returns #t if the play was executed or #f otherwise.
+        ; Returns #t if a play was executed or #f otherwise.
         ((= cmd *strat-cmd-play-phase2*)
                 (strat-level1-any-phase player))
 
-        ; Returns the sum of the cards if the flips were executed #f otherwise.
+        ; Returns a list of the card ids or #f otherwise.
         ((= cmd *strat-cmd-flip-two*)
             (strat-level1-flip-two player))
         
         (else
-            (display "Unknown fommand: ")
+            (display "Unknown command: ")
             (display cmd)
             (newline)
             (exit 1)))
 )
 
-; Returns #t if the a play was executed #f otherwise
-(define (strat-level1-any-phase player)
-
-    (define high-open-card (player-api-get-highest-open-card player))
-    (define discard-value (player-api-get-discard-val player))
-    (define hidden-card (player-api-random-hidden-card-id player))
-
-        (cond
-            ; Try replacing the highest open card with the discard
-            ((and high-open-card (< discard-value (player-api-get-open-card-value player high-open-card)))
-                (player-api-replace-card-from-discard! player high-open-card)                
-                #t)
-                    
-            ; Try replacing the hidden card with the discard
-            ((and hidden-card (<= discard-value *deck-median*))
-                (player-api-replace-card-from-discard! player hidden-card)                
-                #t)
-                        
-            (else
-                    ; Draw a card
-                    (let ((draw-value (player-api-draw-card player)))
-                    (cond
-                        ; Try replacing the highest open card with the draw
-                        ((and high-open-card (< draw-value (player-api-get-open-card-value player high-open-card)))
-                            (player-api-replace-card-with-draw-card! player high-open-card draw-value)
-                            #t)
-
-                        ; Try replacing the hidden card with the draw
-                        ((and hidden-card (<= draw-value *deck-median*))
-                            (player-api-replace-card-with-draw-card! player hidden-card draw-value)
-                            #t)
-
-                        ; Discard the draw
-                        (else
-                            (player-api-discard-draw-card! player draw-value 
-                                (player-api-random-hidden-card-id player))
-                            #t)))))                 
-)
-
 ; Returns (card1 card2)
 (define (strat-level1-flip-two player)
+    ; 1) On the first-round two-flip, open any two cards.
     (define card1 (random-integer *hand-num-cards*))
     (list 
         card1
         (random-integer-exclude *hand-num-cards* card1))
+)
+; Returns #t if the a play was executed #f otherwise
+(define (strat-level1-any-phase player)
+
+    (define highest-open-card-idx (player-api-get-highest-open-card-idx player))
+    (define highest-open-card-val (if highest-open-card-idx (player-api-get-open-card-value player highest-open-card-idx) #f))
+    (define discard-value (player-api-get-discard-val player))
+    (define hidden-card (player-api-random-hidden-card-id player))
+
+        (cond
+            ; 2) If the discard is lower than the highest open card then replace it.
+            ((and highest-open-card-val (< discard-value highest-open-card-val))
+                (player-api-replace-card-from-discard! player highest-open-card-idx)                
+                #t)
+                    
+            ; 3) If the discard is the 5 or lower, then replace any hidden card.
+            ((and hidden-card (<= discard-value 5))
+                (player-api-replace-card-from-discard! player hidden-card)                
+                #t)
+                        
+            (else
+                    ; 4) Othrwise; Draw a card.
+                    (let ((draw-value (player-api-draw-card player)))
+                    (cond
+                        ; 5) If the draw is lower than the highest card in the hand, exchange it.
+                        ((and highest-open-card-idx (< draw-value highest-open-card-val))
+                            (player-api-replace-card-with-draw-card! player highest-open-card-idx draw-value)
+                            #t)
+
+                        ; 6) If the draw is lower than 5, exchange it with a hidden card.
+                        ((and hidden-card (<= draw-value 5))
+                            (player-api-replace-card-with-draw-card! player hidden-card draw-value)
+                            #t)
+
+                        ; 7) Otherwise; discard it.
+                        (else
+                            (player-api-discard-draw-card! player draw-value 
+                                (player-api-random-hidden-card-id player))
+                            #t)))))                 
 )

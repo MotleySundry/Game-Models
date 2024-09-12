@@ -89,11 +89,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; A legal strategy should only use these calls,
 
+(define (player-api-complete-column-card-idx player value)
+    (hand-complete-column-card-idx (player-hand player) value)
+)
+
 ; Returns a random hidden card id or #f on failure
 (define (player-api-random-hidden-card-id player)
     (hand-random-card-state-id (player-hand player) *card-state-hidden*)
 )
-
 
 (define (player-api-get-open-card-value player card-id)
     (if (not card-id)
@@ -110,6 +113,14 @@
     
 (define (player-api-any-cards-open? player)
     (hand-any-cards-open? (player-hand player))
+)
+
+(define (player-api-num-cards-open player)
+    (hand-cnt (player-hand player) *card-state-open*)
+)
+
+(define (player-api-num-cards-hidden player)
+    (hand-cnt (player-hand player) *card-state-hidden*)
 )
 
 (define (player-api-any-cards-hidden? player)
@@ -139,7 +150,7 @@
 )
 
 ; Returns the index of the highest open card or #f if there are no open cards.
-(define (player-api-get-highest-open-card player)
+(define (player-api-get-highest-open-card-idx player)
     (hand-get-highest-open-card (player-hand player))
 ) 
 

@@ -174,6 +174,10 @@
     (> (hand-cnt hand *card-state-removed*) 0)
 )
 
+(define (hand-complete-column-card-idx hand value)
+    #f
+)
+
 ; Returns the id of the highest open card or #f if there are none
 ; The first highest card found wins.
 (define (hand-get-highest-open-card hand)

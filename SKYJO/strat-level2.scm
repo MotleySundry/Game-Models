@@ -22,30 +22,33 @@
 ; 1) On the first-round two-flip, open any two cards in separate columns.
 
 ;    ---- If you have more that one hidden card ----
-; 2) If the discard is lower than the highest open card and the highest open card is 5 or greater then replace it.
-; 3) If the discard is five or lower, then replace a hidden card in a column with a matching open card.
-; 4) If the discard is five or lower, then replace any hidden card.
-; 5) Otherwise; Draw a card.
-; 6) If the draw card is lower than the highest open card and the highest open card is 5 or greater then replace it.
-; 7) If the draw card is between one and five, then replace a hidden card in a column with a matching open card.
-; 8) If the draw card is five or lower, then replace any hidden card.
+; 2) Using the discard complete a matching column if possible.
+; 3) If the discard is lower than the highest open card and the highest open card is 5 or greater then replace it.
+; 4) If the discard is 5 or lower, then replace any hidden card.
+; 5) Otherwise; draw a card.
+; 6) Using the drawn card complete a matching column if possible
+; 7) If the draw card is lower than the highest open card and the highest open card is 5 or greater then replace it.
+; 8) If the draw card is 5 or lower, then replace any hidden card.
 ; 9) Otherwise; discard it.
 
 ;    ---- If you have only one hidden card ----
-; 10) Estimate your hand value, by adding all the open cards plus five for the hidden card.
-; 11) Estimate your opponents hand values, by adding up their open cards plus five points for each hidden card.
+; 10) Estimate your hand value, by adding all the open cards plus 5 for the hidden card.
+; 11) Estimate your opponents hand values, by adding up their open cards plus 5 points for each hidden card.
 ;
-;    ---- If you have the lowest hand estimate ----
-; 12) If the discard is five or lower, replace: the highest open card greater than five otherwise the hidden card. 
-; 13) Draw a card and if it is five or lower replace the hidden card.
-; 14) If it is lower than the highest open card replace it.
-; 15) Otherwise discard it.
+;    ---- If you your hand is low relative to the other players ----
+; 12) Using the discard complete the column with the last hidden card if possible 
+; 13) If the discard is 5 or lower replace the highest open card greater than 5 otherwise.
+; 14) If the discard is 5 or lower replace the hidden card. 
+; 15) Otherwise, draw a card 
+; 16) Using the drawn card complete the column with the hidden card if possible 
+; 17) If the drawn card is 5 or lower replace the highest open card greater than 5 otherwise.
+; 18) If the drawn card is 5 or lower replace the hidden card.
+; 19) If it is lower than the highest open card replace it.
+; 20) Otherwise discard it.
 
-;    ---- If you are equal to the lowest or less than ??? higher ---- 
-
-;    ---- Otherwise ----
-
-
+;    ---- Otherwise do not replace the hidden card ----
+; 21) If the discard is 5 or lower, replace: the highest open card.
+; 22) Draw a card and replace the highest open card.
 
 
 (define (strat-level2 player cmd)
@@ -54,68 +57,128 @@
         ; Returns the string label of the strategy or #f on failure.
         ((= cmd *strat-cmd-get-label*) "Level-2")
 
-        ; Returns #t if the play was executed or #f otherwise
+        ; Returns #t if a play was executed or #f otherwise
         ((= cmd *strat-cmd-play-phase1*)
                 (strat-level2-any-phase player))
         
-        ; Returns #t if the play was executed or #f otherwise.
+        ; Returns #t if a play was executed or #f otherwise.
         ((= cmd *strat-cmd-play-phase2*)
                 (strat-level2-any-phase player))
 
-        ; Returns the sum of the cards if the flips were executed #f otherwise.
+        ; Returns a list of the card ids or #f otherwise.
         ((= cmd *strat-cmd-flip-two*)
             (strat-level2-flip-two player))
         
         (else
-            (display "Unknown fommand: ")
+            (display "Unknown command: ")
             (display cmd)
             (newline)
             (exit 1)))
 )
 
-; Returns #t if the a play was executed #f otherwise
-(define (strat-level2-any-phase player)
-
-    (define high-open-card (player-api-get-highest-open-card player))
-    (define discard-value (player-api-get-discard-val player))
-    (define hidden-card (player-api-random-hidden-card-id player))
-
-        (cond
-            ; Try replacing the highest open card with the discard
-            ((and high-open-card (< discard-value (player-api-get-open-card-value player high-open-card)))
-                (player-api-replace-card-from-discard! player high-open-card)                
-                #t)
-                    
-            ; Try replacing the hidden card with the discard
-            ((and hidden-card (<= discard-value *deck-median*))
-                (player-api-replace-card-from-discard! player hidden-card)                
-                #t)
-                        
-            (else
-                    ; Draw a card
-                    (let ((draw-value (player-api-draw-card player)))
-                    (cond
-                        ; Try replacing the highest open card with the draw
-                        ((and high-open-card (< draw-value (player-api-get-open-card-value player high-open-card)))
-                            (player-api-replace-card-with-draw-card! player high-open-card draw-value)
-                            #t)
-
-                        ; Try replacing the hidden card with the draw
-                        ((and hidden-card (<= draw-value *deck-median*))
-                            (player-api-replace-card-with-draw-card! player hidden-card draw-value)
-                            #t)
-
-                        ; Discard the draw
-                        (else
-                            (player-api-discard-draw-card! player draw-value 
-                                (player-api-random-hidden-card-id player))
-                            #t)))))                 
-)
-
 ; Returns (card1 card2)
 (define (strat-level2-flip-two player)
-    (define card1 (random-integer *hand-num-cards*))
+    ; 1) On the first-round two-flip, open any two cards in separate columns.
+    (define col1 (random-integer 4))
+    (define col2 (random-integer-exclude 4 col1))
     (list 
-        card1
-        (random-integer-exclude *hand-num-cards* card1))
+        (+ (* col1 3) (random-integer 3))
+        (+ (* col2 3) (random-integer 3)))
 )
+
+; Returns #t if a play was executed #f otherwise
+(define (strat-level2-any-phase player)
+    (cond
+        ;    ---- If you have more that one hidden card ----
+        ((> (player-api-num-cards-hidden player) 1)            
+            (strat-level2-more-than-one-hidden-card player))
+
+        ;    ---- If you have only one hidden card ----
+        ((= (player-api-num-cards-hidden player) 1)            
+            (strat-level2-only-one-hidden-card player))
+
+        (else #f)
+    )                 
+)
+
+; Returns #t if a play was executed #f otherwise
+(define (strat-level2-more-than-one-hidden-card player)
+    (define highest-open-card-idx (player-api-get-highest-open-card-idx player))
+    (define highest-open-card-val 
+        (if highest-open-card-idx (player-api-get-open-card-value player highest-open-card-idx) #f))
+    (define discard-value (player-api-get-discard-val player))
+    (define hidden-card (player-api-random-hidden-card-id player))
+    (cond
+
+        ; 2) Using the discard complete a matching column if possible.
+        ((player-api-complete-column-card-idx player discard-value)
+            (player-api-replace-card-from-discard! player (player-api-complete-column-card-idx player discard-value)) 
+
+            #t)
+
+        ; 3) If the discard is lower than the highest open card and the highest open card is 5 or greater then replace it.
+        ((and highest-open-card-val (< discard-value highest-open-card-val) (< highest-open-card-val 5))
+            (player-api-replace-card-from-discard! player highest-open-card-idx) 
+            #t)
+
+        ; 4) If the discard is 5 or lower, then replace any hidden card.
+        ((and (<= discard-value 5) highest-open-card-val (< highest-open-card-val 5))
+            (player-api-replace-card-from-discard! player highest-open-card-idx)
+            #t)
+
+        ; 5) Otherwise; draw a card.
+        ; 6) Using the drawn card complete a matching column if possible
+        ; 7) If the draw card is lower than the highest open card and the highest open card is 5 or greater then replace it.
+        ; 8) If the draw card is 5 or lower, then replace any hidden card.
+        ; 9) Otherwise; discard it.
+
+        (else #f)
+    )
+)
+
+; Returns #t if a play was executed #f otherwise
+(define (strat-level2-only-one-hidden-card player)
+
+        ; 10) Estimate your hand value, by adding all the open cards plus 5 for the hidden card.
+        ; 11) Estimate your opponents hand values, by adding up their open cards plus 5 points for each hidden card.
+
+        (cond
+            ;    ---- If you your hand is low relative to the other players ----
+            (#f
+                (strat-level2-low-relative-to-other-players player))
+
+            ;    ---- Otherwise do not replace the hidden card ----
+            (#f
+                (strat-level2-do-not-replace-the-hidden-card player))
+
+        (else #f)
+    )
+
+)
+
+(define (strat-level2-low-relative-to-other-players player)
+    (cond
+        ; 12) Using the discard complete the column with the last hidden card if possible 
+        ; 13) If the discard is 5 or lower replace the highest open card greater than 5 otherwise.
+        ; 14) If the discard is 5 or lower replace the hidden card. 
+        ; 15) Otherwise, draw a card 
+        ; 16) Using the drawn card complete the column with the hidden card if possible 
+        ; 17) If the drawn card is 5 or lower replace the highest open card greater than 5 otherwise.
+        ; 18) If the drawn card is 5 or lower replace the hidden card.
+        ; 19) If it is lower than the highest open card replace it.
+        ; 20) Otherwise discard it.
+
+        (else #f)
+    )
+)
+
+(define (strat-level2-do-not-replace-the-hidden-card player)
+    (cond
+        ; 21) If the discard is 5 or lower, replace: the highest open card.
+        ; 22) Draw a card and replace the highest open card.
+
+        (else #f)
+    )
+)
+
+
