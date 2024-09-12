@@ -16,15 +16,22 @@
 
 ; Returns #f when the last card is turned over.
 ;
+; =====================================
 ; === Steps for the Level2 strategy ===
+; =====================================
 ; The second tier strategy that follows the rules and makes some round-level strategic decisions.
+;
+; #######################
+; ###### TWO FLIP #######
+; #######################
+
+; 1) On the first-round two-flip, open any two cards in separate columns.
 ;
 ; ######################
 ; ###### PHASE 1 #######
 ; ######################
-; 1) On the first-round two-flip, open any two cards in separate columns.
 
-;    ---- If you have more than one hidden card (BASE-PLAY) ----
+;    ---- BASE PLAY - If you have more than one hidden card ----
 ; 2) Using the discard complete a matching column if possible.
 ; 3) If the discard is lower than the highest open card and the highest open card is 5 or greater then replace it.
 ; 4) If the discard is 5 or lower, then replace any hidden card.
@@ -34,11 +41,11 @@
 ; 8) If the draw card is 5 or lower, then replace any hidden card.
 ; 9) Otherwise; discard it.
 
-;    ---- If you have only one hidden card (END-PLAY) ----
+;    ---- END PLAY - If you have only one hidden card ----
 ; 10) Estimate your hand value, by adding all the open cards plus 5 for the hidden card.
 ; 11) Estimate your opponents hand values, by adding up their open cards plus 5 points for each hidden card.
 ;
-;    ---- If you your hand is low relative to the other players ----
+;    ---- TERMINATE ROUND - If you your hand is low relative to the other players ----
 ; 12) Using the discard complete a matching column if possible.
 ; 13) If the discard is lower than the highest open card and the highest open card is 5 or greater then replace it.
 ; 14) If the discard is 5 or lower, then replace any hidden card.
@@ -49,7 +56,7 @@
 ; 19) If it is lower than the highest open card replace it.
 ; 20) Otherwise discard it.
 
-;    ---- Otherwise do not replace the hidden card ----
+;    ---- PASS - Otherwise do not replace the hidden card ----
 ; 21) If the discard is 5 or lower, replace: the highest open card.
 ; 22) Draw a card and replace the highest open card.
 
@@ -95,26 +102,26 @@
 
 ; Returns #t if a play was executed #f otherwise
 (define (strat-level2-phase2 player)
-    (BASE-PLAY player)
+    (strat-level2-BASE-PLAY player)
 )
 
 ; Returns #t if a play was executed #f otherwise
 (define (strat-level2-phase1 player)
     (cond
-        ;    ---- If you have more than one hidden card ----
+        ;    ---- BASE PLAY - If you have more than one hidden card ----
         ((> (player-api-num-cards-hidden player) 1)            
-            (BASE-PLAY player))
+            (strat-level2-BASE-PLAY player))
 
-        ;    ---- If you have only one hidden card ----
+        ;    ---- END PLAY - If you have only one hidden card ----
         ((= (player-api-num-cards-hidden player) 1)            
-            (END-PLAY player))
+            (strat-level2-END-PLAY player))
 
         (else #f)
     )                 
 )
 
 ; Returns #t if a play was executed #f otherwise
-(define (BASE-PLAY player)
+(define (strat-level2-BASE-PLAY player)
     (define highest-open-card-idx (player-api-get-highest-open-card-idx player))
     (define highest-open-card-val 
         (if highest-open-card-idx (player-api-get-open-card-value player highest-open-card-idx) #f))
@@ -166,25 +173,24 @@
 )
 
 ; Returns #t if a play was executed #f otherwise
-(define (END-PLAY player)
+(define (strat-level2-END-PLAY player)
 
         ; 10) Estimate your hand value, by adding all the open cards plus 5 for the hidden card.
         (define my-hand-value-estimate (player-hand-value-estimate player))
         ; 11) Estimate your opponents hand values, by adding up their open cards plus 5 points for each hidden card.
         (define lowest-opponent-value-estimate (player-lowest-opponent-value-estimate player))
 
-
         (cond
-            ;    ---- If you your hand is low relative to the other players ----
+            ;    ---- TERMINATE ROUND - If you your hand is low relative to the other players ----
             ((< my-hand-value-estimate lowest-opponent-value-estimate)
-                (strat-level2-low-relative-to-other-players player))
+                (strat-level2-TERMINATE-ROUND player))
 
-            ;    ---- Otherwise do not replace the hidden card ----
+            ;    ---- PASS - Otherwise do not replace the hidden card ----
             (else
-                (strat-level2-do-not-replace-the-hidden-card player)))
+                (strat-level2-PASS player)))
 )
 
-(define (strat-level2-low-relative-to-other-players player)
+(define (strat-level2-TERMINATE-ROUND player)
     (define highest-open-card-idx (player-api-get-highest-open-card-idx player))
     (define highest-open-card-val 
         (if highest-open-card-idx (player-api-get-open-card-value player highest-open-card-idx) #f))
@@ -240,7 +246,7 @@
 
 )
 
-(define (strat-level2-do-not-replace-the-hidden-card player)
+(define (strat-level2-PASS player)
     (define highest-open-card-idx (player-api-get-highest-open-card-idx player))
     (define highest-open-card-val 
         (if highest-open-card-idx (player-api-get-open-card-value player highest-open-card-idx) #f))

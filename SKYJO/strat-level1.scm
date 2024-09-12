@@ -16,7 +16,9 @@
 
 ; Returns #f when the last card is turned over.
 ;
+; =====================================
 ; === Steps for the Level1 strategy ===
+; =====================================
 ; The most basic strategy that follows the rules with random choices.
 
 ; 1) On the first-round two-flip, open any two cards.
