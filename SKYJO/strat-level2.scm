@@ -107,12 +107,13 @@
     (define highest-open-card-val 
         (if highest-open-card-idx (player-api-get-open-card-value player highest-open-card-idx) #f))
     (define discard-value (player-api-get-discard-val player))
+    (define complete-idx (player-api-complete-column-card-idx player discard-value))
     (define hidden-card (player-api-random-hidden-card-id player))
     (cond
 
         ; 2) Using the discard complete a matching column if possible.
-        ((player-api-complete-column-card-idx player discard-value)
-            (player-api-replace-card-from-discard! player (player-api-complete-column-card-idx player discard-value)) 
+        (complete-idx
+            (player-api-replace-card-from-discard! player complete-idx) 
             #t)
 
         ; 3) If the discard is lower than the highest open card and the highest open card is 5 or greater then replace it.
@@ -128,27 +129,28 @@
         ; 5) Otherwise; draw a card.
         (else
             (let ((draw-value (player-api-draw-card player)))
-                (cond
-                    ; 6) Using the drawn card complete a matching column if possible
-                    ((player-api-complete-column-card-idx player draw-value)
-                        (player-api-replace-card-with-draw-card! player (player-api-complete-column-card-idx player draw-value) draw-value)
-                        #t)
+                (let ((complete-idx (player-api-complete-column-card-idx player draw-value)))
+                    (cond
+                        ; 6) Using the drawn card complete a matching column if possible
+                        (complete-idx
+                            (player-api-replace-card-with-draw-card! player complete-idx draw-value)
+                            #t)
 
-                    ; 7) If the draw card is lower than the highest open card and the highest open card is 5 or greater then replace it.
-                    ((and highest-open-card-idx (< draw-value highest-open-card-val) (>= highest-open-card-val 5) )
-                        (player-api-replace-card-with-draw-card! player highest-open-card-idx draw-value)
-                        #t)
+                        ; 7) If the draw card is lower than the highest open card and the highest open card is 5 or greater then replace it.
+                        ((and highest-open-card-idx (< draw-value highest-open-card-val) (>= highest-open-card-val 5) )
+                            (player-api-replace-card-with-draw-card! player highest-open-card-idx draw-value)
+                            #t)
 
-                    ; 8) If the draw card is 5 or lower, then replace any hidden card.
-                    ((and hidden-card (<= draw-value 5))
-                        (player-api-replace-card-with-draw-card! player hidden-card draw-value)
-                        #t)
+                        ; 8) If the draw card is 5 or lower, then replace any hidden card.
+                        ((and hidden-card (<= draw-value 5))
+                            (player-api-replace-card-with-draw-card! player hidden-card draw-value)
+                            #t)
 
-                    ; 9) Otherwise; discard it.
-                        (else
-                            (player-api-discard-draw-card! player draw-value 
-                                (player-api-random-hidden-card-id player))
-                            #t)))))                
+                        ; 9) Otherwise; discard it.
+                            (else
+                                (player-api-discard-draw-card! player draw-value 
+                                    (player-api-random-hidden-card-id player))
+                                #t))))))                
 )
 
 ; Returns #t if a play was executed #f otherwise
@@ -196,32 +198,33 @@
         ; 15) Otherwise; draw a card.
         (else
             (let ((draw-value (player-api-draw-card player)))
-                (cond
-                    ; 16) Using the drawn card complete a matching column if possible
-                    ((player-api-complete-column-card-idx player draw-value)
-                        (player-api-replace-card-with-draw-card! player (player-api-complete-column-card-idx player draw-value) draw-value)
-                        #t)
+                (let ((complete-idx (player-api-complete-column-card-idx player draw-value)))
+                    (cond
+                        ; 16) Using the drawn card complete a matching column if possible
+                        (complete-idx
+                            (player-api-replace-card-with-draw-card! player complete-idx draw-value)
+                            #t)
 
-                    ; 17) If the drawn card is 5 or lower replace the highest open card greater than 5.
-                    ((and highest-open-card-idx (< draw-value highest-open-card-val) )
-                        (player-api-replace-card-with-draw-card! player highest-open-card-idx draw-value)
-                        #t)
+                        ; 17) If the drawn card is 5 or lower replace the highest open card greater than 5.
+                        ((and highest-open-card-idx (< draw-value highest-open-card-val) )
+                            (player-api-replace-card-with-draw-card! player highest-open-card-idx draw-value)
+                            #t)
 
-                    ; 18) If the drawn card is 5 or lower replace the hidden card.
-                    ((and hidden-card (<= draw-value 5))
-                        (player-api-replace-card-with-draw-card! player hidden-card draw-value)
-                        #t)
+                        ; 18) If the drawn card is 5 or lower replace the hidden card.
+                        ((and hidden-card (<= draw-value 5))
+                            (player-api-replace-card-with-draw-card! player hidden-card draw-value)
+                            #t)
 
-                    ; 19) If it is lower than the highest open card replace it.
-                    ((and highest-open-card-idx (< draw-value highest-open-card-val))
-                        (player-api-replace-card-with-draw-card! player highest-open-card-idx draw-value)
-                        #t)
+                        ; 19) If it is lower than the highest open card replace it.
+                        ((and highest-open-card-idx (< draw-value highest-open-card-val))
+                            (player-api-replace-card-with-draw-card! player highest-open-card-idx draw-value)
+                            #t)
 
-                    ; 20) Otherwise discard it.
-                    (else
-                        (player-api-discard-draw-card! player draw-value 
-                            (player-api-random-hidden-card-id player))
-                        #t)))))                
+                        ; 20) Otherwise discard it.
+                        (else
+                            (player-api-discard-draw-card! player draw-value 
+                                (player-api-random-hidden-card-id player))
+                            #t))))))            
 
 )
 
@@ -242,7 +245,9 @@
         (else 
             (let ((draw-value (player-api-draw-card player)))
                 (player-api-replace-card-with-draw-card! player highest-open-card-idx draw-value)
-                #t)))
+                #t))
+                
+            )
 )
 
 

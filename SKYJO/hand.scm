@@ -183,7 +183,7 @@
 )
 
 (define (hand-sum-open-cards hand)
-    (hand-get-sum-of-cards-in-state hand *card-state-open*)
+    (hand-sum hand *card-state-open*)
 )
 
 ; Returns the sum of the cards in state
@@ -214,8 +214,8 @@
                     (not (and exclude (= i exclude)))
                     (> (hand-get-card-value hand i) max-value))
                 (loop (+ i 1) i (hand-get-card-value hand i))
-                (loop (+ i 1) max-id max-value)))
-        max-id)
+                (loop (+ i 1) max-id max-value))
+            max-id))
 )
 
 ; Returns the id of the first card in state or #f if there are none
