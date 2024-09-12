@@ -140,7 +140,10 @@
 (define (strat-level2-only-one-hidden-card player)
 
         ; 10) Estimate your hand value, by adding all the open cards plus 5 for the hidden card.
+        (define my-hand-value-estimate (player-hand-value-estimate player))
         ; 11) Estimate your opponents hand values, by adding up their open cards plus 5 points for each hidden card.
+        (define lowest-opponent-value-estimate (player-lowest-opponent-value-estimate player))
+
 
         (cond
             ;    ---- If you your hand is low relative to the other players ----

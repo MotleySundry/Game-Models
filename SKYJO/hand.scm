@@ -178,37 +178,52 @@
     #f
 )
 
-; Returns the id of the highest open card or #f if there are none
-; The first highest card found wins.
-(define (hand-get-highest-open-card hand)
-    (let loop ((i 0) (max-id #f) (max-value -3))
-        (if (< i *hand-num-cards*)
-            (if (and (hand-is-card-open? hand i) (> (hand-get-card-value hand i) max-value))
-                (loop (+ i 1) i (hand-get-card-value hand i))
-                (loop (+ i 1) max-id max-value))
-            max-id))
+(define (hand-value-estimate hand)
+    (+ (hand-sum-open-cards hand) (* 5 (hand-cnt hand *card-state-hidden*)))
 )
 
-; Returns the id of the highest hidden card or #f if there are none
+(define (hand-sum-open-cards hand)
+    (hand-get-sum-of-cards-in-state hand *card-state-open*)
+)
+
+; Returns the sum of the cards in state
+(define (hand-get-sum-of-cards-in-state hand state)
+    (let loop ((i 0) (sum 0))
+        (if (< i *hand-num-cards*)
+            (if (= state (hand-get-card-state hand i))
+                (loop (+ i 1) (+ sum (hand-get-card-value hand i)))
+                (loop (+ i 1) sum)))
+        sum)
+)
+
+(define (hand-get-highest-open-card hand)
+    (hand-get-highest-card-in-state hand *card-state-open*)  
+)
+
+(define (hand-get-highest-hidden-card hand)
+    (hand-get-highest-card-in-state hand *card-state-hidden*)  
+)
+
+; Returns the id of the highest card in state or #f if there are none
 ; The first highest card found wins.
-(define (hand-get-highest-hidden-card hand #!optional exclude)
+(define (hand-get-highest-card-in-state hand state #!optional exclude)
     (let loop ((i 0) (max-id #f) (max-value -3))
         (if (< i *hand-num-cards*)
             (if (and
-                    (hand-is-card-hidden? hand i)
+                    (= state (hand-get-card-state hand i))
                     (not (and exclude (= i exclude)))
                     (> (hand-get-card-value hand i) max-value))
                 (loop (+ i 1) i (hand-get-card-value hand i))
-                (loop (+ i 1) max-id max-value))
-            max-id))
+                (loop (+ i 1) max-id max-value)))
+        max-id)
 )
 
-; Returns the id of the first hidden card or #f if there are none
-(define (hand-get-first-hidden-card hand)
+; Returns the id of the first card in state or #f if there are none
+(define (hand-get-first-card-in-state hand state)
     (let loop ((i 0))
         (if (= i *hand-num-cards*)
             #f
-            (if (hand-is-card-hidden? hand i)
+            (if ((= state (hand-get-card-state hand i)))
                 i
                 (loop (+ i 1))
             )))

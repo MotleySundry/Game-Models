@@ -89,6 +89,25 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; A legal strategy should only use these calls,
 
+(define (player-hand-value-estimate player)
+    (hand-value-estimate (player-hand player))
+)
+    
+(define (player-lowest-opponent-value-estimate player)
+    (define players (round-players (player-round player)))
+    (define my-id (player-id player))
+    (loop ((i 0) (low 13))
+        (if (< i *num-players*)
+            (let ((estimate (player-hand-value-estimate (vector-ref players i))))
+                (if (and (< estimate low) (not (= i my-id)))
+                    (loop (+ i 1) estimate)
+                    (loop (+ i 1) low))
+            ))
+        low
+    )
+)
+
+
 (define (player-api-complete-column-card-idx player value)
     (hand-complete-column-card-idx (player-hand player) value)
 )
@@ -151,7 +170,7 @@
 
 ; Returns the index of the highest open card or #f if there are no open cards.
 (define (player-api-get-highest-open-card-idx player)
-    (hand-get-highest-open-card (player-hand player))
+    (hand-get-highest-open-card (player-hand player ))
 ) 
 
 (define (player-api-get-discard-val player)
