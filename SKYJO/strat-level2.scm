@@ -51,12 +51,12 @@
 ; 14) If the discard is 5 or lower, then replace any hidden card.
 ; 15) Otherwise, draw a card 
 ; 16) Using the drawn card complete the column with the hidden card if possible 
-; 17) If the drawn card is 5 or lower replace the highest open card greater than 5 otherwise.
+; 17) If the drawn card is 5 or lower replace the highest open card greater than 5.
 ; 18) If the drawn card is 5 or lower replace the hidden card.
-; 19) If it is lower than the highest open card replace it.
+; 19) If the drawn card is lower than the highest open card replace it.
 ; 20) Otherwise discard it.
 
-;    ---- PASS - Otherwise do not replace the hidden card ----
+;    ---- PASS - Otherwise do not discard or replace the hidden card ----
 ; 21) If the discard is 5 or lower, replace: the highest open card.
 ; 22) Draw a card and replace the highest open card.
 
@@ -120,6 +120,7 @@
     )                 
 )
 
+;    ---- BASE PLAY - If you have more than one hidden card ----
 ; Returns #t if a play was executed #f otherwise
 (define (strat-level2-BASE-PLAY player)
     (define highest-open-card-idx (player-api-get-highest-open-card-idx player))
@@ -172,6 +173,7 @@
                                 #t))))))                
 )
 
+;    ---- END PLAY - If you have only one hidden card ----
 ; Returns #t if a play was executed #f otherwise
 (define (strat-level2-END-PLAY player)
 
@@ -185,11 +187,13 @@
             ((< my-hand-value-estimate lowest-opponent-value-estimate)
                 (strat-level2-TERMINATE-ROUND player))
 
-            ;    ---- PASS - Otherwise do not replace the hidden card ----
+            ;    ---- PASS - Otherwise do not discard or replace the hidden card ----
             (else
                 (strat-level2-PASS player)))
 )
 
+;    ---- TERMINATE ROUND - If you your hand is low relative to the other players ----
+; Returns #t if a play was executed #f otherwise
 (define (strat-level2-TERMINATE-ROUND player)
     (define highest-open-card-idx (player-api-get-highest-open-card-idx player))
     (define highest-open-card-val 
@@ -246,6 +250,8 @@
 
 )
 
+;    ---- PASS - Otherwise do not discard or replace the hidden card ----
+; Returns #t if a play was executed #f otherwise
 (define (strat-level2-PASS player)
     (define highest-open-card-idx (player-api-get-highest-open-card-idx player))
     (define highest-open-card-val 
