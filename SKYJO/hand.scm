@@ -174,8 +174,38 @@
     (> (hand-cnt hand *card-state-removed*) 0)
 )
 
+; Returns the idx of the position where a card with value will create a tripple, #f otherwise.
 (define (hand-complete-column-card-idx hand value)
-    #f
+    (let loop-col ((col 0))
+        (if (< col 4)
+            (let ((complete-idx (col-complete-row hand col value)))
+                (if complete-idx
+                    complete-idx
+                    (loop-col (+ col 1))))
+            #f)
+    )
+)
+
+; Returns #t if the card at position matches value and is open, otherwise #f.
+(define (card-matches? value cs cv idx)
+    (and 
+        (= *card-state-open* (vector-ref cs idx))
+        (= value (vector-ref cv idx)))
+)
+
+; Returns the position where a card of value will create a tripple in col, otherwise #f.
+(define (col-complete-row hand col value)
+    (define cs (hand-card-state hand))
+    (define cv (hand-card-value hand))
+    (define base (* col 3))
+    (cond
+        ((and (card-matches? value cs cv (+ base 0)) (card-matches? value cs cv (+ base 1)))
+         (+ base 2))
+        ((and (card-matches? value cs cv (+ base 0)) (card-matches? value cs cv (+ base 2)))
+         (+ base 1))
+        ((and (card-matches? value cs cv (+ base 1)) (card-matches? value cs cv (+ base 2)))
+         (+ base 0))
+        (else #f))
 )
 
 (define (hand-value-estimate hand)

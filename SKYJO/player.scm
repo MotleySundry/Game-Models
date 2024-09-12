@@ -107,9 +107,10 @@
     )
 )
 
-
-(define (player-api-complete-column-card-idx player value)
-    (hand-complete-column-card-idx (player-hand player) value)
+(define (player-api-complete-positive-column-card-idx player value)
+    (if (< value 1)
+        #f
+        (hand-complete-column-card-idx (player-hand player) value))
 )
 
 ; Returns a random hidden card id or #f on failure
