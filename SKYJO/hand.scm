@@ -64,6 +64,7 @@
             
             (if (and (< 0 val1) (= val1 val2 val3))
                 (begin
+                    (log-debug 2 "Removed column: " id1 id2 id3)
                     (hand-set-card-removed! hand id1)
                     (hand-set-card-removed! hand id2)
                     (hand-set-card-removed! hand id3)
@@ -226,12 +227,12 @@
         sum)
 )
 
-(define (hand-get-highest-open-card hand)
-    (hand-get-highest-card-in-state hand *card-state-open*)  
+(define (hand-get-highest-open-card hand  #!optional exclude)
+    (hand-get-highest-card-in-state hand *card-state-open* exclude)  
 )
 
-(define (hand-get-highest-hidden-card hand)
-    (hand-get-highest-card-in-state hand *card-state-hidden*)  
+(define (hand-get-highest-hidden-card hand #!optional exclude)
+    (hand-get-highest-card-in-state hand *card-state-hidden* exclude)  
 )
 
 ; Returns the id of the highest card in state or #f if there are none

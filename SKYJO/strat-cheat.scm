@@ -55,8 +55,8 @@
 ; Returns #t if the a play was executed #f otherwise
 (define (strat-cheat-any-phase player)
 
-    (define high-open-card-idx      (player-api-get-highest-open-card player))
-    (define high-hidden-card-idx    (player-cheat-get-highest-hidden-card player))
+    (define high-open-card-idx      (player-api-get-highest-open-card-idx player))
+    (define high-hidden-card-idx    (player-cheat-get-highest-hidden-card-idx player))
     (define discard-val (player-api-get-discard-val player))
     (define draw-val (player-cheat-next-draw-card-val player))
 
@@ -164,8 +164,8 @@
 ; Returns (card1 card2)
 (define (strat-cheat-flip-two player)
 
-    (define card1 (player-cheat-get-highest-hidden-card player))
-    (define card2 (player-cheat-get-highest-hidden-card player card1))
+    (define card1 (player-cheat-get-highest-hidden-card-idx player))
+    (define card2 (player-cheat-get-highest-hidden-card-idx player card1))
     
     (list card1 card2)
 )

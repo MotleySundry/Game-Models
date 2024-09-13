@@ -97,5 +97,13 @@
     (if data (print-list data "  "))
 )
 
+(define (log-debug level msg #!rest data)
+    (if (and (> *log-debug-level* 0) (>= *log-debug-level* level))
+        (begin 
+            (println "... " msg " ... " (time->seconds(current-time)))
+            (if data (print-list data "  "))))
+)
+
+
 
 

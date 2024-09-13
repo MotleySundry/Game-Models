@@ -20,10 +20,14 @@
     round       ;reference to the containing round
     hand        ;reference to the players hand
     strat       ;lambda reference to the assigned strategy
+    pass-cnt    ;number of times player has passed in end play
     points      ;integer points the player scored for the round, updated at the end of the round
     removed     ;integer count of uni-value columns removed
     penalties   ;integer penalty points for going out first and too high
     plays       ;integer number of plays
+  
+    ; set  by game level strategies
+    terminate-round-margin ;size of margin to terminate the round
 )
 
 ; Create a new initialized player structure.
@@ -34,10 +38,12 @@
         round                   ;round
         (new-hand)              ;hand
         (get-player-strat id)   ;strat
+        0                       ;pass-cnt
         0                       ;points
         0                       ;removed
         0                       ;penalties
         0                       ;plays
+        0                       ;terminate-round-margin
     ))  
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -231,7 +237,7 @@
     (deck-cheat-next-draw-card-val (round-deck (player-round player))))
 )
 
- (define (player-cheat-get-highest-hidden-card player #!optional exclude)
+ (define (player-cheat-get-highest-hidden-card-idx player #!optional exclude)
      (if (not *cheating-allowed?*)
         (log-fatal "Cheating is not allowed: player-cheat-get-largest-hidden-card"
             (player-get-strat-label player))

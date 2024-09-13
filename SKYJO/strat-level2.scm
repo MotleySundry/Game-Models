@@ -95,6 +95,7 @@
     ; 1) On the first-round two-flip, open any two cards in separate columns.
     (define col1 (random-integer 4))
     (define col2 (random-integer-exclude 4 col1))
+    (log-debug 1 "Level-2 Rule: 1")
     (list 
         (+ (* col1 3) (random-integer 3))
         (+ (* col2 3) (random-integer 3)))
@@ -133,41 +134,49 @@
 
         ; 2) Using the discard complete a matching positive column if possible.
         (complete-idx
+            (log-debug 1 "Level-2 Rule: 2" complete-idx)
             (player-api-replace-card-from-discard! player complete-idx) 
             #t)
 
         ; 3) If the discard is lower than the highest open card and the highest open card is 5 or greater then replace it.
         ((and highest-open-card-val (< discard-value highest-open-card-val) (>= highest-open-card-val 5))
+            (log-debug 1 "Level-2 Rule: 3")
             (player-api-replace-card-from-discard! player highest-open-card-idx) 
             #t)
 
         ; 4) If the discard is 5 or lower, then replace any hidden card.
         ((and hidden-card (<= discard-value 5))
+            (log-debug 1 "Level-2 Rule: 4")
             (player-api-replace-card-from-discard! player hidden-card)
             #t)
 
         ; 5) Otherwise; draw a card.
         (else
+            (log-debug 1 "Level-2 Rule: 5")
             (let ((draw-value (player-api-draw-card player)))
                 (let ((complete-idx (player-api-complete-positive-column-card-idx player draw-value)))
                     (cond
                         ; 6) Using the drawn card complete a matching positive column if possible
                         (complete-idx
+                            (log-debug 1 "Level-2 Rule: 6")
                             (player-api-replace-card-with-draw-card! player complete-idx draw-value)
                             #t)
 
                         ; 7) If the draw card is lower than the highest open card and the highest open card is 5 or greater then replace it.
                         ((and highest-open-card-idx (< draw-value highest-open-card-val) (>= highest-open-card-val 5) )
+                            (log-debug 1 "Level-2 Rule: 7")
                             (player-api-replace-card-with-draw-card! player highest-open-card-idx draw-value)
                             #t)
 
                         ; 8) If the draw card is 5 or lower, then replace any hidden card.
                         ((and hidden-card (<= draw-value 5))
+                            (log-debug 1 "Level-2 Rule: 8")
                             (player-api-replace-card-with-draw-card! player hidden-card draw-value)
                             #t)
 
                         ; 9) Otherwise; discard it.
                             (else
+                                (log-debug 1 "Level-2 Rule: 9")
                                 (player-api-discard-draw-card! player draw-value 
                                     (player-api-random-hidden-card-id player))
                                 #t))))))                
@@ -182,13 +191,23 @@
         ; 11) Estimate your opponents hand values, by adding up their open cards plus 5 points for each hidden card.
         (define lowest-opponent-value-estimate (player-lowest-opponent-value-estimate player))
 
+        (log-debug 1 "Level-2 Rule: 10")
+        (log-debug 1 "Level-2 Rule: 11")
+
         (cond
+            ; Prevent infinite passing loop
+            ((> (player-pass-cnt player) 0 )
+                (log-debug 1 "Level-2 Prevented infinite passing loop")
+                (log-debug 2 "Hand:" (player-hand player))
+                (strat-level2-TERMINATE-ROUND player))
+            
             ;    ---- TERMINATE ROUND - If you your hand is low relative to the other players ----
-            ((< my-hand-value-estimate lowest-opponent-value-estimate)
+            ((< my-hand-value-estimate (+ lowest-opponent-value-estimate (player-terminate-round-margin player)))
                 (strat-level2-TERMINATE-ROUND player))
 
             ;    ---- PASS - Otherwise do not discard or replace the hidden card ----
             (else
+                (player-pass-cnt-set! player (+ (player-pass-cnt player) 1))
                 (strat-level2-PASS player)))
 )
 
@@ -205,16 +224,19 @@
     (cond
         ; 12) Using the discard complete a matching positive column if possible.
         (complete-idx
+            (log-debug 1 "Level-2 Rule: 12" complete-idx)
             (player-api-replace-card-from-discard! player complete-idx) 
             #t)
 
         ; 13) If the discard is lower than the highest open card and the highest open card is 5 or greater then replace it.
         ((and highest-open-card-val (< discard-value highest-open-card-val) (>= highest-open-card-val 5))
+            (log-debug 1 "Level-2 Rule: 13")
             (player-api-replace-card-from-discard! player highest-open-card-idx) 
             #t)
 
         ; 14) If the discard is 5 or lower, then replace any hidden card.
         ((and hidden-card (<= discard-value 5))
+            (log-debug 1 "Level-2 Rule: 14")
             (player-api-replace-card-from-discard! player hidden-card)
             #t)
 
@@ -225,26 +247,31 @@
                     (cond
                         ; 16) Using the drawn card complete a matching positive column if possible
                         (complete-idx
+                            (log-debug 1 "Level-2 Rule: 16")
                             (player-api-replace-card-with-draw-card! player complete-idx draw-value)
                             #t)
 
                         ; 17) If the drawn card is 5 or lower replace the highest open card greater than 5.
                         ((and highest-open-card-idx (< draw-value highest-open-card-val) (>= highest-open-card-val 5) )
+                            (log-debug 1 "Level-2 Rule: 17")
                             (player-api-replace-card-with-draw-card! player highest-open-card-idx draw-value)
                             #t)
 
                         ; 18) If the drawn card is 5 or lower replace the hidden card.
                         ((and hidden-card (<= draw-value 5))
+                            (log-debug 1 "Level-2 Rule: 18")
                             (player-api-replace-card-with-draw-card! player hidden-card draw-value)
                             #t)
 
                         ; 19) If it is lower than the highest open card replace it.
                         ((and highest-open-card-idx (< draw-value highest-open-card-val))
+                            (log-debug 1 "Level-2 Rule: 19")
                             (player-api-replace-card-with-draw-card! player highest-open-card-idx draw-value)
                             #t)
 
                         ; 20) Otherwise discard it.
                         (else
+                            (log-debug 1 "Level-2 Rule: 20")
                             (player-api-discard-draw-card! player draw-value 
                                 (player-api-random-hidden-card-id player))
                             #t))))))            
@@ -263,11 +290,13 @@
     (cond
         ; 21) If the discard is lower than the highest open card, replace it.
         ((and highest-open-card-val (< discard-value highest-open-card-val))
+            (log-debug 1 "Level-2 Rule: 21")
             (player-api-replace-card-from-discard! player highest-open-card-idx)                
             #t)
 
         ; 22) Draw a card and replace the highest open card.
         (else 
+            (log-debug 1 "Level-2 Rule: 22")
             (let ((draw-value (player-api-draw-card player)))
                 (player-api-replace-card-with-draw-card! player highest-open-card-idx draw-value)
                 #t))
