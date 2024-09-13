@@ -203,13 +203,25 @@
     (define cs (hand-card-state hand))
     (define cv (hand-card-value hand))
     (define base (* col 3))
+    (define card0 base)
+    (define card1 (+ base 1))
+    (define card2 (+ base 2))
     (cond
-        ((and (card-matches? value cs cv base) (card-matches? value cs cv (+ base 1)))
-         (+ base 2))
-        ((and (card-matches? value cs cv base)) (card-matches? value cs cv (+ base 2))
-         (+ base 1))
-        ((and (card-matches? value cs cv (+ base 1)) (card-matches? value cs cv (+ base 2)))
-         base)
+        ((and (not (= *card-state-removed* (vector-ref cs card0)))
+            (card-matches? value cs cv card1) 
+            (card-matches? value cs cv card2))
+         card0)
+
+        ((and (not (= *card-state-removed* (vector-ref cs card1)))
+            (card-matches? value cs cv card0) 
+            (card-matches? value cs cv card2))
+         card1)
+
+        ((and (not (= *card-state-removed* (vector-ref cs card2)))
+            (card-matches? value cs cv card0) 
+            (card-matches? value cs cv card1))
+         card2)
+
         (else #f))
 )
 

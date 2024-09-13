@@ -16,19 +16,19 @@
 
 ; CONFIGURATION
 (define *num-players* 4)                ; Number of players in the game.
-(define *num-games* 1000)               ; Number of games to simulate.
+(define *num-games* 10000)               ; Number of games to simulate.
 (define *cheating-allowed?* #f)         ; Allows calls outside the rules, strat-omnipotent
 (define *write-ml-training-set?* #f)    ; If #t the simulation writes the ML training set.
-(define *log-debug-level* 2)            ; Controls debug logging level: 0-none, 1-basic, 2-detailed
+(define *log-debug-level* 0)            ; Controls debug logging level: 0-none, 1-basic, 2-detailed
 
 (define (get-player-strat id)
-    (if (= id 0) strat-level2
+    (if (= id 0) strat-level1
     (if (= id 1) strat-level2
-    (if (= id 2) strat-level2
-    (if (= id 3) strat-level2
-    (if (= id 4) strat-level2
-    (if (= id 5) strat-level3
-    (if (= id 6) strat-level2
+    (if (= id 2) strat-level1
+    (if (= id 3) strat-level3
+    (if (= id 4) strat-level1
+    (if (= id 5) strat-level2
+    (if (= id 6) strat-level1
     (if (= id 7) strat-level3
 )))))))))
 

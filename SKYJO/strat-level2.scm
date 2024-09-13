@@ -220,7 +220,7 @@
 
         (cond
             ; Prevent infinite passing loop
-            ((> (player-pass-cnt player) 0 )
+            ((> (player-pass-cnt player) 5 )
                 (log-debug 2 "Level-2 Prevented infinite passing loop" 
                     "player =" (player-id player) 
                     "hand =" (player-hand player))
