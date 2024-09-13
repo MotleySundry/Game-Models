@@ -26,8 +26,13 @@
     penalties   ;integer penalty points for going out first and too high
     plays       ;integer number of plays
   
-    ; set  by game level strategies
-    terminate-round-margin ;size of margin to terminate the round
+    ; set by game level strategies
+    terminate-round-margin  ;The margin required to terminate the round.
+                            ;Player hand value must be less than the lowest opponent's hand plus the margin.
+                            ; E.G.
+                            ;     0:  neutral - (Player < lowest)  
+                            ;    10:  aggressive - (Player < lowest+10) 
+                            ;   -10:  conservative - (Player < lowest-10)
 )
 
 ; Create a new initialized player structure.
@@ -95,16 +100,30 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; A legal strategy should only use these calls,
 
-(define (player-hand-value-estimate player)
+
+(define (player-api-my-current-game-points player)
+    1
+)
+
+(define (player-api-lowest-opponent-current-game-score player)
+    1
+)
+
+(define (player-api-round-cnt player)
+    (round-id (player-round player))
+)
+
+
+(define (player-api-my-hand-value-estimate player)
     (hand-value-estimate (player-hand player))
 )
     
-(define (player-lowest-opponent-value-estimate player)
+(define (player-api-lowest-opponent-value-estimate player)
     (define players (round-players (player-round player)))
     (define my-id (player-id player))
     (let loop ((i 0) (low 13))
         (if (< i *num-players*)
-            (let ((estimate (player-hand-value-estimate (vector-ref players i))))
+            (let ((estimate (player-api-my-hand-value-estimate (vector-ref players i))))
                 (if (and (< estimate low) (not (= i my-id)))
                     (loop (+ i 1) estimate)
                     (loop (+ i 1) low))

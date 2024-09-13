@@ -211,9 +211,9 @@
 (define (strat-level2-END-PLAY player)
 
         ; 10) Estimate your hand value, by adding all the open cards plus 5 for the hidden card.
-        (define my-hand-value-estimate (player-hand-value-estimate player))
+        (define my-hand-value-estimate (player-api-my-hand-value-estimate player))
         ; 11) Estimate your opponents hand values, by adding up their open cards plus 5 points for each hidden card.
-        (define lowest-opponent-value-estimate (player-lowest-opponent-value-estimate player))
+        (define lowest-opponent-value-estimate (player-api-lowest-opponent-value-estimate player))
 
         (log-debug 1 "Level-2 Rule: 10" "player = " (player-id player))
         (log-debug 1 "Level-2 Rule: 11" "player = " (player-id player))

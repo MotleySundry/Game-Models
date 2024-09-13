@@ -50,13 +50,23 @@
 
 (define (strat-level3-phase1 player)
 
-    (define my-hand-value (player-hand-value-estimate player))
-    (define my-points 0)
-    (define lowest-opponent-hand-value (player-lowest-opponent-value-estimate player))
-    (define lowest-opponent-points 0)
+    (define round-cnt      (player-api-round-cnt player))
+    (define my-hand        (player-api-my-hand-value-estimate player))
+    (define my-points      (player-api-my-current-game-points player))
+    (define lowest-hand    (player-api-lowest-opponent-value-estimate player))
+    (define lowest-points  (player-api-lowest-opponent-current-game-score player))
 
+    (define margin 
+        (cond
+            ((= round-cnt 0) 5)
+            ((= round-cnt 1) 5)
+            ((= round-cnt 2) 0)
+            ((= round-cnt 3) 0)
+            ((= round-cnt 4) 0)
+            (else 0)
+    ))
 
-    (player-rterminate-round-margin-set! 0)
+    (player-terminate-round-margin-set! player margin)
     (strat-level2-phase1 player)
 )
 
