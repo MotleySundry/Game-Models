@@ -142,8 +142,8 @@
             #t)
 
         ; 4) If the discard is 5 or lower, then replace any hidden card.
-        ((and (<= discard-value 5) highest-open-card-val (< highest-open-card-val 5))
-            (player-api-replace-card-from-discard! player highest-open-card-idx)
+        ((and hidden-card (<= discard-value 5))
+            (player-api-replace-card-from-discard! player hidden-card)
             #t)
 
         ; 5) Otherwise; draw a card.
@@ -214,8 +214,8 @@
             #t)
 
         ; 14) If the discard is 5 or lower, then replace any hidden card.
-        ((and (<= discard-value 5) highest-open-card-val (< highest-open-card-val 5))
-            (player-api-replace-card-from-discard! player highest-open-card-idx)
+        ((and hidden-card (<= discard-value 5))
+            (player-api-replace-card-from-discard! player hidden-card)
             #t)
 
         ; 15) Otherwise; draw a card.
@@ -229,7 +229,7 @@
                             #t)
 
                         ; 17) If the drawn card is 5 or lower replace the highest open card greater than 5.
-                        ((and highest-open-card-idx (< draw-value highest-open-card-val) )
+                        ((and highest-open-card-idx (< draw-value highest-open-card-val) (>= highest-open-card-val 5) )
                             (player-api-replace-card-with-draw-card! player highest-open-card-idx draw-value)
                             #t)
 
