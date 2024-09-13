@@ -113,7 +113,6 @@
     (round-id (player-round player))
 )
 
-
 (define (player-api-my-hand-value-estimate player)
     (hand-value-estimate (player-hand player))
 )

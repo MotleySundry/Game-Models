@@ -19,7 +19,7 @@
 (define *num-games* 10000)               ; Number of games to simulate.
 (define *cheating-allowed?* #f)         ; Allows calls outside the rules, strat-omnipotent
 (define *write-ml-training-set?* #f)    ; If #t the simulation writes the ML training set.
-(define *log-debug-level* 0)            ; Controls debug logging level: 0-none, 1-basic, 2-detailed
+(define *log-debug-level* 2)            ; Controls debug logging level: 0-none, 1-basic, 2-detailed
 
 (define (get-player-strat id)
     (if (= id 0) strat-level1

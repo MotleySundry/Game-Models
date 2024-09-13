@@ -58,13 +58,22 @@
 
     (define margin 
         (cond
-            ((= round-cnt 0) 5)
-            ((= round-cnt 1) 5)
+            ((= round-cnt 0) 0)
+            ((= round-cnt 1) 0)
             ((= round-cnt 2) 0)
             ((= round-cnt 3) 0)
             ((= round-cnt 4) 0)
             (else 0)
     ))
+
+    (log-debug 2 "strat-level3-phase1"
+        "player =" (player-id player)
+        "round-cnt =" round-cnt  
+        "my-hand =" my-hand     
+        "my-points =" my-points     
+        "lowest-hand =" lowest-hand     
+        "lowest-points =" lowest-points
+        "margin =" margin)
 
     (player-terminate-round-margin-set! player margin)
     (strat-level2-phase1 player)
