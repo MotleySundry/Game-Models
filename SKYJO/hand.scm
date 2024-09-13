@@ -62,9 +62,8 @@
             (val2 (hand-get-card-value hand id2))
             (val3 (hand-get-card-value hand id3)))
             
-            (if (and (< 0 val1) (= val1 val2 val3))
+            (if (and (= val1 val2) (= val2 val3))
                 (begin
-                    (log-debug 2 "Removed column: " id1 id2 id3)
                     (hand-set-card-removed! hand id1)
                     (hand-set-card-removed! hand id2)
                     (hand-set-card-removed! hand id3)
@@ -72,6 +71,12 @@
                     (deck-push-discard-pile! deck val1)
                     (deck-push-discard-pile! deck val2)
                     (deck-push-discard-pile! deck val3)
+
+                    (log-debug 2 "Removed Colum" 
+                        "ids =" (list id1 id2 id3) 
+                        "vals =" (list val1 val2 val3)
+                        "hand =" hand)
+
                     1)
                 0))
         0)
@@ -89,11 +94,10 @@
     (vector-set! (hand-card-state hand) id *card-state-open*)
 )
 
-
 (define (hand-set-card-removed! hand id)
     (if (not(hand-is-card-open? hand id))
         (log-fatal "Tried to remove a non-open card: hand-set-card-removed!" id))
-    (vector-set! (hand-card-state hand) id *card-state-open*)
+    (vector-set! (hand-card-state hand) id *card-state-removed*)
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -200,12 +204,12 @@
     (define cv (hand-card-value hand))
     (define base (* col 3))
     (cond
-        ((and (card-matches? value cs cv (+ base 0)) (card-matches? value cs cv (+ base 1)))
+        ((and (card-matches? value cs cv base) (card-matches? value cs cv (+ base 1)))
          (+ base 2))
-        ((and (card-matches? value cs cv (+ base 0)) (card-matches? value cs cv (+ base 2)))
+        ((and (card-matches? value cs cv base)) (card-matches? value cs cv (+ base 2))
          (+ base 1))
         ((and (card-matches? value cs cv (+ base 1)) (card-matches? value cs cv (+ base 2)))
-         (+ base 0))
+         base)
         (else #f))
 )
 

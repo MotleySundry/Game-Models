@@ -76,32 +76,49 @@
 
 )
 
+; Prints all elements of the list two per line lines, with an optional prefix.
+(define (print-list2 lst #!optional prefix)
+    (let loop ((lst lst) (cnt 0))
+        (if (not (null? lst))
+            (begin 
+                (if prefix (display prefix))
+                (display (car lst)) 
+                (if (= 1 (remainder cnt 2)) (newline))
+                (loop (cdr lst) (+ cnt 1)))
+            (if (= 1 (remainder cnt 2)) (newline))))
+)
+
+
 (define (log-fatal msg #!rest data)
-    (println "### " msg " ### " (time->seconds(current-time)))
-    (if data (print-list data "  "))
+    (println "### " msg " ### ")
+    (if data (print-list2 data "  "))
     (exit 1)
 )
 
 (define (log-error msg #!rest data)
-    (println "!!! " msg " !!! " (time->seconds(current-time)))
-    (if data (print-list data "  "))
+    (println "!!! " msg " !!! ")
+    (if data (print-list2 data "  "))
+    (newline)
 )
 
 (define (log-warning msg #!rest data)
-    (println "=== " msg " === " (time->seconds(current-time)))
-    (if data (print-list data "  "))
+    (println "=== " msg " === ")
+    (if data (print-list2 data "  "))
+    (newline)
 )
 
 (define (log-info msg #!rest data)
-    (println "--- " msg " --- " (time->seconds(current-time)))
-    (if data (print-list data "  "))
+    (println "--- " msg " --- ")
+    (if data (print-list2 data "  "))
+    (newline)
 )
 
 (define (log-debug level msg #!rest data)
     (if (and (> *log-debug-level* 0) (>= *log-debug-level* level))
         (begin 
-            (println "... " msg " ... " (time->seconds(current-time)))
-            (if data (print-list data "  "))))
+            (println "debug: " msg " ::: ")
+            (if data (print-list2 data "  "))
+            (newline)))
 )
 
 

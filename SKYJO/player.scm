@@ -55,7 +55,7 @@
     ((player-strat player) player *strat-cmd-get-label*) 
 )
 
-; Returns the sun of the cards
+; Returns the sum of the cards
 (define (player-flip-two player)
     (define resp ((player-strat player) player *strat-cmd-flip-two*))
 
@@ -189,6 +189,8 @@
 (define (player-api-replace-card-with-draw-card! player card-id card-value)
     (if (not card-id)
         (log-fatal "Card Id is false: player-api-replace-card-with-draw-card!" (player-get-strat-label player)))
+    (if (hand-is-card-removed? (player-hand player) card-id)
+        (log-fatal "Card is removed: player-api-replace-card-with-draw-card!" (player-get-strat-label player)))
     (deck-push-discard-pile! (round-deck (player-round player)) 
         (hand-get-card-value (player-hand player) card-id))
     (hand-set-card-value! (player-hand player) card-id card-value)
@@ -201,6 +203,8 @@
 (define (player-api-replace-card-from-discard! player card-id)
     (if (not card-id)
         (log-fatal "Card Id is false: player-api-replace-card-from-discard!" (player-get-strat-label player)))
+    (if (hand-is-card-removed? (player-hand player) card-id)
+        (log-fatal "Card is removed: player-api-replace-card-from-discard!" (player-get-strat-label player)))
     (let ((card-value (deck-pop-discard-pile! (round-deck (player-round player)))))
         (deck-push-discard-pile! (round-deck (player-round  player)) 
             (hand-get-card-value (player-hand player) card-id))
