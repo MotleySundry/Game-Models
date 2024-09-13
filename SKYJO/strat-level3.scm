@@ -20,6 +20,7 @@
 ; ===  Level3 strategy ===
 ; ========================
 ; The third tier strategy that adds game-level strategy on top of level-2 round-level strategy.
+; For each round it sets player parameters to match the game properties.
 ;
 
 (define (strat-level3 player cmd)
@@ -30,7 +31,7 @@
 
         ; Returns #t if a play was executed or #f otherwise
         ((= cmd *strat-cmd-play-phase1*)
-                (strat-level2-phase1 player))
+                (strat-level3-phase1 player))
         
         ; Returns #t if a play was executed or #f otherwise.
         ((= cmd *strat-cmd-play-phase2*)
@@ -45,5 +46,17 @@
             (display cmd)
             (newline)
             (exit 1)))
+)
+
+(define (strat-level3-phase1 player)
+
+    (define my-hand-value (player-hand-value-estimate player))
+    (define my-points 0)
+    (define lowest-opponent-hand-value (player-lowest-opponent-value-estimate player))
+    (define lowest-opponent-points 0)
+
+
+    (player-rterminate-round-margin-set! 0)
+    (strat-level2-phase1 player)
 )
 
