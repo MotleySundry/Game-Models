@@ -10,7 +10,7 @@ The model is written in Gambit Scheme.
 
 # SKYJO Card Game
 
-## There are two strategies implemented:
+## There are four strategies implemented:
 * **Cheat** - Is allowed to break the rules and is mainly used to find lower bounds for the higher strategies.
 * **Level 1** - It is the most basic strategy where the rules are followed and decisions are made randomly.
 * **Level 2** - Extends Level 1 by adding round-level heuristics.
