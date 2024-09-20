@@ -1,7 +1,7 @@
-# Game-Models
-This repository contains software for modeling games.
+# SKYJO Card Game Model
+This repository contains software for modeling and simulating player heuristics for the the card game SKYJO.
 
-The models are written in Gambit Scheme.
+The model is written in Gambit Scheme.
 
 ## To Install Scheme Mac prerequisites:
 * brew install gambit-scheme
@@ -13,6 +13,8 @@ The models are written in Gambit Scheme.
 ## There are two strategies implemented:
 * **Cheat** - Is allowed to break the rules and is mainly used to find lower bounds for the higher strategies.
 * **Level 1** - It is the most basic strategy where the rules are followed and decisions are made randomly.
+* **Level 2** - Extends Level 1 by adding round-level heuristics.
+* **Level 3** - Extends Level 2 by adding game-level heuristics.
 
 Look at the comments at the top of the strategy modules for  more details.
 
