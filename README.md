@@ -1,5 +1,14 @@
 # SKYJO Card Game Model
-This repository contains software for modeling and simulating player heuristics for the the card game SKYJO.
+
+The model simulates player heuristics for the card game SKYJO. It is rule-based, so players can adopt the heuristics to improve their gameplay. 
+
+In SKYJO, players start a round without knowing their cards or those of their opponents. As the round unfolds, players gain more information, but it remains imperfect, and a stochastic element remains until the end.
+
+## The model implements four strategies:
+* **Cheat** - Is allowed to break the rules and is used to find lower bounds for the higher strategies.
+* **Level 1** - The most basic strategy follows the rules and makes decisions randomly.
+* **Level 2** - Extends Level 1 by adding round-level heuristics.
+* **Level 3** - Extends Level 2 by adding game-level heuristics.
 
 The model is written in Gambit Scheme.
 
