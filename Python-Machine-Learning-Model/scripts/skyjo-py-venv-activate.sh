@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Motley Sundry :: Game Models :: validate.sh
+# Motley Sundry :: SKYJO-Card-Game-Model :: Python :: skyjo-py-venv-activate.sh
 # Copyright (C) 2024 Donald R Anderson
 #
 # This program is free software: you can redistribute it and/or modify
@@ -16,14 +16,17 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
+#------------------------------------------------------
+set -euo pipefail
+IFS=$'\n\t'
+export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
+# shellcheck disable=SC2034
 HERE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cd "$HERE"
-source include.sh
-chmod 755  ./*.sh
-shellcheck ./*.sh
+ROOT_PY="$HERE/.."
+cd "$ROOT_PY" || exit
+#=======================================================
 
-# SKYJO
-cd "$HERE/SKYJO"
-chmod 755  ./*.sh
-shellcheck ../include.sh ./*.sh
+export PIP_REQUIRE_VIRTUALENV=true
 
+# shellcheck disable=SC1091
+source "$HOME/.venvs/SKYJO/bin/activate"
