@@ -43,11 +43,11 @@ USAGE
 cd SKYJO
 
 SRC=()
-SRC+=('../library.scm')
-SRC+=('../f64matrix.scm')
-SRC+=('../f64vector.scm')
-SRC+=('../vector.scm')
-SRC+=('../vector2.scm')
+SRC+=('../library/library.scm')
+SRC+=('../library/f64matrix.scm')
+SRC+=('../library/f64vector.scm')
+SRC+=('../library/vector.scm')
+SRC+=('../library/vector2.scm')
 SRC+=('config.scm')
 SRC+=('deck.scm')
 SRC+=('hand.scm')
