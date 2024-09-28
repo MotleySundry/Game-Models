@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Motley Sundry :: Game Models :: validate.sh
+# Motley Sundry :: SKYJO-Card-Game-Model :: Scheme :: skyjo-scm-clean.sh
 # Copyright (C) 2024 Donald R Anderson
 #
 # This program is free software: you can redistribute it and/or modify
@@ -16,14 +16,16 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
+#------------------------------------------------------
+set -euo pipefail
+IFS=$'\n\t'
+export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
+# shellcheck disable=SC2034
 HERE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cd "$HERE"
-source include.sh
-chmod 755  ./*.sh
-shellcheck ./*.sh
+ROOT_SCM="$HERE/.."
+cd "$ROOT_SCM" || exit
+#=======================================================
 
-# SKYJO
-cd "$HERE/SKYJO"
-chmod 755  ./*.sh
-shellcheck ../include.sh ./*.sh
-
+rm -rf ./*.c ./*.h
+rm -rf ./modules/*.c ./modules*.h
+rm -rf ./SKYJO/*.c ./SKYJO*.h ./SKYJO/skyjo.bin

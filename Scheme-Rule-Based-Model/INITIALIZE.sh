@@ -26,4 +26,4 @@ ROOT_SCM="$HERE"
 cd "$ROOT_SCM" || exit
 #=======================================================
 
-./validate.sh
+./skyjo-scm-validate.sh
